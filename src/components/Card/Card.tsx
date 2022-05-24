@@ -2,9 +2,7 @@ import React from 'react';
 import './card.scss';
 
 import { Icon } from '@chakra-ui/react';
-import { MdSettings, MdFavorite } from 'react-icons/md';
-
-import { PhoneIcon, AddIcon, WarningIcon } from '@chakra-ui/icons'
+import { MdSettings } from 'react-icons/md';
 
 export interface CardData {
     id: number;

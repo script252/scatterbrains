@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import logo from './logo.svg';
 import './App.css';
 import MemoryCardContainer from './components/MemoryCardContainer/MemoryCardContainer';
 import { CardData, GameState } from './types/memory-game-types';

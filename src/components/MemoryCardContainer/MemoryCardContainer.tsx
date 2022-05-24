@@ -1,7 +1,7 @@
 import React from 'react';
 import './memory-card-container.scss';
 import Card from '../Card/Card';
-import { CardData, GameState } from '../../types/memory-game-types';
+import { CardData } from '../../types/memory-game-types';
 
 import { SimpleGrid } from '@chakra-ui/react'
 
