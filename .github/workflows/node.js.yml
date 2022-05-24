@@ -30,4 +30,8 @@ jobs:
     - run: npm ci
     - run: npm run build --if-present
     - run: npm test
-    - run: npm run deploy
+    - name: Deploy 🚀
+      uses: JamesIves/github-pages-deploy-action@v4.3.3
+      with:
+        branch: gh-pages # The branch the action should deploy to.
+        folder: build # The folder the action should deploy.
