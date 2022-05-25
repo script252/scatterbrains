@@ -7,5 +7,7 @@ export interface CardData {
 export interface GameState {
     columns: number;
     cards: CardData[];
-    revealedCard?: CardData;
+
+    selected: CardData[];
+    matched: CardData[];
 }

@@ -23,7 +23,9 @@ export function init(rows: number, columns: number): GameState {
 
     const initialGameState: GameState = {
         columns: columns,
-        cards: newCards
+        cards: newCards,
+        selected: [],
+        matched: []
     }
 
     return initialGameState;
@@ -31,17 +33,46 @@ export function init(rows: number, columns: number): GameState {
 
 export function clickedCard(card: CardData, state: GameState): GameState {
 
-    const modifiedCard = {
-        ...card,
-        isFlipped: !card.isFlipped
-    }
+    const selectedCards = getSelectedCards(state.selected, card);
 
-    const newCards = state.cards.map(c => c.id === card.id ? modifiedCard : c);
+    //const modifiedCard = {
+    //    ...card,
+    //    isFlipped: selectedCards.some(sel => sel.id === card.id)//!card.isFlipped
+    //}
+
+    //const newCards = state.cards.map(c => c.id === card.id ? modifiedCard : c);
 
     const newState = {
         ...state,
-        cards: newCards
+        //cards: newCards,
+        selected: selectedCards
     }
 
-    return {...newState};
+    return newState;
+}
+
+function getSelectedCards(currentSelected: CardData[], newSelected: CardData): CardData[] {
+
+    // Determine what card(s) should be selected/locked
+
+    if(currentSelected.some((sel: CardData) => sel.id === newSelected.id)) {
+
+        // Allow clearing selection if there's 2
+        if(currentSelected.length === 2)
+            return [];
+
+        return currentSelected;
+    }
+        
+
+    if(currentSelected.length >= 2)
+        return [];
+
+    if(currentSelected.length === 0)
+        return [newSelected];
+
+    if(currentSelected.length === 1)
+        return [currentSelected[0], newSelected];
+
+    return [...currentSelected];
 }

@@ -17,7 +17,9 @@ function MemoryCardContainer(props: any) {
             <SimpleGrid columns={gameState.columns} spacing={4}>
                 {gameState.cards.map((card: CardData, i: number) => {
                     return (
-                        <Card key= {i} onClick={(e: any) => onCardClicked(card, gameState)} isFlipped={card.isFlipped} icon={card.contents}></Card>
+                        <Card key= {i} onClick={(e: any) => onCardClicked(card, gameState)} 
+                            isFlipped={gameState.selected.some((sel: CardData) => sel.id === card.id)} 
+                            icon={card.contents}></Card>
                     )
                 })}
             </SimpleGrid>
