@@ -15,10 +15,14 @@ export interface CardData {
 
 function Card(props: any) {
 
-    const { onClick, isFlipped, icon } = props;
+    const { onClick, isFlipped, isMatched, icon } = props;
+
+    const getStyles = () => {
+        return (isFlipped===true ? " flipped" : "") + (isMatched===true ? " flipped matched" : "");
+    }
 
     return (
-        <div className={"flip-card-container" + (isFlipped===true ? " flipped" : "") } onClick={onClick}>
+        <div className={ "flip-card-container" + getStyles() } onClick={onClick}>
             <div className="flip-card hover-card">
                 <div className="card-front">
                     <div className="card-content">
