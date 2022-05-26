@@ -63,6 +63,17 @@
         transform-style: preserve-3d;
         transition: .3s .1s;
     }
+
+    &.matched {
+        box-shadow:
+        inset -20px 0 10px #0ff, 
+        0 0 10px #fff, 
+        0px 0 10px #0FFA;
+
+        transition: box-shadow 0.8s ease-out;
+        animation-iteration-count: 1;
+        animation-direction: alternate;
+    }
 }
 
 /* hover and focus-within states */

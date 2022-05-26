@@ -18,7 +18,8 @@ function MemoryCardContainer(props: any) {
                 {gameState.cards.map((card: CardData, i: number) => {
                     return (
                         <Card key= {i} onClick={(e: any) => onCardClicked(card, gameState)} 
-                            isFlipped={gameState.selected.some((sel: CardData) => sel.id === card.id)} 
+                            isFlipped={gameState.selected.some((sel: CardData) => sel.id === card.id)}
+                            isMatched={gameState.matched.some((match: CardData) => match.id === card.id)}
                             icon={card.contents}></Card>
                     )
                 })}

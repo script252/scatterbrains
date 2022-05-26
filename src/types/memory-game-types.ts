@@ -1,6 +1,7 @@
 export interface CardData {
     id: number;
     isFlipped: boolean;
+    isMatched: boolean;
     contents: any;
 }
 
