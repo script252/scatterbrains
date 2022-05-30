@@ -1,3 +1,4 @@
+import { createReadStream } from 'fs';
 import { CardData } from '../types/memory-game-types';
 import { GameState } from '../types/memory-game-types';
 
@@ -23,10 +24,13 @@ export function init(rows: number, columns: number): GameState {
         });
 
     const initialGameState: GameState = {
+        rows: rows,
         columns: columns,
         cards: newCards,
         selected: [],
-        matched: []
+        matched: [],
+        turns: 0,
+        showVictory: false
     }
 
     return initialGameState;
@@ -43,7 +47,9 @@ export function clickedCard(card: CardData, state: GameState): GameState {
     const newState = {
         ...state,
         selected: selectedCards,
-        matched: matchingCards
+        matched: matchingCards,
+        turns: state.turns + (selectedCards.length === 1 ? 1 : 0),
+        showVictory: matchingCards.length === state.cards.length
     }
 
     return newState;

@@ -2,13 +2,21 @@
 .flip-card-container {
 
     perspective: 1000px;
-    width: 64px;
-    height: 64px;
+
+    
+    width: 48px;
+    height: 48px;
+    
+
+    @media (min-width: 768px) {
+        width: 64px;
+        height: 64px;
+    }
 
     .card-front,
     .card-back {
         
-        width: 64px;//3rem;
+        width: 100%; //inherit;//3rem;
         height: 100%;
         //height: 64px;//3rem;
         //min-height: 3rem;

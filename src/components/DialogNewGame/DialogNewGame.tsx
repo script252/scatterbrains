@@ -25,11 +25,11 @@ function DialogNewGame(props: any) {
             <ModalCloseButton />
             <ModalBody>
                 <Center>
-                    <Button colorScheme='teal' onClick={() => selectedSize(3, 4, onClose)}>3x4</Button>
-                    <Button colorScheme='teal' onClick={() => selectedSize(4, 4, onClose)}>4x4</Button>
-                    <Button colorScheme='teal' onClick={() => selectedSize(6, 6, onClose)}>6x6</Button>
-                    <Button colorScheme='teal' onClick={() => selectedSize(8, 8, onClose)}>8x8</Button>
-                    <Button colorScheme='teal' onClick={() => selectedSize(16, 16, onClose)}>16x16</Button>
+                    <Button colorScheme='teal' onClick={() => selectedSize(3, 4, onClose)}>12</Button>
+                    <Button colorScheme='teal' onClick={() => selectedSize(2, 9, onClose)}>18</Button>
+                    <Button colorScheme='teal' onClick={() => selectedSize(6, 6, onClose)}>36</Button>
+                    <Button colorScheme='teal' onClick={() => selectedSize(12, 6, onClose)}>72</Button>
+                    <Button colorScheme='teal' onClick={() => selectedSize(14, 6, onClose)}>84</Button>
                 </Center>
             </ModalBody>
             <ModalFooter>

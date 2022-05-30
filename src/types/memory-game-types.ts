@@ -6,9 +6,13 @@ export interface CardData {
 }
 
 export interface GameState {
+    rows: number;
     columns: number;
     cards: CardData[];
 
     selected: CardData[];
     matched: CardData[];
+
+    turns: number;
+    showVictory: boolean;
 }
