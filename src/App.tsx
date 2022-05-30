@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import './App.css';
 import { ChakraProvider } from '@chakra-ui/react'
 import MemoryGame from './components/MemoryGame/MemoryGame';

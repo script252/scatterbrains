@@ -5,7 +5,7 @@ import { CardData, GameState } from '../../types/memory-game-types';
 
 import { init, clickedCard } from '../../lib/MemoryGame';
 import DialogNewGame from '../DialogNewGame/DialogNewGame';
-import { Center, Box, Text } from '@chakra-ui/layout';
+import { Center, Text } from '@chakra-ui/layout';
 import DialogVictory from '../DialogVictory/DialogVictory';
 
 const initialGameState: GameState = init(3, 4);

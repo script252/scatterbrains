@@ -1,10 +1,10 @@
 import React from 'react';
 import { useDisclosure } from "@chakra-ui/hooks";
-import { Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, ModalBody, ModalFooter, Box, Center } from "@chakra-ui/react";
+import { Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, ModalBody, ModalFooter, Center } from "@chakra-ui/react";
 import { Button, Text } from "@chakra-ui/react";
 
 function DialogVictory(props: any) {
-    const { isOpen, onOpen, onClose } = useDisclosure();
+    const { onClose } = useDisclosure();
   
     const { gameState, onCloseVictory } = props;
 
