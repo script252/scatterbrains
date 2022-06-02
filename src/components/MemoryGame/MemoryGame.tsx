@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import './MemoryGame.scss';
-import MemoryCardContainer from '../MemoryCardContainer/MemoryCardContainer';
+import MemoryCardContainer from './MemoryCardContainer/MemoryCardContainer';
 import { CardData, GameState } from '../../types/memory-game-types';
 
 import { init, clickedCard } from '../../lib/MemoryGame';
-import DialogNewGame from '../DialogNewGame/DialogNewGame';
+import DialogNewGame from './DialogNewGame/DialogNewGame';
 import { Center, Text } from '@chakra-ui/layout';
-import DialogVictory from '../DialogVictory/DialogVictory';
+import DialogVictory from './DialogVictory/DialogVictory';
 
 const initialGameState: GameState = init(3, 4);
 
