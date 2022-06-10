@@ -10,15 +10,17 @@ const initialGameState: SudokuGameState = init('easy');
 function SudokuGame() {
 
   const [gameState, setGameState] = useState(initialGameState);
+  const cellSize = 48;
+  const containerWidth = cellSize * 9 + "px";
 
   return (
-      <Box className="sudoku-game" width="18rem">
+      <Box className="sudoku-game" width={containerWidth}>
             <SimpleGrid spacing={0} columns={9} gap={0}>
                 {gameState.cells.map((cell: any, ri: number) => {
                     return (
                         cell.map((cell: any, ci: number) => {
                             return (
-                                <Cell key={ri+ci} value={cell} isSelected={false} onClick={(e: any) => onCellClicked(cell, gameState)} 
+                                <Cell key={ri+ci} value={cell} isSelected={false} size={cellSize+"px"} onClick={(e: any) => onCellClicked(cell, gameState)} 
                                 ></Cell>
                             )
                         })

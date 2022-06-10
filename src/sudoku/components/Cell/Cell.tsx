@@ -14,7 +14,7 @@ function Cell(props: any) {
         border: '1px',
         borderColor: 'gray.500',
         color: "black",
-        lineHeight: "1"
+        lineHeight: "normal"
     }
 
     const getStyles = () => {
@@ -23,7 +23,7 @@ function Cell(props: any) {
 
     return (
         <Box {...cellStyle} onClick={onClick}>
-            <Text>{value}</Text>
+            <Text fontSize="3xl">{value}</Text>
         </Box>
     );
 }
