@@ -1,5 +1,5 @@
-import { CardData } from '../types/memory-game-types';
-import { GameState } from '../types/memory-game-types';
+import { CardData } from './memoryGameTypes';
+import { GameState } from './memoryGameTypes';
 
 import { getUniqueIcons } from './memoryGameData';
 
