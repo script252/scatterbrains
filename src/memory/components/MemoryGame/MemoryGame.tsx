@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import './MemoryGame.scss';
 import MemoryCardContainer from '../MemoryCardContainer/MemoryCardContainer';
-import { CardData, GameState } from '../../types/memory-game-types';
+import { CardData, GameState } from '../../lib/memoryGameTypes';
 
-import { init, clickedCard } from '../../lib/MemoryGame';
+import { init, clickedCard } from '../../lib/memoryGameLib';
 import DialogNewGame from '../DialogNewGame/DialogNewGame';
 import { Center, Text } from '@chakra-ui/layout';
 import DialogVictory from '../DialogVictory/DialogVictory';
