@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import Cell from '../Cell/Cell';
 import { CellData, SudokuGameState } from '../../lib/sudokuGameTypes';
 import { init, onCellClicked, onEnteredInput } from '../../lib/sudokuGameLib';
-import { Box, SimpleGrid } from '@chakra-ui/react';
+import { Box, Center, SimpleGrid } from '@chakra-ui/react';
 import CellInputButtons from '../CellInputButtons/CellInputButtons';
 
 const initialGameState: SudokuGameState = init('easy');
@@ -24,6 +24,7 @@ function SudokuGame() {
     };
 
     return (
+        <Center>
         <Box className="sudoku-game" width={containerWidth}>
             <SimpleGrid spacing={0} columns={9} gap={0}>
                 {gameState.cells.map((cell: CellData, index: number) => {
@@ -43,6 +44,7 @@ function SudokuGame() {
             </SimpleGrid>
             <CellInputButtons onClick={(value: number) => setGameState(onEnteredInput(gameState.cells[gameState.selected as number], value, gameState))}></CellInputButtons>
         </Box>
+        </Center>
     );
 }
 
