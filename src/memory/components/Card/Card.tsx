@@ -1,7 +1,7 @@
 import React from 'react';
 import './card.scss';
 
-import { Icon } from '@chakra-ui/react';
+import { Box, Icon } from '@chakra-ui/react';
 import { MdSettings } from 'react-icons/md';
 
 export interface CardData {
@@ -22,20 +22,20 @@ function Card(props: any) {
     }
 
     return (
-        <div className={ "flip-card-container" + getStyles() } onClick={onClick}>
+        <Box className={ "flip-card-container" + getStyles() } onClick={onClick} h={["40px", "48px", "64px"]} w={["40px", "48px", "64px"]}>
             <div className="flip-card hover-card">
                 <div className="card-front">
                     <div className="card-content">
-                        <Icon as={MdSettings} className="icon" width="32px" height="32px"></Icon>
+                        <Icon as={MdSettings} className="icon" width="100%" height="100%"></Icon>
                     </div>
                 </div>
                 <div className="card-back">
                     <div className="card-content">
-                        <Icon as={icon}></Icon>
+                        <Icon as={icon} height="100%" width="100%"></Icon>
                     </div>
                 </div>
             </div>
-        </div>
+        </Box>
     );
 }
 

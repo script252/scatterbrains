@@ -11,8 +11,8 @@ function CellInputButtons(props: any) {
             <SimpleGrid columns={3} spacing={0} m={0}>
             {numbers.map(((value: number) => {
                 return (
-                    <Box p={2} height={buttonSize} >
-                        <Button width="100%" height="100%" colorScheme='teal' onClick={() => onClick(value)}><Text fontSize="md">{value}</Text></Button>
+                    <Box key={value} p={2} height={buttonSize} >
+                        <Button  width="100%" height="100%" colorScheme='teal' onClick={() => onClick(value)}><Text fontSize="md">{value}</Text></Button>
                     </Box>
                 )
                 })

@@ -14,7 +14,7 @@ function MemoryCardContainer(props: any) {
 
     return (
         <div className="memory-card-container">
-            <SimpleGrid minChildWidth="64px" spacing={4}>
+            <SimpleGrid columns={[6, 8, 10]} spacing={4}>
                 {gameState.cards.map((card: CardData, i: number) => {
                     return (
                         <Card key= {i} onClick={(e: any) => onCardClicked(card, gameState)} 
