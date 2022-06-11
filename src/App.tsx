@@ -18,8 +18,8 @@ function App() {
             <Routes>
               <Route path="/">
                 {/* <Route index element={<MemoryGame />} /> */}
-                <Route path="memory" element={<MemoryGame />} />
-                <Route path="sudoku" element={<SudokuGame />} />
+                <Route path="/memory" element={<MemoryGame />} />
+                <Route path="/sudoku" element={<SudokuGame />} />
               </Route>
             </Routes>
           </BrowserRouter>
