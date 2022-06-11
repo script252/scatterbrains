@@ -9,8 +9,6 @@ export function init(difficulty: any): SudokuGameState {
     const puzzleFixed: number[] = puzzle.map((c:number) => c === 0 ? 9 : c);
     const answerFixed: number[] = answer.map((c:number) => c === 0 ? 9 : c);
 
-    console.log(puzzle, answer);
-
     // Generate and fill cells based on difficulty
     const emptyCells = new Array<any>(81)
         .fill(null)
