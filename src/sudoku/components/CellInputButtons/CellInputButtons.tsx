@@ -3,7 +3,7 @@ import { Box, Button, SimpleGrid, Text } from "@chakra-ui/react";
 
 function CellInputButtons(props: any) {
 
-    const { onClick, buttonSize = "144px" } = props;
+    const { onClick } = props;
     const numbers = [1,2,3,4,5,6,7,8,9];
 
     return (
