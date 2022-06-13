@@ -1,11 +1,10 @@
-import { Box, Square, Text } from "@chakra-ui/react";
-import { relative } from "node:path/win32";
+import { Box, Text } from "@chakra-ui/react";
 import "./cell.scss";
 
 // A single sudoku game cell
 function Cell(props: any) {
 
-    const { onClick, value, /*answer,*/ isSelected, isHighlighted, isError="false", size = "2rem", debugText } = props;
+    const { onClick, value, /*answer,*/ isSelected, isHighlighted, isError="false", debugText } = props;
 
     const getBgColor = () => {
         if(isSelected === true)

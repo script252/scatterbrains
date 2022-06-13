@@ -1,6 +1,6 @@
 import React from 'react';
 import './App.css';
-import { Box, ChakraProvider, Flex, VStack } from '@chakra-ui/react'
+import { Box, ChakraProvider, Flex } from '@chakra-ui/react'
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import MemoryGame from './memory/components/MemoryGame/MemoryGame';
 import NavBar from './components/NavBar/NavBar';

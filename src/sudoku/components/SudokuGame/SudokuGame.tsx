@@ -4,7 +4,7 @@ import './sudoku-game.scss';
 import Cell from '../Cell/Cell';
 import { CellData, SudokuGameState } from '../../lib/sudokuGameTypes';
 import { init, onCellClicked, onEnteredInput } from '../../lib/sudokuGameLib';
-import { Box, Center, Flex, SimpleGrid } from '@chakra-ui/react';
+import { Box, Flex, SimpleGrid } from '@chakra-ui/react';
 import CellInputButtons from '../CellInputButtons/CellInputButtons';
 
 const initialGameState: SudokuGameState = init('easy');
@@ -13,7 +13,7 @@ function SudokuGame() {
 
     const [gameState, setGameState] = useState(initialGameState);
     const cellSize = 48;
-    const containerWidth = cellSize * 9 + "px";
+    //const containerWidth = cellSize * 9 + "px";
 
     const isCellSelected = (id: number|null) => gameState.selected === id;
     const isCellHighlighted = (id: number|null) => gameState.highlighted.some((c:number|null) => c === id);
