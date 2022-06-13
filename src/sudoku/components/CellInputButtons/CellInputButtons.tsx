@@ -7,12 +7,12 @@ function CellInputButtons(props: any) {
     const numbers = [1,2,3,4,5,6,7,8,9];
 
     return (
-        <Box>
-            <SimpleGrid columns={3} spacing={0} m={0}>
+        <Box className="button-container" position="relative" width="70vh" height="25vh">
+            <SimpleGrid columns={3} spacing={0} m="auto" height="100%">
             {numbers.map(((value: number) => {
                 return (
-                    <Box key={value} p={2} height={buttonSize} >
-                        <Button  width="100%" height="100%" colorScheme='teal' onClick={() => onClick(value)}><Text fontSize="md">{value}</Text></Button>
+                    <Box key={value} p={2} position="relative" height="100%" >
+                        <Button width="100%" height="100%" colorScheme='teal' onClick={() => onClick(value)}><Text fontSize="md">{value}</Text></Button>
                     </Box>
                 )
                 })

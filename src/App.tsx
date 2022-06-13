@@ -1,6 +1,6 @@
 import React from 'react';
 import './App.css';
-import { Box, ChakraProvider } from '@chakra-ui/react'
+import { Box, ChakraProvider, Flex, VStack } from '@chakra-ui/react'
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import MemoryGame from './memory/components/MemoryGame/MemoryGame';
 import NavBar from './components/NavBar/NavBar';
@@ -10,21 +10,29 @@ function App() {
 
   return (
     <ChakraProvider>
-      <div className="App">
+      <Box className="App" height="100vh">
 
           
           <BrowserRouter>
-          <NavBar></NavBar>
-          <header className="App-header">
+          {/* <header className="App-header"> */}
+          <Flex 
+            alignItems='center'
+            //width="100vw"
+            min-height="100%"
+            height="100%"
+            flexDirection="column"
+            >
+            <NavBar></NavBar>
             <Routes>
               <Route path="/" element={<Box></Box>}></Route>
                 {/* <Route index element={<MemoryGame />} /> */}
               <Route path="memory" element={<MemoryGame />} />
               <Route path="sudoku" element={<SudokuGame />} />
             </Routes>
-            </header>
+          </Flex>
+          {/* </header> */}
           </BrowserRouter>
-      </div>
+      </Box>
     </ChakraProvider>
   );
 }
