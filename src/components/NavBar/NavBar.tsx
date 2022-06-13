@@ -8,7 +8,7 @@ import { ChevronDownIcon } from '@chakra-ui/icons';
 function NavBar(props: any) {
 
     return (
-        <Flex bg="gray.700">
+        <Flex bg="gray.700" width="100%">
             <Spacer />
                 
                 <Menu>

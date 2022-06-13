@@ -1,4 +1,5 @@
-import { Box, Text } from "@chakra-ui/react";
+import { Box, Square, Text } from "@chakra-ui/react";
+import { relative } from "node:path/win32";
 import "./cell.scss";
 
 // A single sudoku game cell
@@ -15,21 +16,25 @@ function Cell(props: any) {
     }
 
     const cellStyle = {
-        width: size,
-        height: size,
-        minWidth: size,
+        width: "100%", //size,
+        height: "100%", //size,
+        //minWidth: size,
         bgColor: getBgColor(),
         border: '1px',
         borderColor: 'gray.500',
         color: isError ? "red" : "black",
-        lineHeight: "normal",
+        //lineHeight: "normal",
+        display: "flex",
+        
+        //justifyContent: "center",
     }
 
     return (
         <Box {...cellStyle} userSelect="none" onClick={onClick}>
-            {value !== 0 && (<Text fontSize="3xl">{value}</Text>)}
+            {!value && (<Text fontSize="min(5vw, 32pt)" m="auto" visibility="hidden">0</Text>)}
+            {value && (<Text fontSize="min(5vw, 32pt)" m="auto">{value}</Text>)}
             {/* {answer !== 0  && value !== answer && (<Text fontSize="3xl">{answer}</Text>)} */}
-            {debugText && (<Text fontSize="md">{debugText}</Text>)}
+            {debugText && (<Text fontSize="100%">{debugText}</Text>)}
         </Box>
     );
 }

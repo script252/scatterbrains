@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 
+import './sudoku-game.scss';
 import Cell from '../Cell/Cell';
 import { CellData, SudokuGameState } from '../../lib/sudokuGameTypes';
 import { init, onCellClicked, onEnteredInput } from '../../lib/sudokuGameLib';
-import { Box, Center, SimpleGrid } from '@chakra-ui/react';
+import { Box, Center, Flex, SimpleGrid } from '@chakra-ui/react';
 import CellInputButtons from '../CellInputButtons/CellInputButtons';
 
 const initialGameState: SudokuGameState = init('easy');
@@ -24,27 +25,30 @@ function SudokuGame() {
     };
 
     return (
-        <Center>
-        <Box className="sudoku-game" width={containerWidth}>
-            <SimpleGrid spacing={0} columns={9} gap={0}>
-                {gameState.cells.map((cell: CellData, index: number) => {
-                    return (
-                        <Cell key={index} 
-                            //value={cell.value} 
-                            {...cell}
-                            //debugText={cell.clusterId} 
-                            isSelected={ isCellSelected(index) }
-                            isHighlighted={ isCellHighlighted(index) } 
-                            isError={ isCellError(index)}
-                            size={cellSize+"px"} 
-                            onClick={(e: any) => setGameState(onCellClicked(cell, gameState))} 
-                        ></Cell>
-                    )
-                })}
-            </SimpleGrid>
-            <CellInputButtons onClick={(value: number) => setGameState(onEnteredInput(gameState.cells[gameState.selected as number], value, gameState))}></CellInputButtons>
-        </Box>
-        </Center>
+        
+            <Flex className="sudoku-game" height="100%" width="100%">
+                <Box ml="auto" mr="auto" flex="1 100%"> 
+                    <SimpleGrid spacing={0} columns={9} gap={0} height="100vw" width="100%" maxWidth="70vh" maxHeight="70vh" p="8px" m="auto">
+                        {gameState.cells.map((cell: CellData, index: number) => {
+                            return (
+                                <Cell key={index} 
+                                    //value={cell.value} 
+                                    {...cell}
+                                    //debugText={cell.clusterId} 
+                                    isSelected={ isCellSelected(index) }
+                                    isHighlighted={ isCellHighlighted(index) } 
+                                    isError={ isCellError(index)}
+                                    size={cellSize+"px"} 
+                                    onClick={(e: any) => setGameState(onCellClicked(cell, gameState))} 
+                                ></Cell>
+                            )
+                        })}
+                    </SimpleGrid>
+                    
+                </Box>
+                <CellInputButtons onClick={(value: number) => setGameState(onEnteredInput(gameState.cells[gameState.selected as number], value, gameState))}></CellInputButtons>
+            </Flex>
+            
     );
 }
 
