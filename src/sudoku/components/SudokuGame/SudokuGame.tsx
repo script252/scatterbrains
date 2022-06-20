@@ -26,7 +26,7 @@ function SudokuGame() {
 
     return (
         
-            <Flex className="sudoku-game" height="100%" width="100%">
+            <Flex className="sudoku-game" width="100%">
                 <Box ml="auto" mr="auto" flex="1 100%"> 
                     <SimpleGrid spacing={0} columns={9} gap={0} height="100vw" width="100%" maxWidth="70vh" maxHeight="70vh" p="8px" m="auto">
                         {gameState.cells.map((cell: CellData, index: number) => {

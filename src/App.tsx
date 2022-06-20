@@ -26,8 +26,8 @@ function App() {
             <Routes>
               <Route path="/" element={<Box></Box>}></Route>
                 {/* <Route index element={<MemoryGame />} /> */}
-              <Route path="memory" element={<MemoryGame />} />
-              <Route path="sudoku" element={<SudokuGame />} />
+              <Route path="memory/memory" element={<MemoryGame />} />
+              <Route path="memory/sudoku" element={<SudokuGame />} />
             </Routes>
           </Flex>
           {/* </header> */}
