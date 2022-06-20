@@ -12,7 +12,7 @@ function CellInputButtons(props: any) {
             {numbers.map(((value: number) => {
                 return (
                     <Box key={value} p={2} position="relative" height="100%" >
-                        <Button width="100%" height="100%" colorScheme='teal' onClick={() => onClick(value)}><Text fontSize="md">{value}</Text></Button>
+                        <Button width="100%" height="100%" colorScheme='teal' onClick={() => onClick(value)}><Text fontSize="xl">{value}</Text></Button>
                     </Box>
                 )
                 })
