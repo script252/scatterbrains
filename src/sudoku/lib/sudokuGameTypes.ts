@@ -13,3 +13,10 @@ export interface SudokuGameState {
     selected: number|null,
     highlighted: (number|null)[]
 }
+
+export enum ENewGameDialogResult {
+    easy = 'easy',
+    medium = 'medium',
+    hard = 'hard',
+    cancel = 'cancel',
+}
