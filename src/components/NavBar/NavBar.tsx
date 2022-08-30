@@ -6,11 +6,12 @@ import { Flex, Button, Menu, MenuButton, MenuItem, MenuList, Spacer/*, Link*/ } 
 import { ChevronDownIcon } from '@chakra-ui/icons';
 
 function NavBar(props: any) {
-
+    const {onNewGame} = props;
     return (
         <Flex bg="gray.700" width="100%">
             <Spacer />
-                
+                <Button m="1" as={Button} colorScheme="gray" 
+                    onClick={onNewGame}>Restart Game</Button>
                 <Menu>
                     <MenuButton m="1" as={Button} rightIcon={<ChevronDownIcon />} colorScheme="teal">
                         Games

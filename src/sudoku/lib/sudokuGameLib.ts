@@ -1,5 +1,6 @@
 import { CellData, SudokuGameState } from "./sudokuGameTypes";
 import { makepuzzle, solvepuzzle/*, ratepuzzle*/ } from "sudoku";
+import { useCookies } from "react-cookie";
 
 export function init(difficulty: any): SudokuGameState {
     
@@ -72,4 +73,21 @@ function findCellRowCells(cell: CellData, gs: SudokuGameState): CellData[] {
 
 function findCellColCells(cell: CellData, gs: SudokuGameState): CellData[] {
     return gs.cells.filter((c: CellData, i: number) => c.col === cell.col);
+}
+
+export function saveGameState(gs: SudokuGameState): SudokuGameState {
+    localStorage.setItem('sudokuGameState', JSON.stringify(gs));
+    return gs;
+}
+
+export function loadGameState(gameState: SudokuGameState): SudokuGameState {
+
+    try {
+        // Set game state from saved value (if there is one)
+        const loadedState: string = localStorage.getItem('sudokuGameState') || '';
+        const loadedStateParsed = JSON.parse(loadedState) || gameState;
+        return loadedStateParsed || gameState;
+    } catch (err) {
+        return gameState;
+    }
 }

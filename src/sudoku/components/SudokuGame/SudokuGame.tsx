@@ -1,19 +1,21 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import './sudoku-game.scss';
 import Cell from '../Cell/Cell';
-import { CellData, SudokuGameState } from '../../lib/sudokuGameTypes';
-import { init, onCellClicked, onEnteredInput } from '../../lib/sudokuGameLib';
+import { CellData, ENewGameDialogResult, SudokuGameState } from '../../lib/sudokuGameTypes';
+import * as SudokuGameLib from '../../lib/sudokuGameLib';
 import { Box, Flex, SimpleGrid } from '@chakra-ui/react';
 import CellInputButtons from '../CellInputButtons/CellInputButtons';
+import DialogNewGame from '../DialogNewGame/DialogNewGame';
 
-const initialGameState: SudokuGameState = init('easy');
+const initialGameState: SudokuGameState = SudokuGameLib.init('easy');
 
-function SudokuGame() {
+function SudokuGame(props: any) {
+
+    const {startNewGame, onCloseNewGameModal} = props;
 
     const [gameState, setGameState] = useState(initialGameState);
     const cellSize = 48;
-    //const containerWidth = cellSize * 9 + "px";
 
     const isCellSelected = (id: number|null) => gameState.selected === id;
     const isCellHighlighted = (id: number|null) => gameState.highlighted.some((c:number|null) => c === id);
@@ -24,8 +26,27 @@ function SudokuGame() {
         }
     };
 
+    useEffect(() => {
+        // Set game state from saved value (if there is one)
+        if(startNewGame !== true) {
+            setGameState(SudokuGameLib.loadGameState(gameState));
+        }
+    }, []);
+
+    const onClick = (cell: CellData, gs: SudokuGameState) => {
+        setGameState(SudokuGameLib.saveGameState(SudokuGameLib.onCellClicked(cell, gs)));
+    }
+
+    const onDifficultySelected = (difficulty: ENewGameDialogResult) => {
+        setGameState(SudokuGameLib.init(difficulty))
+        onCloseNewGameModal();
+    }
+
+    const onNewGameCancel = () => {
+        onCloseNewGameModal();
+    }
+
     return (
-        
             <Flex className="sudoku-game" width="100%">
                 <Box ml="auto" mr="auto" flex="1 100%"> 
                     <SimpleGrid spacing={0} columns={9} gap={0} height="100vw" width="100%" maxWidth="70vh" maxHeight="70vh" p="8px" m="auto">
@@ -39,19 +60,17 @@ function SudokuGame() {
                                     isHighlighted={ isCellHighlighted(index) } 
                                     isError={ isCellError(index)}
                                     size={cellSize+"px"} 
-                                    onClick={(e: any) => setGameState(onCellClicked(cell, gameState))} 
+                                    onClick={(e: any) => onClick(cell, gameState)} 
                                 ></Cell>
                             )
                         })}
                     </SimpleGrid>
                     
                 </Box>
-                <CellInputButtons onClick={(value: number) => setGameState(onEnteredInput(gameState.cells[gameState.selected as number], value, gameState))}></CellInputButtons>
+                <CellInputButtons onClick={(value: number) => setGameState(SudokuGameLib.saveGameState(SudokuGameLib.onEnteredInput(gameState.cells[gameState.selected as number], value, gameState)))}></CellInputButtons>
+                <DialogNewGame startNewGameState={startNewGame} onDifficultySelected={(difficulty: any) => onDifficultySelected(difficulty)} onCancel={onNewGameCancel}></DialogNewGame>
             </Flex>
-            
     );
 }
 
 export default SudokuGame;
-
-
