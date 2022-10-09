@@ -1,4 +1,4 @@
-import { CellData, SudokuGameState } from "./sudokuGameTypes";
+import { CellData, ECellEdge, SudokuGameState } from "./sudokuGameTypes";
 
 import sudoku from "./sudoku-generator/sudoku";
 
@@ -29,19 +29,41 @@ export function init(difficulty: number): SudokuGameState {
         
         return rowClust + (colClust * 3);
     }
-    
+
     const initialState: SudokuGameState = {
         showErrors: true,
         cells: emptyCells.map((cell, index:number) => {
             const row: number = Math.floor(index / 9);
             const col: number = Math.floor(index % 9);
-            return {id: index, col: col, row: row, value: puzzleFixed[index], answer: answerFixed[index], clusterId: getClusterId(col, row)}
+            const clusterId = getClusterId(col, row);
+            return {
+                id: index, 
+                col: col, 
+                row: row, 
+                value: puzzleFixed[index], 
+                answer: answerFixed[index], 
+                clusterId: clusterId,
+                edgeType: ECellEdge.none,
+                notes: [0, 0, 0, 0, 0, 0, 0, 0, 0]
+                //debugText: getClusterId(col, row)
+            } as CellData;
+        }).map((cell, index:number, cells: CellData[]) => {
+
+            const clusterCells = cells.filter((c: CellData) => c.clusterId === cell.clusterId);
+            // Find index of same id cell in clusterCells
+            const edgeIndex: number = clusterCells.findIndex(cc => cc.id === cell.id);
+
+            return {
+                ...cell,
+                edgeType: edgeIndex,
+                //debugText: edgeIndex
+            }
         }),
         selected: null,
         highlighted: [],
-        showVictory: false
+        showVictory: false,
     };
-
+    
     return initialState;
 }
 
@@ -103,7 +125,7 @@ export function loadGameState(gameState: SudokuGameState): SudokuGameState {
     try {
         // Set game state from saved value (if there is one)
         const loadedState: string = localStorage.getItem('sudokuGameState') || '';
-        const loadedStateParsed = JSON.parse(loadedState) || gameState;
+        const loadedStateParsed: SudokuGameState = JSON.parse(loadedState) as SudokuGameState || gameState;
         return loadedStateParsed || gameState;
     } catch (err) {
         return gameState;

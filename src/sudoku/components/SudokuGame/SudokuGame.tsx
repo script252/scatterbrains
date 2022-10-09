@@ -51,7 +51,7 @@ function SudokuGame(props: any) {
 
     return (
             <Flex className="sudoku-game" width="100%">
-                <Box ml="auto" mr="auto" flex="1 100%"> 
+                <Box ml="auto" mr="auto" flex="1 100%" className="cell-container"> 
                     <SimpleGrid spacing={0} columns={9} gap={0} height="100vw" width="100%" maxWidth="70vh" maxHeight="70vh" p="8px" m="auto">
                         {gameState.cells.map((cell: CellData, index: number) => {
                             return (
@@ -68,7 +68,6 @@ function SudokuGame(props: any) {
                             )
                         })}
                     </SimpleGrid>
-                    
                 </Box>
                 <CellInputButtons onClick={(value: number) => setGameState(SudokuGameLib.saveGameState(SudokuGameLib.onEnteredInput(gameState.cells[gameState.selected as number], value, gameState)))}></CellInputButtons>
                 <DialogNewGame startNewGameState={startNewGame} onDifficultySelected={(difficulty: any) => onDifficultySelected(difficulty)} onCancel={onNewGameCancel}></DialogNewGame>
