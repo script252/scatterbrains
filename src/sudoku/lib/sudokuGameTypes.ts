@@ -7,16 +7,28 @@ export interface CellData {
     row: number,
 }
 
-export interface SudokuGameState {
-    showErrors: boolean,
-    cells: CellData[],
-    selected: number|null,
-    highlighted: (number|null)[]
+export class SudokuGameState {
+    showErrors: boolean = false;
+    cells: CellData[] = [];
+    selected: number|null = null;
+    highlighted: (number|null)[] = [];
 }
 
+/*
+"easy":         62
+"medium":       53
+"hard":         44
+"very-hard":    35
+"insane":       26
+"inhuman":      17
+*/
+
 export enum ENewGameDialogResult {
-    easy = 'easy',
-    medium = 'medium',
-    hard = 'hard',
+    easy = 62,
+    medium = 53,
+    hard = 44,
+    veryHard = 35,
+    insane = 26,
+    inhuman = 17,
     cancel = 'cancel',
 }

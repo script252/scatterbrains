@@ -1,14 +1,15 @@
 import React from 'react';
 import { useDisclosure } from "@chakra-ui/hooks";
-import { Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, ModalBody, ModalFooter, Box, Center } from "@chakra-ui/react";
+import { Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, ModalBody, ModalFooter, Center } from "@chakra-ui/react";
 import { Button } from "@chakra-ui/react";
+import { ENewGameDialogResult } from '../../lib/sudokuGameTypes';
 
 function DialogNewGame(props: any) {
-    const { isOpen, onOpen, onClose } = useDisclosure();
+    const { isOpen, /*onOpen,*/ onClose } = useDisclosure();
   
     const { onDifficultySelected, startNewGameState, onCancel } = props;
 
-    const selectedDifficulty = (difficulty: any, onClose?: any) => {
+    const selectedDifficulty = (difficulty: ENewGameDialogResult, onClose?: any) => {
         onDifficultySelected(difficulty);
         onClose();
     }
@@ -28,9 +29,12 @@ function DialogNewGame(props: any) {
                     <ModalCloseButton />
                     <ModalBody>
                         <Center>
-                            <Button colorScheme='teal' onClick={() => selectedDifficulty('easy', onClose)}>Easy</Button>
-                            <Button colorScheme='teal' onClick={() => selectedDifficulty('medium', onClose)}>Medium</Button>
-                            <Button colorScheme='teal' onClick={() => selectedDifficulty('hard', onClose)}>Difficult</Button>
+                            <Button colorScheme='teal' onClick={() => selectedDifficulty(ENewGameDialogResult.easy, onClose)}>Easy</Button>
+                            <Button colorScheme='teal' onClick={() => selectedDifficulty(ENewGameDialogResult.medium, onClose)}>Medium</Button>
+                            <Button colorScheme='teal' onClick={() => selectedDifficulty(ENewGameDialogResult.hard, onClose)}>Hard</Button>
+                            <Button colorScheme='teal' onClick={() => selectedDifficulty(ENewGameDialogResult.veryHard, onClose)}>Very hard</Button>
+                            <Button colorScheme='teal' onClick={() => selectedDifficulty(ENewGameDialogResult.insane, onClose)}>Insane</Button>
+                            <Button colorScheme='teal' onClick={() => selectedDifficulty(ENewGameDialogResult.inhuman, onClose)}>Inhuman</Button>
                         </Center>
                     </ModalBody>
                     <ModalFooter>

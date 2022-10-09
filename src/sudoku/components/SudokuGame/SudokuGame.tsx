@@ -8,13 +8,11 @@ import { Box, Flex, SimpleGrid } from '@chakra-ui/react';
 import CellInputButtons from '../CellInputButtons/CellInputButtons';
 import DialogNewGame from '../DialogNewGame/DialogNewGame';
 
-const initialGameState: SudokuGameState = SudokuGameLib.init('easy');
-
 function SudokuGame(props: any) {
 
     const {startNewGame, onCloseNewGameModal} = props;
 
-    const [gameState, setGameState] = useState(initialGameState);
+    const [gameState, setGameState] = useState(new SudokuGameState());
     const cellSize = 48;
 
     const isCellSelected = (id: number|null) => gameState.selected === id;
@@ -27,10 +25,11 @@ function SudokuGame(props: any) {
     };
 
     useEffect(() => {
+
+        const initialGameState: SudokuGameState = SudokuGameLib.init('easy');
+
         // Set game state from saved value (if there is one)
-        if(startNewGame !== true) {
-            setGameState(SudokuGameLib.loadGameState(gameState));
-        }
+        setGameState(SudokuGameLib.loadGameState(initialGameState as SudokuGameState));
     }, []);
 
     const onClick = (cell: CellData, gs: SudokuGameState) => {
@@ -38,8 +37,11 @@ function SudokuGame(props: any) {
     }
 
     const onDifficultySelected = (difficulty: ENewGameDialogResult) => {
-        setGameState(SudokuGameLib.init(difficulty))
-        onCloseNewGameModal();
+        const newGameState = SudokuGameLib.init(difficulty);
+        if(newGameState !== null) {
+            setGameState(newGameState);
+            onCloseNewGameModal();
+        }
     }
 
     const onNewGameCancel = () => {
