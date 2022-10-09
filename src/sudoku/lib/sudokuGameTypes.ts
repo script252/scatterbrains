@@ -1,3 +1,16 @@
+export enum ECellEdge {
+    topLeft = 0,
+    top = 1,
+    topRight = 2,
+    left = 3,
+    center = 4,
+    right = 5,
+    bottomLeft = 6,
+    bottom = 7,
+    bottomRight = 8,
+    none = 9,
+}
+
 export interface CellData {
     id: number,
     value: number|null,
@@ -5,6 +18,8 @@ export interface CellData {
     clusterId: number,
     col: number,
     row: number,
+    edgeType: ECellEdge,
+    notes: number[],
 }
 
 export class SudokuGameState {
