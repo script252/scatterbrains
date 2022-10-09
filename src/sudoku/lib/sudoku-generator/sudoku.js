@@ -7,6 +7,8 @@
     Please see the README for more details.
 */
 
+/* eslint-disable */
+
 export default function sudoku() {
     var sudoku = {};  // Global reference to the sudoku library
 
