@@ -6,7 +6,7 @@ import { Flex, Button, Menu, MenuButton, MenuItem, MenuList, Spacer/*, Link*/ } 
 import { ChevronDownIcon } from '@chakra-ui/icons';
 
 function NavBar(props: any) {
-    
+
     const {onNewGame, showNewGameButton} = props;
     const location = useLocation();
     
@@ -20,9 +20,9 @@ function NavBar(props: any) {
                         Games
                     </MenuButton>
                     <MenuList>
-                        <Link  to="memory/crossword"><MenuItem>Crossword</MenuItem></Link>
-                        <Link  to="memory/memory"><MenuItem>Memory</MenuItem></Link>
-                        <Link  to="memory/sudoku"><MenuItem>Sudoku</MenuItem></Link>
+                        <Link  to="crossword"><MenuItem>Crossword</MenuItem></Link>
+                        <Link  to="memory"><MenuItem>Memory</MenuItem></Link>
+                        <Link  to="sudoku"><MenuItem>Sudoku</MenuItem></Link>
                     </MenuList>
                 </Menu>
                 
