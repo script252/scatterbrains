@@ -17,12 +17,12 @@ function App() {
     setStartNewGameState(false);
   }
 
+  const basename = process.env.PUBLIC_URL;
+
   return (
     <ChakraProvider>
         <Box className="App" height="100vh">
-
-            
-            <BrowserRouter>
+            <BrowserRouter basename={`${basename}`}>
             {/* <header className="App-header"> */}
             <Flex 
               alignItems='center'
@@ -31,12 +31,12 @@ function App() {
               height="100%"
               flexDirection="column"
               >
-              <NavBar onNewGame={onNewGame}></NavBar>
+              <NavBar onNewGame={onNewGame} showNewGameButton={true}></NavBar>
               <Routes>
-                <Route path="/" element={<Box></Box>}></Route>
+                <Route path="" element={<Box />}></Route>
                   {/* <Route index element={<MemoryGame />} /> */}
-                <Route path="memory/memory" element={<MemoryGame />} />
-                <Route path="memory/sudoku" element={<SudokuGame startNewGame={startNewGameState} onCloseNewGameModal={onCloseNewGameModal}/>} />
+                <Route path="/memory" element={<MemoryGame />} />
+                <Route path="/sudoku" element={<SudokuGame startNewGame={startNewGameState} onCloseNewGameModal={onCloseNewGameModal}/>} />
               </Routes>
             </Flex>
             {/* </header> */}

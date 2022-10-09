@@ -1,14 +1,10 @@
 import { CellData, SudokuGameState } from "./sudokuGameTypes";
-//import { makepuzzle, solvepuzzle/*, ratepuzzle*/ } from "sudoku";
-//import { useCookies } from "react-cookie";
 
 import sudoku from "./sudoku-generator/sudoku";
-//var declare sudoku: any;
 
-export function init(difficulty: any): SudokuGameState {
+export function init(difficulty: number): SudokuGameState {
         
     const sg = sudoku();
-
     const puzzleString: string = sg.generate(difficulty, false);
     const puzzle: string[] = puzzleString.split('');
     

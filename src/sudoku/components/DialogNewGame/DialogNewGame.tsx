@@ -1,6 +1,6 @@
 import React from 'react';
 import { useDisclosure } from "@chakra-ui/hooks";
-import { Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, ModalBody, ModalFooter, Center } from "@chakra-ui/react";
+import { Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, ModalBody, ModalFooter, Center, SimpleGrid } from "@chakra-ui/react";
 import { Button } from "@chakra-ui/react";
 import { ENewGameDialogResult } from '../../lib/sudokuGameTypes';
 
@@ -19,22 +19,27 @@ function DialogNewGame(props: any) {
         onClose();
     }
 
+    const diffArray: any = Object.entries(ENewGameDialogResult).slice(0, -1);
+
     return (
         <>
-            <h1>Is open: {isOpen}</h1>
-            <Modal onClose={onClose} isOpen={isOpen || startNewGameState} isCentered>
+            <Modal onClose={cancelled} isOpen={isOpen || startNewGameState} isCentered size={"xl"}>
             <ModalOverlay />
                 <ModalContent>
                     <ModalHeader>Start New Game</ModalHeader>
                     <ModalCloseButton />
                     <ModalBody>
                         <Center>
-                            <Button colorScheme='teal' onClick={() => selectedDifficulty(ENewGameDialogResult.easy, onClose)}>Easy</Button>
-                            <Button colorScheme='teal' onClick={() => selectedDifficulty(ENewGameDialogResult.medium, onClose)}>Medium</Button>
-                            <Button colorScheme='teal' onClick={() => selectedDifficulty(ENewGameDialogResult.hard, onClose)}>Hard</Button>
-                            <Button colorScheme='teal' onClick={() => selectedDifficulty(ENewGameDialogResult.veryHard, onClose)}>Very hard</Button>
-                            <Button colorScheme='teal' onClick={() => selectedDifficulty(ENewGameDialogResult.insane, onClose)}>Insane</Button>
-                            <Button colorScheme='teal' onClick={() => selectedDifficulty(ENewGameDialogResult.inhuman, onClose)}>Inhuman</Button>
+                            <SimpleGrid
+                                columns={3}
+                                spacing={2}
+                            >
+                            {diffArray.map((d:any, i:number) => {
+                                return (
+                                    <Button height="120px" width="120px" colorScheme='teal' onClick={() => selectedDifficulty(d[1], onClose)} key={i}>{d[0]}</Button>
+                                );
+                            })}
+                            </SimpleGrid>
                         </Center>
                     </ModalBody>
                     <ModalFooter>

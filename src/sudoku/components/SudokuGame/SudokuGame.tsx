@@ -26,7 +26,7 @@ function SudokuGame(props: any) {
 
     useEffect(() => {
 
-        const initialGameState: SudokuGameState = SudokuGameLib.init('easy');
+        const initialGameState: SudokuGameState = SudokuGameLib.init(Number(ENewGameDialogResult.easy));
 
         // Set game state from saved value (if there is one)
         setGameState(SudokuGameLib.loadGameState(initialGameState as SudokuGameState));
@@ -37,7 +37,7 @@ function SudokuGame(props: any) {
     }
 
     const onDifficultySelected = (difficulty: ENewGameDialogResult) => {
-        const newGameState = SudokuGameLib.init(difficulty);
+        const newGameState = SudokuGameLib.init(Number(difficulty));
         if(newGameState !== null) {
             setGameState(newGameState);
             onCloseNewGameModal();

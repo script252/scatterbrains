@@ -14,21 +14,12 @@ export class SudokuGameState {
     highlighted: (number|null)[] = [];
 }
 
-/*
-"easy":         62
-"medium":       53
-"hard":         44
-"very-hard":    35
-"insane":       26
-"inhuman":      17
-*/
-
 export enum ENewGameDialogResult {
-    easy = 62,
-    medium = 53,
-    hard = 44,
-    veryHard = 35,
-    insane = 26,
-    inhuman = 17,
+    easy = '62',
+    medium = '53',
+    hard = '44',
+    harder = '35',
+    insane = '26',
+    inhuman = '17',
     cancel = 'cancel',
 }

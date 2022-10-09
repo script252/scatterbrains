@@ -6,7 +6,6 @@ import { getUniqueIcons } from './memoryGameData';
 // Max size should be 32x32 maybe
 
 export function init(rows: number, columns: number): GameState {
-    console.log('Generating memory game', rows * columns);
 
     const cardIcons = getUniqueIcons((rows * columns) / 2);
 
