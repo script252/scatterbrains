@@ -1,14 +1,27 @@
 import { CellData, SudokuGameState } from "./sudokuGameTypes";
-import { makepuzzle, solvepuzzle/*, ratepuzzle*/ } from "sudoku";
-import { useCookies } from "react-cookie";
+//import { makepuzzle, solvepuzzle/*, ratepuzzle*/ } from "sudoku";
+//import { useCookies } from "react-cookie";
+
+import sudoku from "./sudoku-generator/sudoku";
+//var declare sudoku: any;
 
 export function init(difficulty: any): SudokuGameState {
-    
-    const puzzle: number[] = makepuzzle();
-    const answer: number[] = solvepuzzle(puzzle);
+        
+    const sg = sudoku();
 
-    const puzzleFixed: number[] = puzzle.map((c:number) => c === 0 ? 9 : c);
-    const answerFixed: number[] = answer.map((c:number) => c === 0 ? 9 : c);
+    const puzzleString: string = sg.generate(difficulty, false);
+    const puzzle: string[] = puzzleString.split('');
+    
+    const answerString: string | false = sg.solve(puzzle, false);
+
+    if(answerString === false) {
+        console.error('Generated puzzle could not be solved!');
+        return new SudokuGameState();
+    }
+
+    const answer: string[] = (answerString as string).split('');
+    const puzzleFixed: number[] = puzzle.map((c:string) => c === '.' ? 0 : Number(c));
+    const answerFixed: number[] = answer.map((c:string) => c === '.' ? 0 : Number(c));
 
     // Generate and fill cells based on difficulty
     const emptyCells = new Array<any>(81)
@@ -20,7 +33,7 @@ export function init(difficulty: any): SudokuGameState {
         
         return rowClust + (colClust * 3);
     }
-
+    
     const initialState: SudokuGameState = {
         showErrors: true,
         cells: emptyCells.map((cell, index:number) => {
@@ -30,8 +43,8 @@ export function init(difficulty: any): SudokuGameState {
         }),
         selected: null,
         highlighted: []
-    }
-    
+    };
+
     return initialState;
 }
 

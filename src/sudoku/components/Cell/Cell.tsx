@@ -30,8 +30,8 @@ function Cell(props: any) {
 
     return (
         <Box {...cellStyle} userSelect="none" onClick={onClick}>
-            {!value && (<Text fontSize="min(5vw, 32pt)" m="auto" visibility="hidden">0</Text>)}
-            {value && (<Text fontSize="min(5vw, 32pt)" m="auto">{value}</Text>)}
+            {value === 0 && (<Text fontSize="min(5vw, 32pt)" m="auto" visibility="hidden">0</Text>)}
+            {value !== 0 && (<Text fontSize="min(5vw, 32pt)" m="auto">{value}</Text>)}
             {/* {answer !== 0  && value !== answer && (<Text fontSize="3xl">{answer}</Text>)} */}
             {debugText && (<Text fontSize="100%">{debugText}</Text>)}
         </Box>

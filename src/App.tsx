@@ -6,8 +6,6 @@ import MemoryGame from './memory/components/MemoryGame/MemoryGame';
 import NavBar from './components/NavBar/NavBar';
 import SudokuGame from './sudoku/components/SudokuGame/SudokuGame';
 
-import { CookiesProvider } from "react-cookie";
-
 function App() {
 
   const [startNewGameState, setStartNewGameState] = useState(false);
@@ -21,7 +19,6 @@ function App() {
 
   return (
     <ChakraProvider>
-      <CookiesProvider>
         <Box className="App" height="100vh">
 
             
@@ -45,7 +42,6 @@ function App() {
             {/* </header> */}
             </BrowserRouter>
         </Box>
-      </CookiesProvider>
     </ChakraProvider>
   );
 }
