@@ -38,10 +38,19 @@ export function init(difficulty: number): SudokuGameState {
             return {id: index, col: col, row: row, value: puzzleFixed[index], answer: answerFixed[index], clusterId: getClusterId(col, row)}
         }),
         selected: null,
-        highlighted: []
+        highlighted: [],
+        showVictory: false
     };
 
     return initialState;
+}
+
+function checkForVictory(gs: SudokuGameState): SudokuGameState {
+
+    return {
+        ...gs,
+        showVictory: !gs.cells.some(((cell: CellData) => cell.value !== cell.answer))
+    };
 }
 
 export function onCellClicked(cell: CellData, gameState: SudokuGameState): SudokuGameState {
@@ -53,7 +62,7 @@ export function onCellClicked(cell: CellData, gameState: SudokuGameState): Sudok
     const gs = {
         ...gameState,
         selected: cell.id,
-        highlighted: [...clusterCells, ...rowCells, ...colCells]
+        highlighted: [...clusterCells, ...rowCells, ...colCells],
     }
 
     return gs;
@@ -66,10 +75,10 @@ export function onEnteredInput(cell: CellData, value: number, gameState: SudokuG
     
     const gs = {
         ...gameState,
-        cells: [...gameState.cells.map((cell: CellData) => (cell.id === gameState.selected as number) ? {...cell, value: value} : cell)]//.splice(gameState.selected as number, 1, {...cell, value: value})]
+        cells: [...gameState.cells.map((cell: CellData) => (cell.id === gameState.selected as number) ? {...cell, value: value} : cell)],
     }
 
-    return gs;
+    return checkForVictory(gs);
 }
 
 function findCellClusterCells(cell: CellData, gs: SudokuGameState): CellData[] {

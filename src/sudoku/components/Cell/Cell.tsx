@@ -4,7 +4,7 @@ import "./cell.scss";
 // A single sudoku game cell
 function Cell(props: any) {
 
-    const { onClick, value, /*answer,*/ isSelected, isHighlighted, isError="false", debugText } = props;
+    const { onClick, value, isSelected, isHighlighted, isError="false", debugText } = props;
 
     const getBgColor = () => {
         if(isSelected === true)

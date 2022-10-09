@@ -12,6 +12,7 @@ export class SudokuGameState {
     cells: CellData[] = [];
     selected: number|null = null;
     highlighted: (number|null)[] = [];
+    showVictory: boolean = false;
 }
 
 export enum ENewGameDialogResult {

@@ -7,6 +7,7 @@ import * as SudokuGameLib from '../../lib/sudokuGameLib';
 import { Box, Flex, SimpleGrid } from '@chakra-ui/react';
 import CellInputButtons from '../CellInputButtons/CellInputButtons';
 import DialogNewGame from '../DialogNewGame/DialogNewGame';
+import DialogVictory from '../DialogVictory/DialogVictory';
 
 function SudokuGame(props: any) {
 
@@ -57,7 +58,7 @@ function SudokuGame(props: any) {
                                 <Cell key={index} 
                                     //value={cell.value} 
                                     {...cell}
-                                    //debugText={cell.clusterId} 
+                                    //debugText={cell.answer} 
                                     isSelected={ isCellSelected(index) }
                                     isHighlighted={ isCellHighlighted(index) } 
                                     isError={ isCellError(index)}
@@ -71,6 +72,7 @@ function SudokuGame(props: any) {
                 </Box>
                 <CellInputButtons onClick={(value: number) => setGameState(SudokuGameLib.saveGameState(SudokuGameLib.onEnteredInput(gameState.cells[gameState.selected as number], value, gameState)))}></CellInputButtons>
                 <DialogNewGame startNewGameState={startNewGame} onDifficultySelected={(difficulty: any) => onDifficultySelected(difficulty)} onCancel={onNewGameCancel}></DialogNewGame>
+                <DialogVictory gameState={gameState} onCloseVictory={() => setGameState({...gameState, showVictory: false})}></DialogVictory>
             </Flex>
     );
 }
