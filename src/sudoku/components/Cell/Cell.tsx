@@ -1,5 +1,4 @@
 import { Box, SimpleGrid, Text } from "@chakra-ui/react";
-import { serialize } from "v8";
 import "./cell.scss";
 
 const bc = 'lightGray';
@@ -20,7 +19,7 @@ const edgeStyles: string[] = [
 // A single sudoku game cell
 function Cell(props: any) {
 
-    const { onClick, value, isSelected, isHighlighted, notes, isError="false", edgeType, debugText, size } = props;
+    const { onClick, value, isSelected, isHighlighted, notes, isError="false", edgeType, debugText } = props;
 
     const getBgColor = () => {
         if(isSelected === true)

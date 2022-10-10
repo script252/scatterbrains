@@ -1,7 +1,6 @@
 import { CellData, ECellEdge, SudokuGameState } from "./sudokuGameTypes";
 
 import sudoku from "./sudoku-generator/sudoku";
-import { notStrictEqual } from "assert";
 
 export function init(difficulty: number): SudokuGameState {
         
