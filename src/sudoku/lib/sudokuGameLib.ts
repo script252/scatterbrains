@@ -109,9 +109,14 @@ export function onEnteredNote(cell: CellData, value: number, gameState: SudokuGa
     if(gameState.selected === null)
         return gameState;
     
+    const getNoteToggleValue = (cellValue: number, value: number) => {
+        console.log('Checking note values: ', cellValue, value);
+        return value === cellValue ? 0 : cellValue;
+    }
+
     const gs = {
         ...gameState,
-        cells: [...gameState.cells.map((cell: CellData) => (cell.id === gameState.selected as number) ? {...cell, notes: [...cell.notes.map((n, i) => i === (value - 1) ? value : n)]} : cell)],
+        cells: [...gameState.cells.map((cell: CellData) => (cell.id === gameState.selected as number) ? {...cell, notes: [...cell.notes.map((n, i) => i === (value - 1) ? getNoteToggleValue(value, n) : n)]} : cell)],
     }
 
     return checkForVictory(gs);
