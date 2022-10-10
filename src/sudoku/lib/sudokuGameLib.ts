@@ -110,7 +110,6 @@ export function onEnteredNote(cell: CellData, value: number, gameState: SudokuGa
         return gameState;
     
     const getNoteToggleValue = (cellValue: number, value: number) => {
-        console.log('Checking note values: ', cellValue, value);
         return value === cellValue ? 0 : cellValue;
     }
 

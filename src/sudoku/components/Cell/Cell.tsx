@@ -53,10 +53,10 @@ function Cell(props: any) {
             {/* {answer !== 0  && value !== answer && (<Text fontSize="3xl">{answer}</Text>)} */}
             {debugText && (<Text fontSize="100%">{debugText}</Text>)}
             {value === 0 && (
-                <SimpleGrid columns={3} position="absolute" top="0" bottom="0" width="100%" height="100%">
+                <SimpleGrid columns={3} position="absolute" top="0" left="0" minH="100%" minW="100%">
                     {notes.map((note:number, i:number) => (
-                        <Box w="100%">
-                            <Text fontSize="min(2vw, 8pt)" verticalAlign="" align="center" display={note ? 'block' : 'none'} key={i}>{note}</Text>
+                        <Box w="100%" minH="2ch">
+                            <Text fontSize="min(2vw, 8pt)" align="center" display={note ? 'block' : 'none'} key={i}>{note}</Text>
                         </Box>
                     ))}
                 </SimpleGrid>

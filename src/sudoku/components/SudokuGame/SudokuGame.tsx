@@ -61,7 +61,7 @@ function SudokuGame(props: any) {
     
     return (
                 <Container height="100vh" maxW="xl">
-                    <Flex height="100%" flexDirection="column" >
+                    <Flex height="90%" flexDirection="column" >
                         <Container maxW="100%" className="cell-grid-container" m="0" p="0">
                             <SimpleGrid spacing={0} columns={9} gap={0} p="8px" className="cell-grid" width="100%" >
                                 {gameState.cells.map((cell: CellData, index: number) => {
