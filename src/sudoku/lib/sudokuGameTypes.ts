@@ -11,15 +11,15 @@ export enum ECellEdge {
     none = 9,
 }
 
-export interface CellData {
-    id: number,
-    value: number|null,
-    answer: number,
-    clusterId: number,
-    col: number,
-    row: number,
-    edgeType: ECellEdge,
-    notes: number[],
+export class CellData {
+    id: number|null = null;
+    value: number|null = null;
+    answer: number|null = null;
+    clusterId: number|null = null;
+    col: number|null = null;
+    row: number|null = null;
+    edgeType: ECellEdge = ECellEdge.none;
+    notes: number[] = [1,2,3,4,5,6,7,8,9];
 }
 
 export class SudokuGameState {

@@ -21,7 +21,7 @@ export function init(difficulty: number): SudokuGameState {
 
     // Generate and fill cells based on difficulty
     const emptyCells = new Array<any>(81)
-        .fill(null)
+        .fill(new CellData());
 
     const getClusterId = (col: number, row: number): number => {
         const colClust = Math.floor((col) / 3);
