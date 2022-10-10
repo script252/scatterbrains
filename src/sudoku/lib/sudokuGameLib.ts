@@ -1,6 +1,7 @@
 import { CellData, ECellEdge, SudokuGameState } from "./sudokuGameTypes";
 
 import sudoku from "./sudoku-generator/sudoku";
+import { notStrictEqual } from "assert";
 
 export function init(difficulty: number): SudokuGameState {
         
@@ -62,6 +63,7 @@ export function init(difficulty: number): SudokuGameState {
         selected: null,
         highlighted: [],
         showVictory: false,
+        noteMode: false,
     };
     
     return initialState;
@@ -98,6 +100,19 @@ export function onEnteredInput(cell: CellData, value: number, gameState: SudokuG
     const gs = {
         ...gameState,
         cells: [...gameState.cells.map((cell: CellData) => (cell.id === gameState.selected as number) ? {...cell, value: value} : cell)],
+    }
+
+    return checkForVictory(gs);
+}
+
+export function onEnteredNote(cell: CellData, value: number, gameState: SudokuGameState): SudokuGameState {
+
+    if(gameState.selected === null)
+        return gameState;
+    
+    const gs = {
+        ...gameState,
+        cells: [...gameState.cells.map((cell: CellData) => (cell.id === gameState.selected as number) ? {...cell, notes: [...cell.notes.map((n, i) => i === (value - 1) ? value : n)]} : cell)],
     }
 
     return checkForVictory(gs);

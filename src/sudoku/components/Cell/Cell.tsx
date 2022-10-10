@@ -55,7 +55,7 @@ function Cell(props: any) {
             {debugText && (<Text fontSize="100%">{debugText}</Text>)}
             {value === 0 && (
                 <SimpleGrid columns={3} position="absolute" top="0" width="100%">
-                    {notes.map((note: number) => (<Text align="center">{note ? note : ''}</Text>))}
+                    {notes.map((note:number, i:number) => (<Text fontSize="min(2vw, 10pt)" align="center" key={i}>{note ? note : ''}</Text>))}
                 </SimpleGrid>
             )}
         </Box>

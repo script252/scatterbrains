@@ -49,10 +49,20 @@ function SudokuGame(props: any) {
         onCloseNewGameModal();
     }
 
+    const onEnterCellValue = (value: number, note?: boolean) => {
+
+        const gs = note === true ?  
+            SudokuGameLib.onEnteredNote(gameState.cells[gameState.selected as number], value, gameState)
+            : 
+            SudokuGameLib.onEnteredInput(gameState.cells[gameState.selected as number], value, gameState);
+
+        setGameState(SudokuGameLib.saveGameState(gs));
+    }
+    
     return (
-                <Container height="100vh">
+                <Container height="100vh" maxW="xl">
                     <Flex height="100%" flexDirection="column" >
-                        <Container width="100%" className="cell-grid-container" m="0" p="0">
+                        <Container maxW="100%" className="cell-grid-container" m="0" p="0">
                             <SimpleGrid spacing={0} columns={9} gap={0} p="8px" className="cell-grid" width="100%" >
                                 {gameState.cells.map((cell: CellData, index: number) => {
                                     return (
@@ -70,11 +80,13 @@ function SudokuGame(props: any) {
                                 })}
                             </SimpleGrid>
                         </Container>
-                    <HStack spacing='24px' width="100%" flexGrow="1">
-                        <Button>Note</Button>
-                        <Button>Clear</Button>
-                        <CellInputButtons onClick={(value: number) => setGameState(SudokuGameLib.saveGameState(SudokuGameLib.onEnteredInput(gameState.cells[gameState.selected as number], value, gameState)))}></CellInputButtons>
-                    </HStack>
+                        <VStack spacing='10px' width="100%" flexGrow="1">
+                            <CellInputButtons onClick={(value: number) => onEnterCellValue(value, gameState.noteMode)}></CellInputButtons>
+                            <HStack width="100%" height="20%" pl="8px" pr="8px">
+                                <Button mr="8px" colorScheme={gameState.noteMode ? 'green' : 'gray'} width="100%" height="100%" onClick={() => setGameState({...gameState, noteMode: !gameState.noteMode})}>Note</Button>
+                                <Button ml="8px" width="100%" height="100%" onClick={() => onEnterCellValue(0)}>Clear</Button>
+                            </HStack>
+                        </VStack>
                     </Flex>
                     <DialogNewGame startNewGameState={startNewGame} onDifficultySelected={(difficulty: any) => onDifficultySelected(difficulty)} onCancel={onNewGameCancel}></DialogNewGame>
                     <DialogVictory gameState={gameState} onCloseVictory={() => setGameState({...gameState, showVictory: false})}></DialogVictory>
