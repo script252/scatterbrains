@@ -4,7 +4,7 @@ import './sudoku-game.scss';
 import Cell from '../Cell/Cell';
 import { CellData, ENewGameDialogResult, SudokuGameState } from '../../lib/sudokuGameTypes';
 import * as SudokuGameLib from '../../lib/sudokuGameLib';
-import { Box, Button, Center, Container, Flex, HStack, SimpleGrid, VStack } from '@chakra-ui/react';
+import { Button, Container, Flex, HStack, SimpleGrid, VStack } from '@chakra-ui/react';
 import CellInputButtons from '../CellInputButtons/CellInputButtons';
 import DialogNewGame from '../DialogNewGame/DialogNewGame';
 import DialogVictory from '../DialogVictory/DialogVictory';
