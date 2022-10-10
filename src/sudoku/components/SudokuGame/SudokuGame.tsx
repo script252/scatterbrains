@@ -4,7 +4,7 @@ import './sudoku-game.scss';
 import Cell from '../Cell/Cell';
 import { CellData, ENewGameDialogResult, SudokuGameState } from '../../lib/sudokuGameTypes';
 import * as SudokuGameLib from '../../lib/sudokuGameLib';
-import { Box, Flex, SimpleGrid } from '@chakra-ui/react';
+import { Box, Button, Center, Container, Flex, HStack, SimpleGrid, VStack } from '@chakra-ui/react';
 import CellInputButtons from '../CellInputButtons/CellInputButtons';
 import DialogNewGame from '../DialogNewGame/DialogNewGame';
 import DialogVictory from '../DialogVictory/DialogVictory';
@@ -14,7 +14,7 @@ function SudokuGame(props: any) {
     const {startNewGame, onCloseNewGameModal} = props;
 
     const [gameState, setGameState] = useState(new SudokuGameState());
-    const cellSize = 48;
+    const cellSize = 52;
 
     const isCellSelected = (id: number|null) => gameState.selected === id;
     const isCellHighlighted = (id: number|null) => gameState.highlighted.some((c:number|null) => c === id);
@@ -50,29 +50,35 @@ function SudokuGame(props: any) {
     }
 
     return (
-            <Flex className="sudoku-game" width="100%">
-                <Box ml="auto" mr="auto" flex="1 100%" className="cell-container"> 
-                    <SimpleGrid spacing={0} columns={9} gap={0} height="100vw" width="100%" maxWidth="70vh" maxHeight="70vh" p="8px" m="auto">
-                        {gameState.cells.map((cell: CellData, index: number) => {
-                            return (
-                                <Cell key={index} 
-                                    //value={cell.value} 
-                                    {...cell}
-                                    //debugText={cell.answer} 
-                                    isSelected={ isCellSelected(index) }
-                                    isHighlighted={ isCellHighlighted(index) } 
-                                    isError={ isCellError(index)}
-                                    size={cellSize+"px"} 
-                                    onClick={(e: any) => onClick(cell, gameState)} 
-                                ></Cell>
-                            )
-                        })}
-                    </SimpleGrid>
-                </Box>
-                <CellInputButtons onClick={(value: number) => setGameState(SudokuGameLib.saveGameState(SudokuGameLib.onEnteredInput(gameState.cells[gameState.selected as number], value, gameState)))}></CellInputButtons>
-                <DialogNewGame startNewGameState={startNewGame} onDifficultySelected={(difficulty: any) => onDifficultySelected(difficulty)} onCancel={onNewGameCancel}></DialogNewGame>
-                <DialogVictory gameState={gameState} onCloseVictory={() => setGameState({...gameState, showVictory: false})}></DialogVictory>
-            </Flex>
+                <Container height="100vh">
+                    <Flex height="100%" flexDirection="column" >
+                        <Container width="100%" className="cell-grid-container" m="0" p="0">
+                            <SimpleGrid spacing={0} columns={9} gap={0} p="8px" className="cell-grid" width="100%" >
+                                {gameState.cells.map((cell: CellData, index: number) => {
+                                    return (
+                                        <Cell key={index} 
+                                            //value={cell.value} 
+                                            {...cell}
+                                            //debugText={cell.answer} 
+                                            isSelected={ isCellSelected(index) }
+                                            isHighlighted={ isCellHighlighted(index) } 
+                                            isError={ isCellError(index)}
+                                            size={cellSize+"px"} 
+                                            onClick={(e: any) => onClick(cell, gameState)} 
+                                        ></Cell>
+                                    )
+                                })}
+                            </SimpleGrid>
+                        </Container>
+                    <HStack spacing='24px' width="100%" flexGrow="1">
+                        <Button>Note</Button>
+                        <Button>Clear</Button>
+                        <CellInputButtons onClick={(value: number) => setGameState(SudokuGameLib.saveGameState(SudokuGameLib.onEnteredInput(gameState.cells[gameState.selected as number], value, gameState)))}></CellInputButtons>
+                    </HStack>
+                    </Flex>
+                    <DialogNewGame startNewGameState={startNewGame} onDifficultySelected={(difficulty: any) => onDifficultySelected(difficulty)} onCancel={onNewGameCancel}></DialogNewGame>
+                    <DialogVictory gameState={gameState} onCloseVictory={() => setGameState({...gameState, showVictory: false})}></DialogVictory>
+                </Container>
     );
 }
 

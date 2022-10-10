@@ -1,4 +1,5 @@
 import { Box, SimpleGrid, Text } from "@chakra-ui/react";
+import { serialize } from "v8";
 import "./cell.scss";
 
 const bc = 'lightGray';
@@ -19,9 +20,7 @@ const edgeStyles: string[] = [
 // A single sudoku game cell
 function Cell(props: any) {
 
-    const { onClick, value, isSelected, isHighlighted, notes, isError="false", edgeType, debugText } = props;
-
-    console.log(notes);
+    const { onClick, value, isSelected, isHighlighted, notes, isError="false", edgeType, debugText, size } = props;
 
     const getBgColor = () => {
         if(isSelected === true)
@@ -32,8 +31,10 @@ function Cell(props: any) {
     }
 
     const cellStyle = {
-        width: "100%", //size,
+        width: "100%", //"100%", //size,
         height: "100%", //size,
+        //maxWidth: size,
+        //minHeight: size,
         //minWidth: size,
         bgColor: getBgColor(),
         border: '1px',
@@ -48,8 +49,8 @@ function Cell(props: any) {
 
     return (
         <Box {...cellStyle} userSelect="none" onClick={onClick} position="relative">
-            {value === 0 && (<Text fontSize="min(5vw, 32pt)" m="auto" visibility="hidden">0</Text>)}
-            {value !== 0 && (<Text fontSize="min(5vw, 32pt)" m="auto">{value}</Text>)}
+            {value === 0 && (<Text fontSize="min(4vw, 22pt)" m="auto" visibility="hidden">0</Text>)}
+            {value !== 0 && (<Text fontSize="min(4vw, 22pt)" m="auto">{value}</Text>)}
             {/* {answer !== 0  && value !== answer && (<Text fontSize="3xl">{answer}</Text>)} */}
             {debugText && (<Text fontSize="100%">{debugText}</Text>)}
             {value === 0 && (
@@ -62,3 +63,5 @@ function Cell(props: any) {
 }
 
 export default Cell;
+
+
