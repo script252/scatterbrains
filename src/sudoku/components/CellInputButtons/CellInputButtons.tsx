@@ -7,7 +7,7 @@ function CellInputButtons(props: any) {
     const numbers = [1,2,3,4,5,6,7,8,9];
 
     return (
-        <Box className="button-container" position="relative" width="100%" height="25vh">
+        <Box className="button-container" position="relative" width="100%" height="100%">
             <SimpleGrid columns={3} spacing={0} m="auto" height="100%">
             {numbers.map(((value: number) => {
                 return (

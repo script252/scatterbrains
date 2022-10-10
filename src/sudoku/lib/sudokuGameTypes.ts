@@ -28,6 +28,7 @@ export class SudokuGameState {
     selected: number|null = null;
     highlighted: (number|null)[] = [];
     showVictory: boolean = false;
+    noteMode: boolean = false;
 }
 
 export enum ENewGameDialogResult {
