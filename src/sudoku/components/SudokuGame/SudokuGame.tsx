@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 
 import './sudoku-game.scss';
 import Cell from '../Cell/Cell';
-import { CellData, ENewGameDialogResult, SudokuGameState } from '../../lib/sudokuGameTypes';
+import { CellData, NewGameSettings, SudokuGameState } from '../../lib/sudokuGameTypes';
 import * as SudokuGameLib from '../../lib/sudokuGameLib';
 import { Button, Container, Flex, HStack, SimpleGrid, VStack } from '@chakra-ui/react';
 import CellInputButtons from '../CellInputButtons/CellInputButtons';
@@ -23,11 +23,13 @@ function SudokuGame(props: any) {
             const cell: CellData = gameState.cells[id as number];
             return cell.value ? cell.answer !== cell.value : false;
         }
+
+        return false;
     };
 
     useEffect(() => {
 
-        const initialGameState: SudokuGameState = SudokuGameLib.init(Number(ENewGameDialogResult.easy));
+        const initialGameState: SudokuGameState = SudokuGameLib.init(new NewGameSettings());
 
         // Set game state from saved value (if there is one)
         setGameState(SudokuGameLib.loadGameState(initialGameState as SudokuGameState));
@@ -37,8 +39,8 @@ function SudokuGame(props: any) {
         setGameState(SudokuGameLib.saveGameState(SudokuGameLib.onCellClicked(cell, gs)));
     }
 
-    const onDifficultySelected = (difficulty: ENewGameDialogResult) => {
-        const newGameState = SudokuGameLib.init(Number(difficulty));
+    const onDifficultySelected = (settings: NewGameSettings) => {
+        const newGameState = SudokuGameLib.init(settings);
         if(newGameState !== null) {
             setGameState(newGameState);
             onCloseNewGameModal();

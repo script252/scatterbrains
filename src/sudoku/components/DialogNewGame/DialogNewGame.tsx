@@ -1,16 +1,18 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useDisclosure } from "@chakra-ui/hooks";
-import { Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, ModalBody, ModalFooter, Center, SimpleGrid } from "@chakra-ui/react";
+import { Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, ModalBody, ModalFooter, Center, SimpleGrid, Checkbox } from "@chakra-ui/react";
 import { Button } from "@chakra-ui/react";
-import { ENewGameDialogResult } from '../../lib/sudokuGameTypes';
+import { EDifficulty, NewGameSettings } from '../../lib/sudokuGameTypes';
 
 function DialogNewGame(props: any) {
     const { isOpen, /*onOpen,*/ onClose } = useDisclosure();
   
     const { onDifficultySelected, startNewGameState, onCancel } = props;
 
-    const selectedDifficulty = (difficulty: ENewGameDialogResult, onClose?: any) => {
-        onDifficultySelected(difficulty);
+    const [state, setState] = useState(new NewGameSettings());
+
+    const selectedDifficulty = (difficulty: EDifficulty, onClose?: any) => {
+        onDifficultySelected({...state, difficulty: difficulty});
         onClose();
     }
 
@@ -19,7 +21,11 @@ function DialogNewGame(props: any) {
         onClose();
     }
 
-    const diffArray: any = Object.entries(ENewGameDialogResult).slice(0, -1);
+    const highlightErrorsChanged = (value: any) => {
+        setState({...state, highlightErrors: value.target.checked});
+    }
+
+    const diffArray: any = Object.entries(EDifficulty).slice(0, -1);
 
     return (
         <>
@@ -41,6 +47,7 @@ function DialogNewGame(props: any) {
                             })}
                             </SimpleGrid>
                         </Center>
+                        <Checkbox defaultChecked onChange={highlightErrorsChanged}>Highlight errors</Checkbox>
                     </ModalBody>
                     <ModalFooter>
                     <Button onClick={cancelled}>Cancel</Button>

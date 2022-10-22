@@ -31,7 +31,7 @@ export class SudokuGameState {
     noteMode: boolean = false;
 }
 
-export enum ENewGameDialogResult {
+export enum EDifficulty {
     easy = '62',
     medium = '53',
     hard = '44',
@@ -39,4 +39,9 @@ export enum ENewGameDialogResult {
     insane = '26',
     inhuman = '17',
     cancel = 'cancel',
+}
+
+export class NewGameSettings {
+    difficulty: EDifficulty = EDifficulty.easy;
+    highlightErrors: boolean = true;
 }

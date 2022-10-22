@@ -1,7 +1,7 @@
 
-// Compare an initialized object with another to check that all fields defined
-
-// exist in both
+//  Compare an initialized object with another to ensure that
+//  all fields defined within the template exist on the resulting
+//  object
 export function ensureFieldsPresent(obj: any, template: any, saveType: any): any {
     const templateKeys = Object.keys(template);
 

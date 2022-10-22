@@ -1,12 +1,12 @@
-import { CellData, ECellEdge, SudokuGameState } from "./sudokuGameTypes";
+import { CellData, ECellEdge, NewGameSettings, SudokuGameState } from "./sudokuGameTypes";
 
 import sudoku from "./sudoku-generator/sudoku";
 import { ensureFieldsPresent } from "../../lib/utilities";
 
-export function init(difficulty: number): SudokuGameState {
+export function init(settings: NewGameSettings): SudokuGameState {
         
     const sg = sudoku();
-    const puzzleString: string = sg.generate(difficulty, false);
+    const puzzleString: string = sg.generate(settings.difficulty, false);
     const puzzle: string[] = puzzleString.split('');
     
     const answerString: string | false = sg.solve(puzzle, false);
@@ -32,7 +32,6 @@ export function init(difficulty: number): SudokuGameState {
     }
 
     const initialState: SudokuGameState = {
-        showErrors: true,
         cells: emptyCells.map((cell, index:number) => {
             const row: number = Math.floor(index / 9);
             const col: number = Math.floor(index % 9);
@@ -65,6 +64,7 @@ export function init(difficulty: number): SudokuGameState {
         highlighted: [],
         showVictory: false,
         noteMode: false,
+        showErrors: settings.highlightErrors
     };
     
     return initialState;
