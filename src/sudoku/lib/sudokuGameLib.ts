@@ -4,9 +4,11 @@ import sudoku from "./sudoku-generator/sudoku";
 import { ensureFieldsPresent } from "../../lib/utilities";
 
 export function init(settings: NewGameSettings): SudokuGameState {
-        
+    
+    //console.log('Starting new sudoku game:', settings);
+
     const sg = sudoku();
-    const puzzleString: string = sg.generate(settings.difficulty, false);
+    const puzzleString: string = sg.generate(Number(settings.difficulty), false);
     const puzzle: string[] = puzzleString.split('');
     
     const answerString: string | false = sg.solve(puzzle, false);
@@ -32,6 +34,7 @@ export function init(settings: NewGameSettings): SudokuGameState {
     }
 
     const initialState: SudokuGameState = {
+        ...new SudokuGameState(),
         cells: emptyCells.map((cell, index:number) => {
             const row: number = Math.floor(index / 9);
             const col: number = Math.floor(index % 9);
@@ -60,10 +63,6 @@ export function init(settings: NewGameSettings): SudokuGameState {
                 //debugText: edgeIndex
             }
         }),
-        selected: null,
-        highlighted: [],
-        showVictory: false,
-        noteMode: false,
         showErrors: settings.highlightErrors
     };
     

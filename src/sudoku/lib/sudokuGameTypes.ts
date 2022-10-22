@@ -29,6 +29,7 @@ export class SudokuGameState {
     highlighted: (number|null)[] = [];
     showVictory: boolean = false;
     noteMode: boolean = false;
+    showNewGame: boolean = false;
 }
 
 export enum EDifficulty {

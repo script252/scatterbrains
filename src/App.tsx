@@ -1,29 +1,21 @@
-import React, { useState } from 'react';
+import React from 'react';
 import './App.css';
-import { Box, ChakraProvider, Flex } from '@chakra-ui/react'
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { Box, ChakraProvider, Flex, Icon, MenuItem, Spacer } from '@chakra-ui/react'
+import { Routes, Route, Link, useNavigate } from "react-router-dom";
 import MemoryGame from './memory/components/MemoryGame/MemoryGame';
 import NavBar from './components/NavBar/NavBar';
 import SudokuGame from './sudoku/components/SudokuGame/SudokuGame';
 import Home from './home/Home';
+import { MdReplayCircleFilled } from 'react-icons/md';
 
 function App() {
 
-  const [startNewGameState, setStartNewGameState] = useState(false);
-  const onNewGame = () => { 
-    setStartNewGameState(true);
-  };
-
-  const onCloseNewGameModal = () => {
-    setStartNewGameState(false);
-  }
-
-  const basename = process.env.PUBLIC_URL;
+  const n = useNavigate();
 
   return (
     <ChakraProvider>
         <Box className="App" height="100vh">
-            <BrowserRouter basename={`${basename}`}>
+            
             {/* <header className="App-header"> */}
             <Flex 
               alignItems='center'
@@ -32,16 +24,34 @@ function App() {
               height="100%"
               flexDirection="column"
               >
-              <NavBar onNewGame={onNewGame} showNewGameButton={true}></NavBar>
+              <NavBar showNewGameButton={false}>
+                <Link to=""><MenuItem>Home</MenuItem></Link>
+                <Link to="memory"><MenuItem>Memory</MenuItem></Link>
+                <Flex>
+                  <Link to="sudoku"><MenuItem>Sudoku</MenuItem></Link>
+                  <Spacer />
+                  <Link to="sudoku/new">
+                    <MenuItem icon={<Icon as={MdReplayCircleFilled}></Icon>}>New</MenuItem>
+                  </Link>
+                </Flex>
+                <Flex>
+                  <Link to="word-scramble"><MenuItem>Word Scramble</MenuItem></Link>
+                  <Spacer />
+                  <Link to="word-scramble/new">
+                    <MenuItem icon={<Icon as={MdReplayCircleFilled}></Icon>}>New</MenuItem>
+                  </Link>
+                </Flex>
+              </NavBar>
               <Routes>
                 <Route path="" element={<Home />}></Route>
                   {/* <Route index element={<MemoryGame />} /> */}
                 <Route path="/memory" element={<MemoryGame />} />
-                <Route path="/sudoku" element={<SudokuGame startNewGame={startNewGameState} onCloseNewGameModal={onCloseNewGameModal}/>} />
+                <Route path="/sudoku/:startNewGame" element={<SudokuGame onCloseNewGameModal={() => {n('sudoku')}}/>} />
+                <Route path="/sudoku" element={<SudokuGame/>} />
               </Routes>
             </Flex>
             {/* </header> */}
-            </BrowserRouter>
+            
         </Box>
     </ChakraProvider>
   );

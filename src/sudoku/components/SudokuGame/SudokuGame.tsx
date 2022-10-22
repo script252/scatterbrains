@@ -8,10 +8,11 @@ import { Button, Container, Flex, HStack, SimpleGrid, VStack } from '@chakra-ui/
 import CellInputButtons from '../CellInputButtons/CellInputButtons';
 import DialogNewGame from '../DialogNewGame/DialogNewGame';
 import DialogVictory from '../DialogVictory/DialogVictory';
+import { useParams } from 'react-router-dom';
 
 function SudokuGame(props: any) {
 
-    const {startNewGame, onCloseNewGameModal} = props;
+    const {onCloseNewGameModal} = props;
 
     const [gameState, setGameState] = useState(new SudokuGameState());
     const cellSize = 52;
@@ -41,13 +42,17 @@ function SudokuGame(props: any) {
         return false;
     };
 
+    const {startNewGame} = useParams();
     useEffect(() => {
 
         const initialGameState: SudokuGameState = SudokuGameLib.init(new NewGameSettings());
 
         // Set game state from saved value (if there is one)
-        setGameState(SudokuGameLib.loadGameState(initialGameState as SudokuGameState));
-    }, []);
+        const gs = SudokuGameLib.loadGameState(initialGameState as SudokuGameState);
+        setGameState(gs);
+
+        setGameState({...gs, showNewGame: startNewGame === 'new'});
+    }, [startNewGame]);
 
     const onClick = (cell: CellData, gs: SudokuGameState) => {
         setGameState(SudokuGameLib.saveGameState(SudokuGameLib.onCellClicked(cell, gs)));
@@ -56,12 +61,15 @@ function SudokuGame(props: any) {
     const onDifficultySelected = (settings: NewGameSettings) => {
         const newGameState = SudokuGameLib.init(settings);
         if(newGameState !== null) {
-            setGameState(newGameState);
+            const gs = {...newGameState, showNewGame: false};
+            setGameState(gs);
+            SudokuGameLib.saveGameState(gs);
             onCloseNewGameModal();
         }
     }
 
     const onNewGameCancel = () => {
+        setGameState({...gameState, showNewGame: false});
         onCloseNewGameModal();
     }
 
@@ -104,7 +112,7 @@ function SudokuGame(props: any) {
                             </HStack>
                         </VStack>
                     </Flex>
-                    <DialogNewGame startNewGameState={startNewGame} onDifficultySelected={(difficulty: any) => onDifficultySelected(difficulty)} onCancel={onNewGameCancel}></DialogNewGame>
+                    <DialogNewGame startNewGameState={gameState.showNewGame} onDifficultySelected={(difficulty: any) => onDifficultySelected(difficulty)} onCancel={onNewGameCancel}></DialogNewGame>
                     <DialogVictory gameState={gameState} onCloseVictory={() => setGameState({...gameState, showVictory: false})}></DialogVictory>
                 </Container>
     );
