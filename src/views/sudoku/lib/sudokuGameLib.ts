@@ -146,9 +146,9 @@ export function loadGameState(gameState: SudokuGameState): SudokuGameState {
         const loadedState: string = localStorage.getItem('sudokuGameState') || '';
         const loadedStateParsed: SudokuGameState = JSON.parse(loadedState) as SudokuGameState || gameState;
 
-        ensureFieldsPresent(loadedStateParsed, new SudokuGameState(), SudokuGameState);
+        const fieldsFilled = ensureFieldsPresent(loadedStateParsed, new SudokuGameState(), SudokuGameState);
 
-        return loadedStateParsed || gameState;
+        return fieldsFilled;
     } catch (err) {
         return gameState;
     }
