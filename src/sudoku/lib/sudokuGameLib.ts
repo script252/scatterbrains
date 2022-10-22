@@ -1,6 +1,7 @@
 import { CellData, ECellEdge, SudokuGameState } from "./sudokuGameTypes";
 
 import sudoku from "./sudoku-generator/sudoku";
+import { ensureFieldsPresent } from "../../lib/utilities";
 
 export function init(difficulty: number): SudokuGameState {
         
@@ -44,7 +45,8 @@ export function init(difficulty: number): SudokuGameState {
                 answer: answerFixed[index], 
                 clusterId: clusterId,
                 edgeType: ECellEdge.none,
-                notes: [0, 0, 0, 0, 0, 0, 0, 0, 0]
+                notes: [0, 0, 0, 0, 0, 0, 0, 0, 0],
+                
                 //debugText: getClusterId(col, row)
             } as CellData;
         }).map((cell, index:number, cells: CellData[]) => {
@@ -144,6 +146,9 @@ export function loadGameState(gameState: SudokuGameState): SudokuGameState {
         // Set game state from saved value (if there is one)
         const loadedState: string = localStorage.getItem('sudokuGameState') || '';
         const loadedStateParsed: SudokuGameState = JSON.parse(loadedState) as SudokuGameState || gameState;
+
+        ensureFieldsPresent(loadedStateParsed, new SudokuGameState(), SudokuGameState);
+
         return loadedStateParsed || gameState;
     } catch (err) {
         return gameState;
