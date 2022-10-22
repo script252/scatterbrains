@@ -5,6 +5,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import MemoryGame from './memory/components/MemoryGame/MemoryGame';
 import NavBar from './components/NavBar/NavBar';
 import SudokuGame from './sudoku/components/SudokuGame/SudokuGame';
+import Home from './home/Home';
 
 function App() {
 
@@ -33,7 +34,7 @@ function App() {
               >
               <NavBar onNewGame={onNewGame} showNewGameButton={true}></NavBar>
               <Routes>
-                <Route path="" element={<Box />}></Route>
+                <Route path="" element={<Home />}></Route>
                   {/* <Route index element={<MemoryGame />} /> */}
                 <Route path="/memory" element={<MemoryGame />} />
                 <Route path="/sudoku" element={<SudokuGame startNewGame={startNewGameState} onCloseNewGameModal={onCloseNewGameModal}/>} />

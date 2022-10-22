@@ -2,3 +2,12 @@
 a:hover {
     text-decoration: none;
 }
+
+.coffee-link {
+    height: 42px;
+    img {
+        max-width: 75%;
+        height: auto;
+        padding: 5px;
+    }
+}
