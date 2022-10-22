@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import './Home.scss';
 import { Center, Text } from '@chakra-ui/layout';
 
