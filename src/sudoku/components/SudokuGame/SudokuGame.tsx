@@ -16,6 +16,20 @@ function SudokuGame(props: any) {
     const [gameState, setGameState] = useState(new SudokuGameState());
     const cellSize = 52;
 
+    useEffect(() => {
+
+        // Listen for number key presses for cell input
+        const numKeys = ['1','2','3','4','5','6','7','8','9','0'];
+        function handle(event: any) {
+            if(numKeys.some((k) => event.key === k)) {
+                onEnterCellValue(Number(event.key), gameState.noteMode);
+            }
+        };
+
+        document.addEventListener('keypress', handle);
+        return () => document.removeEventListener('keypress', handle);
+    });
+
     const isCellSelected = (id: number|null) => gameState.selected === id;
     const isCellHighlighted = (id: number|null) => gameState.highlighted.some((c:number|null) => c === id);
     const isCellError = (id: number|null) => { 
