@@ -1,8 +1,8 @@
 {
-  "name": "memory",
+  "name": "scatterbrains",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://script252.github.io/memory",
+  "homepage": "https://script252.github.io/scatterbrains",
   "dependencies": {
     "@chakra-ui/icons": "^2.0.0",
     "@chakra-ui/react": "^2.1.0",
