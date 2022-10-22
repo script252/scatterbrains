@@ -1,7 +1,7 @@
 import { CellData, ECellEdge, NewGameSettings, SudokuGameState } from "./sudokuGameTypes";
 
 import sudoku from "./sudoku-generator/sudoku";
-import { ensureFieldsPresent } from "../../lib/utilities";
+import { ensureFieldsPresent } from "../../../lib/utilities";
 
 export function init(settings: NewGameSettings): SudokuGameState {
     
