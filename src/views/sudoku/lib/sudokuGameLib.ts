@@ -144,12 +144,13 @@ export function loadGameState(gameState: SudokuGameState): SudokuGameState {
     try {
         // Set game state from saved value (if there is one)
         const loadedState: string = localStorage.getItem('sudokuGameState') || '';
-        const loadedStateParsed: SudokuGameState = JSON.parse(loadedState) as SudokuGameState || gameState;
+        const loadedStateParsed: SudokuGameState = JSON.parse(loadedState) as SudokuGameState;
 
         const fieldsFilled = ensureFieldsPresent(loadedStateParsed, new SudokuGameState(), SudokuGameState);
 
         return fieldsFilled;
     } catch (err) {
+        console.warn('No save state found, generating new game', gameState);
         return gameState;
     }
 }
