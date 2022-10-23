@@ -2,12 +2,16 @@ import React from 'react';
 import './App.css';
 import { Box, ChakraProvider, Flex, Icon, MenuItem, Spacer } from '@chakra-ui/react'
 import { Routes, Route, Link, useNavigate } from "react-router-dom";
-import MemoryGame from './views/memory/components/MemoryGame/MemoryGame';
+
 import NavBar from './components/NavBar/NavBar';
-import SudokuGame from './views/sudoku/components/SudokuGame/SudokuGame';
+
 import Home from './views/home/Home';
 import { MdReplayCircleFilled } from 'react-icons/md';
-import WordScramble from './views/wordScramble/components/WordScramble';
+
+// Games
+import MemoryGame from './views/memory/components/MemoryGame/MemoryGame';
+import SudokuGame from './views/sudoku/components/SudokuGame/SudokuGame';
+import WordScrambleGame from './views/wordScramble/components/WordScrambleGame/WordScrambleGame';
 
 function App() {
 
@@ -49,8 +53,8 @@ function App() {
                 <Route path="/memory" element={<MemoryGame />} />
                 <Route path="/sudoku/:startNewGame" element={<SudokuGame onCloseNewGameModal={() => {n('sudoku')}}/>} />
                 <Route path="/sudoku" element={<SudokuGame/>} />
-                <Route path="/word-scramble/:startNewGame" element={<WordScramble onCloseNewGameModal={() => {n('sudoku')}}/>} />
-                <Route path="/word-scramble" element={<WordScramble/>} />
+                <Route path="/word-scramble/:startNewGame" element={<WordScrambleGame onCloseNewGameModal={() => {n('sudoku')}}/>} />
+                <Route path="/word-scramble" element={<WordScrambleGame/>} />
               </Routes>
             </Flex>
             {/* </header> */}

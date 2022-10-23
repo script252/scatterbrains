@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
-import './sudoku-game.scss';
+import './sudokuGame.scss';
 import Cell from '../Cell/Cell';
 import { CellData, NewGameSettings, SudokuGameState } from '../../lib/sudokuGameTypes';
 import * as SudokuGameLib from '../../lib/sudokuGameLib';
