@@ -1,5 +1,5 @@
 import { ensureFieldsPresent } from "../../../lib/utilities";
-import { CellData, NewGameSettings, standardCubes, WordScrambleGameState } from "./wordScrambleTypes";
+import { CellData, CellDirs, CellDir, NewGameSettings, standardCubes, WordScrambleGameState } from "./wordScrambleTypes";
 
 const words = require('an-array-of-english-words');
 
@@ -46,6 +46,24 @@ export function getRolledCubes(): string[] {
 function isWordValid(word: string) {
     //console.log(words.filter((d:any) => /fun/.test(d)));
 }
+
+// May return undefined
+function getCellAtCoord(col: number, row: number, gameState: WordScrambleGameState): CellData {
+    const index = col + (row * gameState.gameSettings.boardSize);
+    return gameState.cells[index];
+}
+
+// May return undefined
+function getAdjacentCell(cell: CellData, gameState: WordScrambleGameState, dir: CellDir): CellData {
+    return getCellAtCoord(dir.colAndRow[0], dir.colAndRow[1], gameState);
+}
+
+// function getAllValidAdjacentCellIndices(cell: CellData, gameState: WordScrambleGameState) {
+//     Object.keys(CellDirs).map((dirString) => {
+//         const dir: CellDir = CellDirs[dirString];
+//         getAdjacentCell(cell, gameState, dir);
+//     });
+// }
 
 export function onCellClicked(cell: CellData, gameState: WordScrambleGameState): WordScrambleGameState {
     const gs = {

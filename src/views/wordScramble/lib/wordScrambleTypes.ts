@@ -5,6 +5,21 @@ export const standardCubes: string[] = [
     "EIOSST", "ELRTTY", "HIMNQU", "HLNNRZ"
 ];
 
+export const CellDirs = {
+    up: [0, -1],
+    upRight: [1, -1],
+    right: [1, 0],
+    downRight: [1, 1],
+    down: [0, 1],
+    downLeft: [-1, 1],
+    left: [-1, 1],
+    upLeft: [-1, -1],
+}
+
+export interface CellDir {
+    colAndRow: number[];
+}
+
 export class CellData {
     id: number|null = null;
     value: string = '';
