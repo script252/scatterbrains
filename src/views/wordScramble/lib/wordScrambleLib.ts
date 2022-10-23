@@ -1,10 +1,12 @@
 import { ensureFieldsPresent } from "../../../lib/utilities";
 import { CellData, NewGameSettings, standardCubes, WordScrambleGameState } from "./wordScrambleTypes";
 
+const words = require('an-array-of-english-words');
+
 export function init(settings: NewGameSettings): WordScrambleGameState {
     
     console.log('Starting new word scramble game:', settings);
-
+    
     // Generate and fill cells based on difficulty
     const emptyCells = new Array<any>(settings.boardSize * settings.boardSize)
         .fill(new CellData());
@@ -39,6 +41,10 @@ export function getRolledCubes(): string[] {
     }
 
     return scrambledCubes;
+}
+
+function isWordValid(word: string) {
+    //console.log(words.filter((d:any) => /fun/.test(d)));
 }
 
 export function onCellClicked(cell: CellData, gameState: WordScrambleGameState): WordScrambleGameState {

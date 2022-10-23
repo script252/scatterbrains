@@ -3,3 +3,30 @@
     //height: "100%";
     text-align: center;
 }
+
+.letter {
+    border-radius: 16px;
+    text-transform: capitalize;
+    position: relative;
+    float: left;
+    width: 21%;
+    height: auto;
+    margin: 2%;
+    box-shadow: -2px -4px 8px rgb(255 255 255 / 60%), 2px 4px 8px rgb(0 0 0 / 30%);
+}
+
+.letter-circle {
+    position: absolute;
+    line-height: 1;
+    font-size: 52px;
+    top: 5%;
+    left: 5%;
+    width: 90%;
+    height: 90%;
+    border-radius: 100%;
+    background: rgba(255, 255, 255, 0.89);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: black;
+}

@@ -9,7 +9,7 @@ function Cell(props: any) {
     const getBgColor = () => {
         if(isSelected === true)
             return "cyan.200";
-        return "white";
+        return "lightgray";
     }
 
     const cellStyle = {
@@ -28,9 +28,13 @@ function Cell(props: any) {
     }
 
     return (
-        <Box {...cellStyle} userSelect="none" onClick={onClick} onMouseDown={onClick} onMouseEnter={onMouseEnter} position="relative" pointerEvents="all" id={id}>
-            {value !== undefined && (<Text fontSize="min(10vw, 44pt)" m="auto" pointerEvents="none">{value}</Text>)}
+        <Box {...cellStyle} userSelect="none" 
+            onClick={onClick} onMouseDown={onClick} onMouseEnter={onMouseEnter} 
+            position="relative" pointerEvents="all" id={id} className="letter">
+            
+            {value !== undefined && (<Text className="letter-circle" fontSize="min(10vw, 44pt)" m="auto" pointerEvents="none">{value}</Text>)}
             {debugText && (<Text fontSize="100%">{debugText}</Text>)}
+            
         </Box>
     );
 }
