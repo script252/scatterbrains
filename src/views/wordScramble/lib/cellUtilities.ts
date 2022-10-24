@@ -5,8 +5,8 @@ export function findAllWords(gameState: WordScrambleGameState, words: string[]):
     console.log('Finding all words...');
     // For each cell
     const startTime = Date.now();
-    const result = gameState.cells.map((c: CellData) => getCellBranches(c, gameState, [c]).map((branch: CellData[]) => branch.flatMap((c:CellData) => c.value)));
-    console.log(result.slice(0, 20));
+    const result = gameState.cells.map((c: CellData) => getCellBranches(c, gameState, [c])).map((s:CellData[][]) => s.map((path:CellData[]) => path.flatMap((c:CellData)=> c.value).join(''))).flat(1);
+    console.log(result);
     const time = Date.now();
     console.log(`Done: `, time-startTime);
     return [];
@@ -29,10 +29,8 @@ function getCellBranches(cell: CellData, gameState: WordScrambleGameState, path:
 
     if(filteredNext.length > 0) {
         //const newPath = [...path, gameState.cells[filteredNext[0]]];
-        return filteredNext.map((id:number) => getCellBranches(gameState.cells[id], gameState, [...path, gameState.cells[id]]).flat());
+        return filteredNext.map((id:number) => getCellBranches(gameState.cells[id], gameState, [...path, gameState.cells[id]])).flat(1);
     }
 
     return [path];
-    //return nextCellIds?.map((id:number) => getCellBranches(gameState.cells[id], gameState, [...path, gameState.cells[id]])).flat();
 }
-
