@@ -195,7 +195,7 @@ export function loadGameState(gameState: WordScrambleGameState): WordScrambleGam
 
         // Fill set with saved scored words
         fieldsFilled.score.discoveredWordsSet = new Set<string>(fieldsFilled.score.discoveredWords);
-        findAllWords(fieldsFilled, words);
+        findAllWords(fieldsFilled, words.filter((w:string) => w.length <= 16));
         return fieldsFilled;
     } catch (err) {
         console.warn('No save state found, generating new game', gameState);
