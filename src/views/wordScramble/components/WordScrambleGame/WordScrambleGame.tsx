@@ -29,32 +29,31 @@ function WordScrambleGame(props: any) {
   }, [startNewGame]);
 
   const getCellIdAtLocation = (clientX: number, clientY: number) => {
-    console.log(clientX, clientY);
     const elem = document.elementFromPoint(clientX, clientY);
     const cellId:number = elem?.id ? Number(elem?.id) : -1;
     return cellId;
   }
 
   const onClick = (cell: CellData, gs: WordScrambleGameState, dragging: boolean = false) => {
-      console.log('onClick, dragging: ', dragging);
+      //console.log('onClick, dragging: ', dragging);
       setDragging(dragging);
       //setGameState(WordScrambleLib.saveGameState(WordScrambleLib.onCellClicked(cell, gs)));
-      setGameState(WordScrambleLib.onCellClicked(cell, gs, dragging));
+      setGameState(WordScrambleLib.saveGameState(WordScrambleLib.onCellClicked(cell, gs, dragging)));
   }
 
   const onTouchStart = (e: any) => {
     if(dragging === false) {
-      console.log('onTouchStart: single click', e);
+      //console.log('onTouchStart: single click', e);
       const cellId = getCellIdAtLocation(e.touches[0].clientX, e.touches[0].clientY);
       if(cellId !== -1) {
-        setGameState(WordScrambleLib.onCellClicked(gameState.cells[cellId], gameState, false));
+        setGameState(WordScrambleLib.saveGameState(WordScrambleLib.onCellClicked(gameState.cells[cellId], gameState, false)));
       }
     }
     //e.preventDefault();  // Don't trigger a mouse click event
   }
 
   const onTouchDrag = (e: any) => {
-    console.log('onTouchDrag');
+    //console.log('onTouchDrag');
     const cellId = getCellIdAtLocation(e.touches[0].clientX, e.touches[0].clientY);
     if(cellId !== -1) {
       onClick(gameState.cells[cellId], gameState, true);
@@ -63,7 +62,7 @@ function WordScrambleGame(props: any) {
 
   const onTouchEnd = (e: any) => {
     if(dragging === true) {
-      console.log('onTouchEnd', e);
+      //console.log('onTouchEnd', e);
       setDragging(false);
       onSelectionComplete();
     } else {
@@ -86,7 +85,7 @@ function WordScrambleGame(props: any) {
   }
 
   const onMouseDown = (e: any, cell: CellData) => {
-    console.log('onDragStart', e);
+    //console.log('onDragStart', e);
     onClick(cell, gameState, false);
     
     e.preventDefault();
@@ -131,7 +130,7 @@ function WordScrambleGame(props: any) {
                                           isSelected={ isCellSelected(index) }
                                           size={cellSize+"px"} 
                                           //onClick={(e: any) => {console.log('Cell onClick'); onClick(cell, gameState)}}
-                                          onDrag={(e: any) => {console.log('Cell onDrag'); onClick(cell, gameState, true)}}
+                                          onDrag={(e: any) => onClick(cell, gameState, true)}
                                           onMouseUp={(e:any) => onMouseUp(e)}
                                           onMouseDown={(e: any) => onMouseDown(e, cell)}
                                           debugText={cell.id}

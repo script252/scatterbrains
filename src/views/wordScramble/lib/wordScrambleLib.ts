@@ -54,15 +54,12 @@ function isWordValid(word: string, gameState: WordScrambleGameState): boolean {
     // exists in word list
     // isn't already in discovered word list
     const lowerCaseWord = word.toLowerCase();
-    console.log('Validating: ', lowerCaseWord);
     const minLength: boolean = lowerCaseWord.length > 2;
     if(minLength === true) {
         
         const newWord: boolean = !gameState.score.discoveredWordsSet.has(lowerCaseWord);
         if(newWord === true) {
-            
             const isWord: boolean = words.some((dw:string) => {return lowerCaseWord === dw});
-            console.log('Found word', newWord);
             return isWord === true;
         }
     }
@@ -149,6 +146,13 @@ export function onCellClicked(cell: CellData, gameState: WordScrambleGameState, 
         if(gameState.selected.some((id:number)=> id === cell.id)) {
             if(dragging === false) {
                 return {...gameState, selected: []};
+            } else {
+                // If dragging over the previous cell, clip selected
+                const prevCell = gameState.selected.findIndex(s => s === cell.id);
+                if(prevCell !== -1) {
+                    const clipped: number[] = gameState.selected.slice(0, prevCell+1);
+                    return {...gameState, selected: clipped};
+                }
             }
         }
 
@@ -159,7 +163,7 @@ export function onCellClicked(cell: CellData, gameState: WordScrambleGameState, 
             // they are only considered complete if the word is valid
             if(isWordValid(getSelectedString(gs), gs)){
                 if(dragging === false) {
-                    //return onSelectionComplete(gs, true);
+                    return onSelectionComplete(gs, false);
                 }
             }
 
