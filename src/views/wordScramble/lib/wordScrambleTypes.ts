@@ -5,34 +5,46 @@ export const standardCubes: string[] = [
     "EIOSST", "ELRTTY", "HIMNQU", "HLNNRZ"
 ];
 
-export const CellDirs = {
-    up: [0, -1],
-    upRight: [1, -1],
-    right: [1, 0],
-    downRight: [1, 1],
-    down: [0, 1],
-    downLeft: [-1, 1],
-    left: [-1, 1],
-    upLeft: [-1, -1],
-}
+export const CellDirs = new Map([
+    ['up', [0, -1]],
+    ['upRight', [1, -1]],
+    ['right', [1, 0]],
+    ['downRight', [1, 1]],
+    ['down', [0, 1]],
+    ['downLeft', [-1, 1]],
+    ['left', [-1, 0]],
+    ['upLeft', [-1, -1]],
+])
 
-export interface CellDir {
-    colAndRow: number[];
-}
+export type CellDir = number[];
 
 export class CellData {
-    id: number|null = null;
+    id: number = -1;
     value: string = '';
-    col: number|null = null;
-    row: number|null = null;
+    col: number = -1;
+    row: number = -1;
+}
+
+export class Word {
+    word: string = '';
+    score: number = 0;
+}
+
+export class ScoreState {
+    // So we can quickly check for already added words
+    // This doesn't convert to json!
+    discoveredWordsSet: Set<string> = new Set();
+    // Words with their associated scores
+    discoveredWords: string[] = [];
 }
 
 export class WordScrambleGameState {
     gameSettings: NewGameSettings = new NewGameSettings();
     cells: CellData[] = [];
-    selected: (number|null)[] = [];
+    selected: number[] = [];
     showVictory: boolean = false;
     showNewGame: boolean = false;
+    score: ScoreState = new ScoreState();
 }
 
 export class NewGameSettings {

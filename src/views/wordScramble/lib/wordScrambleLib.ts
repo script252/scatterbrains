@@ -1,12 +1,16 @@
+import { lowerCase } from "lodash";
 import { ensureFieldsPresent } from "../../../lib/utilities";
 import { CellData, CellDirs, CellDir, NewGameSettings, standardCubes, WordScrambleGameState } from "./wordScrambleTypes";
 
-const words = require('an-array-of-english-words');
+const words: string[] = require('an-array-of-english-words');
+//const words: Map = new Map([wordsArray]);
+
 
 export function init(settings: NewGameSettings): WordScrambleGameState {
     
     console.log('Starting new word scramble game:', settings);
-    
+    console.log('Testing word validation: ', isWordValid('abided', new WordScrambleGameState()));
+
     // Generate and fill cells based on difficulty
     const emptyCells = new Array<any>(settings.boardSize * settings.boardSize)
         .fill(new CellData());
@@ -43,38 +47,139 @@ export function getRolledCubes(): string[] {
     return scrambledCubes;
 }
 
-function isWordValid(word: string) {
-    //console.log(words.filter((d:any) => /fun/.test(d)));
+function isWordValid(word: string, gameState: WordScrambleGameState): boolean {
+
+    // Validation:
+    // 3 letters min
+    // exists in word list
+    // isn't already in discovered word list
+    const lowerCaseWord = word.toLowerCase();
+    console.log('Validating: ', lowerCaseWord);
+    const minLength: boolean = lowerCaseWord.length > 2;
+    if(minLength === true) {
+        
+        const newWord: boolean = !gameState.score.discoveredWordsSet.has(lowerCaseWord);
+        if(newWord === true) {
+            
+            const isWord: boolean = words.some((dw:string) => {return lowerCaseWord === dw});
+            console.log('Found word', newWord);
+            return isWord === true;
+        }
+    }
+
+    return false;
 }
 
 // May return undefined
-function getCellAtCoord(col: number, row: number, gameState: WordScrambleGameState): CellData {
-    const index = col + (row * gameState.gameSettings.boardSize);
+function getCellAtCoord(col: number, row: number, gameState: WordScrambleGameState): CellData | undefined {
+    const bSize = gameState.gameSettings.boardSize;
+    if(col >= bSize || row >= bSize)
+        return undefined;
+
+    const index = col + (row * bSize);
     return gameState.cells[index];
 }
 
 // May return undefined
-function getAdjacentCell(cell: CellData, gameState: WordScrambleGameState, dir: CellDir): CellData {
-    return getCellAtCoord(dir.colAndRow[0], dir.colAndRow[1], gameState);
+function getAdjacentCell(cell: CellData, gameState: WordScrambleGameState, dir: CellDir): CellData | undefined {
+    // console.log(`Getting adjacent to row/col: ${dir[0]}, ${dir[1]}`);
+    return getCellAtCoord(cell.col + dir[0], cell.row + dir[1], gameState);
 }
 
-// function getAllValidAdjacentCellIndices(cell: CellData, gameState: WordScrambleGameState) {
-//     Object.keys(CellDirs).map((dirString) => {
-//         const dir: CellDir = CellDirs[dirString];
-//         getAdjacentCell(cell, gameState, dir);
-//     });
-// }
+function getAllValidAdjacentCellIndices(cell: CellData, gameState: WordScrambleGameState): number[] {
+    
+    //console.log('Dir values: ', Array.from(CellDirs.values()));
 
-export function onCellClicked(cell: CellData, gameState: WordScrambleGameState): WordScrambleGameState {
+    // OPTIMIZE: doing a lot of copying in here
+    const adjCells: (number|undefined)[] = Array.from(CellDirs.values())
+        .map((value: number[]) => {
+            const adj = getAdjacentCell(cell, gameState, value);
+            
+            // Don't add already selected cells?
+            return adj?.id;
+        });
+
+    return adjCells.filter(c => c !== undefined) as number[];
+}
+
+function selectCell(cell: CellData, gameState: WordScrambleGameState): WordScrambleGameState {
+    if(cell && !gameState.selected.some(s => s === cell?.id)) {
+        const gs = {
+            ...gameState,
+            selected: [...gameState.selected, cell.id],
+        }
+        return gs;
+    }
+    return gameState;
+}
+
+export function getSelectedString(gameState: WordScrambleGameState): string {
+    return gameState.selected.map(s => gameState.cells[s].value).join('');
+}
+
+export function onSelectionComplete(gameState: WordScrambleGameState, validate: boolean = true): WordScrambleGameState {
+
     const gs = {
         ...gameState,
-        selected: [...gameState.selected, cell.id],
+        selected: []
+    };
+
+    const word: string = getSelectedString(gameState);
+    const valid = validate === true ? isWordValid(word, gameState) : true;
+    if(valid === true) {
+        gs.score.discoveredWordsSet.add(word.toLowerCase());
+        console.log('Found a valid word!', word);
+        console.log('State:', gs);
     }
 
     return gs;
 }
 
+export function onCellClicked(cell: CellData, gameState: WordScrambleGameState, dragging: boolean = false): WordScrambleGameState {
+
+    // Limit selection if we've started a chain
+    if(gameState.selected.length > 0) {
+        const latestCell = gameState.cells[gameState.selected[gameState.selected.length - 1]];
+        const adjCells = new Set(getAllValidAdjacentCellIndices(latestCell, gameState));
+        //console.log(`Adj cells, from starting cell id: ${latestCell.id}`, adjCells);
+
+        // If cell has already been selected, and this is an individual
+        // cell being added to the set, then clear the selection.
+        // Otherwise, cut the selection chain back to the clicked cell
+        if(gameState.selected.some((id:number)=> id === cell.id)) {
+            if(dragging === false) {
+                return {...gameState, selected: []};
+            }
+        }
+
+        if(adjCells.has(cell.id)) {
+            const gs = selectCell(cell, gameState);
+            
+            // Need to test for individual click completions;
+            // they are only considered complete if the word is valid
+            if(isWordValid(getSelectedString(gs), gs)){
+                if(dragging === false) {
+                    //return onSelectionComplete(gs, true);
+                }
+            }
+
+            return gs;
+        }
+
+    } else {
+        
+        // Allow any cell if none already selected
+        return selectCell(cell, gameState);
+    }
+
+    return gameState;
+}
+
 export function saveGameState(gs: WordScrambleGameState): WordScrambleGameState {
+    
+    // Stick set into array so it can be saved
+    gs.score.discoveredWords = Array.from(gs.score.discoveredWordsSet);
+
     localStorage.setItem('wordScrambleGameState', JSON.stringify(gs));
     return gs;
 }
@@ -86,7 +191,10 @@ export function loadGameState(gameState: WordScrambleGameState): WordScrambleGam
         const loadedState: string = localStorage.getItem('wordScrambleGameState') || '';
         const loadedStateParsed: WordScrambleGameState = JSON.parse(loadedState) as WordScrambleGameState;
 
-        const fieldsFilled = ensureFieldsPresent(loadedStateParsed, new WordScrambleGameState(), WordScrambleGameState);
+        const fieldsFilled: WordScrambleGameState = ensureFieldsPresent(loadedStateParsed, new WordScrambleGameState(), WordScrambleGameState);
+
+        // Fill set with saved scored words
+        fieldsFilled.score.discoveredWordsSet = new Set<string>(fieldsFilled.score.discoveredWords);
 
         return fieldsFilled;
     } catch (err) {

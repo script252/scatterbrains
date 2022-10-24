@@ -4,7 +4,7 @@ import "./cell.scss";
 // A single sudoku game cell
 function Cell(props: any) {
 
-    const { id, onClick, value, isSelected, debugText } = props;
+    const { id, onClick, onDrag, onMouseDown, onMouseUp, value, isSelected, debugText } = props;
 
     const getBgColor = () => {
         if(isSelected === true)
@@ -23,13 +23,13 @@ function Cell(props: any) {
 
     const onMouseEnter = (e: any) => {
         if(e?.buttons === 1) {
-            onClick(e);
+            onDrag(e);
         }
     }
 
     return (
         <Box {...cellStyle} userSelect="none" 
-            onClick={onClick} onMouseDown={onClick} onMouseEnter={onMouseEnter} 
+            onClick={onClick} onMouseDown={onMouseDown} onMouseEnter={onMouseEnter} onMouseUp={onMouseUp}
             position="relative" pointerEvents="all" id={id} className="letter">
             
             {value !== undefined && (<Text className="letter-circle" fontSize="min(10vw, 44pt)" m="auto" pointerEvents="none">{value}</Text>)}

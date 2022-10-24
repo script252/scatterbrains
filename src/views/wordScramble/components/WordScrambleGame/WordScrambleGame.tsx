@@ -11,6 +11,7 @@ function WordScrambleGame(props: any) {
   //const {onCloseNewGameModal} = props;
 
   const [gameState, setGameState] = useState(new WordScrambleGameState());
+  const [dragging, setDragging] = useState(false);
   const cellSize = 52;
 
   const isCellSelected = (id: number|null) => gameState.selected.some((c:number|null) => c === id);
@@ -27,18 +28,72 @@ function WordScrambleGame(props: any) {
       setGameState({...gs, showNewGame: startNewGame === 'new'});
   }, [startNewGame]);
 
-  const onClick = (cell: CellData, gs: WordScrambleGameState) => {
-      setGameState(WordScrambleLib.saveGameState(WordScrambleLib.onCellClicked(cell, gs)));
+  const getCellIdAtLocation = (clientX: number, clientY: number) => {
+    console.log(clientX, clientY);
+    const elem = document.elementFromPoint(clientX, clientY);
+    const cellId:number = elem?.id ? Number(elem?.id) : -1;
+    return cellId;
+  }
 
+  const onClick = (cell: CellData, gs: WordScrambleGameState, dragging: boolean = false) => {
+      console.log('onClick, dragging: ', dragging);
+      setDragging(dragging);
+      //setGameState(WordScrambleLib.saveGameState(WordScrambleLib.onCellClicked(cell, gs)));
+      setGameState(WordScrambleLib.onCellClicked(cell, gs, dragging));
+  }
+
+  const onTouchStart = (e: any) => {
+    if(dragging === false) {
+      console.log('onTouchStart: single click', e);
+      const cellId = getCellIdAtLocation(e.touches[0].clientX, e.touches[0].clientY);
+      if(cellId !== -1) {
+        setGameState(WordScrambleLib.onCellClicked(gameState.cells[cellId], gameState, false));
+      }
+    }
+    //e.preventDefault();  // Don't trigger a mouse click event
   }
 
   const onTouchDrag = (e: any) => {
-    
-    const elem = document.elementFromPoint(e.touches[0].clientX, e.touches[0].clientY);
-    const cellId:number = elem?.id ? Number(elem?.id) : -1;
+    console.log('onTouchDrag');
+    const cellId = getCellIdAtLocation(e.touches[0].clientX, e.touches[0].clientY);
     if(cellId !== -1) {
-      onClick(gameState.cells[cellId], gameState);
+      onClick(gameState.cells[cellId], gameState, true);
     }
+  }
+
+  const onTouchEnd = (e: any) => {
+    if(dragging === true) {
+      console.log('onTouchEnd', e);
+      setDragging(false);
+      onSelectionComplete();
+    } else {
+      // console.log('onTouchEnd: single click', e);
+      // const cellId = getCellIdAtLocation(e.changedTouches[0].clientX, e.changedTouches[0].clientY);
+      // if(cellId !== -1) {
+      //   //onClick(gameState.cells[cellId], gameState, true);
+      //   setGameState(WordScrambleLib.onCellClicked(gameState.cells[cellId], gameState, true));
+      // }
+    }
+    e.preventDefault();  // Don't trigger a mouse click event
+  }
+
+  const onMouseUp = (e: any) => {
+    
+    if(dragging) {
+      console.log('onDragEnd', e);
+      onSelectionComplete();
+    }
+  }
+
+  const onMouseDown = (e: any, cell: CellData) => {
+    console.log('onDragStart', e);
+    onClick(cell, gameState, false);
+    
+    e.preventDefault();
+  }
+
+  const onSelectionComplete = () => {
+    setGameState(WordScrambleLib.saveGameState(WordScrambleLib.onSelectionComplete(gameState)));
   }
 
   // const onStartNewGame = (settings: NewGameSettings) => {
@@ -61,7 +116,13 @@ function WordScrambleGame(props: any) {
               <Container height="100vh" maxW="xl">
                   <Flex height="90%" flexDirection="column" >
                       <Container maxW="100%" className="cell-grid-container" m="0" p="0">
-                          <SimpleGrid spacing={0} columns={gameState.gameSettings.boardSize} gap={0} p="8px" className="cell-grid" width="100%" onTouchMove={onTouchDrag}>
+                          <SimpleGrid 
+                            spacing={0} columns={gameState.gameSettings.boardSize} 
+                            gap={0} p="8px" className="cell-grid" width="100%" 
+                            onTouchMove={onTouchDrag}
+                            onTouchEnd={onTouchEnd}
+                            onTouchStart={onTouchStart}
+                            >
                               {gameState.cells.map((cell: CellData, index: number) => {
                                   return (
                                       <Cell 
@@ -69,7 +130,11 @@ function WordScrambleGame(props: any) {
                                           {...cell}
                                           isSelected={ isCellSelected(index) }
                                           size={cellSize+"px"} 
-                                          onClick={(e: any) => onClick(cell, gameState)} 
+                                          //onClick={(e: any) => {console.log('Cell onClick'); onClick(cell, gameState)}}
+                                          onDrag={(e: any) => {console.log('Cell onDrag'); onClick(cell, gameState, true)}}
+                                          onMouseUp={(e:any) => onMouseUp(e)}
+                                          onMouseDown={(e: any) => onMouseDown(e, cell)}
+                                          debugText={cell.id}
                                       ></Cell>
                                   )
                               })}
