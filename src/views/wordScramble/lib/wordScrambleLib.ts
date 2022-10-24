@@ -1,15 +1,11 @@
-import { lowerCase } from "lodash";
 import { ensureFieldsPresent } from "../../../lib/utilities";
+import { findAllWords } from "./cellUtilities";
 import { CellData, CellDirs, CellDir, NewGameSettings, standardCubes, WordScrambleGameState } from "./wordScrambleTypes";
 
 const words: string[] = require('an-array-of-english-words');
 //const words: Map = new Map([wordsArray]);
 
-
 export function init(settings: NewGameSettings): WordScrambleGameState {
-    
-    console.log('Starting new word scramble game:', settings);
-    console.log('Testing word validation: ', isWordValid('abided', new WordScrambleGameState()));
 
     // Generate and fill cells based on difficulty
     const emptyCells = new Array<any>(settings.boardSize * settings.boardSize)
@@ -30,7 +26,7 @@ export function init(settings: NewGameSettings): WordScrambleGameState {
             } as CellData;
         }),
     };
-    
+
     return initialState;
 }
 
@@ -70,7 +66,7 @@ function isWordValid(word: string, gameState: WordScrambleGameState): boolean {
 // May return undefined
 function getCellAtCoord(col: number, row: number, gameState: WordScrambleGameState): CellData | undefined {
     const bSize = gameState.gameSettings.boardSize;
-    if(col >= bSize || row >= bSize)
+    if(col >= bSize || row >= bSize || col < 0 || row < 0)
         return undefined;
 
     const index = col + (row * bSize);
@@ -83,7 +79,7 @@ function getAdjacentCell(cell: CellData, gameState: WordScrambleGameState, dir: 
     return getCellAtCoord(cell.col + dir[0], cell.row + dir[1], gameState);
 }
 
-function getAllValidAdjacentCellIndices(cell: CellData, gameState: WordScrambleGameState): number[] {
+export function getAllValidAdjacentCellIndices(cell: CellData, gameState: WordScrambleGameState): number[] {
     
     //console.log('Dir values: ', Array.from(CellDirs.values()));
 
@@ -199,7 +195,7 @@ export function loadGameState(gameState: WordScrambleGameState): WordScrambleGam
 
         // Fill set with saved scored words
         fieldsFilled.score.discoveredWordsSet = new Set<string>(fieldsFilled.score.discoveredWords);
-
+        findAllWords(fieldsFilled, words);
         return fieldsFilled;
     } catch (err) {
         console.warn('No save state found, generating new game', gameState);
