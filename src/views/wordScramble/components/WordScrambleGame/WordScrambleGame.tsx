@@ -19,13 +19,15 @@ function WordScrambleGame(props: any) {
   const {startNewGame} = useParams();
   useEffect(() => {
 
+      console.log('Starting Word Scramble');
+
       const initialGameState: WordScrambleGameState = WordScrambleLib.init(new NewGameSettings());
 
       // Set game state from saved value (if there is one)
       const gs = WordScrambleLib.loadGameState(initialGameState as WordScrambleGameState);
       setGameState(gs);
-
       setGameState({...gs, showNewGame: startNewGame === 'new'});
+      WordScrambleLib.findWords(gs);
   }, [startNewGame]);
 
   const getCellIdAtLocation = (clientX: number, clientY: number) => {

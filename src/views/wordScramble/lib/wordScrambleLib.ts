@@ -1,9 +1,8 @@
 import { ensureFieldsPresent } from "../../../lib/utilities";
-import { asyncFindAllWords, findAllWords } from "./cellUtilities";
+import { asyncFindAllWords } from "./cellUtilities";
 import { CellData, CellDirs, CellDir, NewGameSettings, standardCubes, WordScrambleGameState, DirStrings } from "./wordScrambleTypes";
 
 const words: string[] = require('an-array-of-english-words');
-//const words: Map = new Map([wordsArray]);
 
 export function init(settings: NewGameSettings): WordScrambleGameState {
 
@@ -192,10 +191,13 @@ export function loadGameState(gameState: WordScrambleGameState): WordScrambleGam
 
         // Fill set with saved scored words
         fieldsFilled.score.discoveredWordsSet = new Set<string>(fieldsFilled.score.discoveredWords);
-        findAllWords(fieldsFilled, words.filter((w:string) => w.length <= 16));
         return fieldsFilled;
     } catch (err) {
         console.warn('No save state found, generating new game', gameState);
         return gameState;
     }
+}
+
+export function findWords(gameState: WordScrambleGameState) {
+    asyncFindAllWords(gameState, words.filter((w:string) => w.length <= 16)).then(()=>{console.log('Found words')});
 }

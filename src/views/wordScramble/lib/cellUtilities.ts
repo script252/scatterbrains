@@ -3,9 +3,7 @@ import { CellData, WordScrambleGameState } from "./wordScrambleTypes";
 
 export async function asyncFindAllWords(gameState: WordScrambleGameState, words: string[]): Promise<string[]> {
 
-    findAllWords(gameState, words);
-
-    return Promise.resolve([]);
+    return Promise.resolve(findAllWords(gameState, words));
 }
 
 export function findAllWords(gameState: WordScrambleGameState, words: string[]): string[] {
@@ -25,33 +23,31 @@ export function findAllWords(gameState: WordScrambleGameState, words: string[]):
     //console.log(`Unique possible letter combinations: ${pathsSet.size}`);
     console.log(`Found words: ${foundWords.size}`);
 
-    return [];
+    return Array.from(foundWords);
 }
 
-function getCellBranches(cell: CellData, gameState: WordScrambleGameState, path: CellData[], wordDict: Set<string>, /*This changes!*/foundWords: Set<string>, pathWord: string) {
+async function getCellBranches(cell: CellData, gameState: WordScrambleGameState, path: CellData[], wordDict: Set<string>, /*This changes!*/foundWords: Set<string>, pathWord: string) {
 
-    const wordSoFar: string = pathWord;//path.map((c:CellData)=> c.value).join('');  // Slow
-    if(testWord(wordSoFar, wordDict) === true)
-        foundWords.add(wordSoFar);
-
-    //if(path.length > 12) return;
-
-    if(path.length >= gameState.cells.length)
+    if(pathWord.length > 16)
         return;
+
+    const wordSoFar: string = pathWord;
+    if(wordSoFar.length > 2 && !foundWords.has(wordSoFar)) {
+        if(testWord(wordSoFar, wordDict) === true)
+            foundWords.add(wordSoFar);
+    }
 
     // Get all valid neighbors (none already tested)
     const pathSet: Set<CellData> = new Set(path);
     const nextCellIds: number[] = getAllValidAdjacentCellIndices(cell, gameState, pathSet);
-    //const filteredNext = nextCellIds.filter((id:number) => !pathIds.has(gameState.cells[id]));
 
-    //if(filteredNext.length > 0) {
-        //const newPath = [...path, gameState.cells[filteredNext[0]]];
-        nextCellIds.forEach((id:number) => getCellBranches(gameState.cells[id], gameState, [...path, gameState.cells[id]], wordDict, foundWords, pathWord.concat(gameState.cells[id].value.toLowerCase())));
-    //}
+    if(pathWord === 'h')
+        console.log('Next cell ids:', nextCellIds);
+
+    nextCellIds.forEach((id:number) => getCellBranches(gameState.cells[id], gameState, [...path, gameState.cells[id]], wordDict, foundWords, pathWord.padEnd(pathWord.length+1, gameState.cells[id].value.toLowerCase())));
 }
 
 function testWord(word: string, words: Set<string>): boolean {
-    const lowerCaseWord = word.toLowerCase();
-    const isWord: boolean = words.has(lowerCaseWord);
+    const isWord: boolean = words.has(word);
     return isWord;
 }
