@@ -1,52 +1,57 @@
 import { getAllValidAdjacentCellIndices } from "./wordScrambleLib";
 import { CellData, WordScrambleGameState } from "./wordScrambleTypes";
 
+export async function asyncFindAllWords(gameState: WordScrambleGameState, words: string[]): Promise<string[]> {
+
+    findAllWords(gameState, words);
+
+    return Promise.resolve([]);
+}
+
 export function findAllWords(gameState: WordScrambleGameState, words: string[]): string[] {
+
+    const wordsHash: Set<string> = new Set(words);
+
     console.log('Finding all words...');
     // For each cell
     const foundWords: Set<string> = new Set();
     const startTime = Date.now();
-    const result = gameState.cells.map((c: CellData) => getCellBranches(c, gameState, [c], words, foundWords)).map((s:CellData[][]) => s.map((path:CellData[]) => path.flatMap((c:CellData)=> c.value).join(''))).flat(1);
+    //const result = gameState.cells.map((c: CellData) => getCellBranches(c, gameState, [c], words, foundWords)).map((s:CellData[][]) => s.map((path:CellData[]) => path.flatMap((c:CellData)=> c.value).join(''))).flat(1);
+    gameState.cells.forEach((c:CellData) => getCellBranches(c, gameState, [c], wordsHash, foundWords, c.value.toLowerCase()));
     const time = Date.now();
-    console.log(`Created ${result.length} paths in ${time-startTime}ms`);
+    console.log(`Searched in ${time-startTime}ms`);
 
-    const pathsSet: Set<string> = new Set(result);
-    console.log(`Unique possible letter combinations: ${pathsSet.size}`);
+    //const pathsSet: Set<string> = new Set(result);
+    //console.log(`Unique possible letter combinations: ${pathsSet.size}`);
     console.log(`Found words: ${foundWords.size}`);
 
     return [];
 }
 
-function getCellBranches(cell: CellData, gameState: WordScrambleGameState, path: CellData[], wordDict: string[], /*This is changed!*/foundWords: Set<string>): CellData[][] {
+function getCellBranches(cell: CellData, gameState: WordScrambleGameState, path: CellData[], wordDict: Set<string>, /*This changes!*/foundWords: Set<string>, pathWord: string) {
 
-    const wordSoFar: string = path.map((c:CellData)=> c.value).join('');
+    const wordSoFar: string = path.map((c:CellData)=> c.value).join('');  // Slow
     if(testWord(wordSoFar, wordDict) === true)
         foundWords.add(wordSoFar);
 
-    if(path.length > 4) return [path];
+    //if(path.length > 12) return;
 
     if(path.length >= gameState.cells.length)
-        return [path];
+        return;
 
     // Get all valid neighbors (none already tested)
-    const pathIds: number[] = path.map((p:CellData) => p.id);
-    const nextCellIds: number[] = getAllValidAdjacentCellIndices(cell, gameState);
-    const filteredNext = nextCellIds.filter((id:number) => !pathIds.some((pId:number) => pId === id) );
-    //console.log('Path: ', pathIds);
-    //console.log(nextCellIds);
-    //console.log(filteredNext);
+    const pathIds: Set<CellData> = new Set(path);
+    const nextCellIds: number[] = getAllValidAdjacentCellIndices(cell, gameState, pathIds);
+    //const filteredNext = nextCellIds.filter((id:number) => !pathIds.has(gameState.cells[id]));
 
-    if(filteredNext.length > 0) {
+    //if(filteredNext.length > 0) {
         //const newPath = [...path, gameState.cells[filteredNext[0]]];
-        return filteredNext.map((id:number) => getCellBranches(gameState.cells[id], gameState, [...path, gameState.cells[id]], wordDict, foundWords)).flat(1);
-    }
-
-    return [path];
+        nextCellIds.forEach((id:number) => getCellBranches(gameState.cells[id], gameState, [...path, gameState.cells[id]], wordDict, foundWords, pathWord));
+    //}
 }
 
-function testWord(word: string, words: string[]): boolean {
+function testWord(word: string, words: Set<string>): boolean {
     const lowerCaseWord = word.toLowerCase();
-    const isWord: boolean = words.some((dw:string) => {return lowerCaseWord === dw});
-    //if(isWord === true) console.log('Found word: ', lowerCaseWord);
+    const isWord: boolean = words.has(lowerCaseWord);
     return isWord;
 }

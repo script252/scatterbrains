@@ -16,6 +16,17 @@ export const CellDirs = new Map([
     ['upLeft', [-1, -1]],
 ])
 
+export const DirStrings = [
+    'up',
+    'upRight',
+    'right',
+    'downRight',
+    'down',
+    'downLeft',
+    'left',
+    'upLeft'
+];
+
 export type CellDir = number[];
 
 export class CellData {

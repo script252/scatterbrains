@@ -1,6 +1,6 @@
 import { ensureFieldsPresent } from "../../../lib/utilities";
-import { findAllWords } from "./cellUtilities";
-import { CellData, CellDirs, CellDir, NewGameSettings, standardCubes, WordScrambleGameState } from "./wordScrambleTypes";
+import { asyncFindAllWords, findAllWords } from "./cellUtilities";
+import { CellData, CellDirs, CellDir, NewGameSettings, standardCubes, WordScrambleGameState, DirStrings } from "./wordScrambleTypes";
 
 const words: string[] = require('an-array-of-english-words');
 //const words: Map = new Map([wordsArray]);
@@ -74,25 +74,22 @@ function getCellAtCoord(col: number, row: number, gameState: WordScrambleGameSta
 }
 
 // May return undefined
-function getAdjacentCell(cell: CellData, gameState: WordScrambleGameState, dir: CellDir): CellData | undefined {
+export function getAdjacentCell(cell: CellData, gameState: WordScrambleGameState, dir: CellDir): CellData | undefined {
     // console.log(`Getting adjacent to row/col: ${dir[0]}, ${dir[1]}`);
     return getCellAtCoord(cell.col + dir[0], cell.row + dir[1], gameState);
 }
 
-export function getAllValidAdjacentCellIndices(cell: CellData, gameState: WordScrambleGameState): number[] {
-    
-    //console.log('Dir values: ', Array.from(CellDirs.values()));
+export function getAllValidAdjacentCellIndices(cell: CellData, gameState: WordScrambleGameState, omitList: Set<CellData> = new Set()): number[] {
 
-    // OPTIMIZE: doing a lot of copying in here
-    const adjCells: (number|undefined)[] = Array.from(CellDirs.values())
-        .map((value: number[]) => {
-            const adj = getAdjacentCell(cell, gameState, value);
-            
-            // Don't add already selected cells?
-            return adj?.id;
-        });
+    let adjCells: (number|undefined)[] = [];
+    for(let i=0; i<8; i++) {
+        const adj = getAdjacentCell(cell, gameState, CellDirs.get(DirStrings[i]) as number[])?.id
+        
+        if(adj !== undefined && !omitList.has(gameState.cells[adj]))
+            adjCells.push(adj);
+    }
 
-    return adjCells.filter(c => c !== undefined) as number[];
+    return adjCells as number[];
 }
 
 function selectCell(cell: CellData, gameState: WordScrambleGameState): WordScrambleGameState {
