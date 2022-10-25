@@ -30,7 +30,7 @@ export function findAllWords(gameState: WordScrambleGameState, words: string[]):
 
 function getCellBranches(cell: CellData, gameState: WordScrambleGameState, path: CellData[], wordDict: Set<string>, /*This changes!*/foundWords: Set<string>, pathWord: string) {
 
-    const wordSoFar: string = path.map((c:CellData)=> c.value).join('');  // Slow
+    const wordSoFar: string = pathWord;//path.map((c:CellData)=> c.value).join('');  // Slow
     if(testWord(wordSoFar, wordDict) === true)
         foundWords.add(wordSoFar);
 
@@ -40,13 +40,13 @@ function getCellBranches(cell: CellData, gameState: WordScrambleGameState, path:
         return;
 
     // Get all valid neighbors (none already tested)
-    const pathIds: Set<CellData> = new Set(path);
-    const nextCellIds: number[] = getAllValidAdjacentCellIndices(cell, gameState, pathIds);
+    const pathSet: Set<CellData> = new Set(path);
+    const nextCellIds: number[] = getAllValidAdjacentCellIndices(cell, gameState, pathSet);
     //const filteredNext = nextCellIds.filter((id:number) => !pathIds.has(gameState.cells[id]));
 
     //if(filteredNext.length > 0) {
         //const newPath = [...path, gameState.cells[filteredNext[0]]];
-        nextCellIds.forEach((id:number) => getCellBranches(gameState.cells[id], gameState, [...path, gameState.cells[id]], wordDict, foundWords, pathWord));
+        nextCellIds.forEach((id:number) => getCellBranches(gameState.cells[id], gameState, [...path, gameState.cells[id]], wordDict, foundWords, pathWord.concat(gameState.cells[id].value.toLowerCase())));
     //}
 }
 
