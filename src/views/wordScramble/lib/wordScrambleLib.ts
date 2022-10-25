@@ -1,5 +1,6 @@
 import { ensureFieldsPresent } from "../../../lib/utilities";
 import { asyncFindAllWords } from "./cellUtilities";
+import { findWordsFast } from "./cellUtilitiesFast";
 import { CellData, CellDirs, CellDir, NewGameSettings, standardCubes, WordScrambleGameState, DirStrings } from "./wordScrambleTypes";
 
 const words: string[] = require('an-array-of-english-words');
@@ -198,6 +199,10 @@ export function loadGameState(gameState: WordScrambleGameState): WordScrambleGam
     }
 }
 
-export function findWords(gameState: WordScrambleGameState) {
-    asyncFindAllWords(gameState, words.filter((w:string) => w.length <= 16)).then(()=>{console.log('Found words')});
+// export function findWords(gameState: WordScrambleGameState) {
+//     asyncFindAllWords(gameState, words.filter((w:string) => w.length <= 16)).then(()=>{console.log('Found words')});
+// }
+
+export function findWords(gameState: WordScrambleGameState): string[] {
+    return findWordsFast(gameState, words.filter((w:string) => w.length <= 16));
 }

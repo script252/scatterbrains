@@ -56,6 +56,7 @@ export class WordScrambleGameState {
     showVictory: boolean = false;
     showNewGame: boolean = false;
     score: ScoreState = new ScoreState();
+    possibleWordCount: number = -1;
 }
 
 export class NewGameSettings {

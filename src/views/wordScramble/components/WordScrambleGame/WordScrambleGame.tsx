@@ -25,9 +25,12 @@ function WordScrambleGame(props: any) {
 
       // Set game state from saved value (if there is one)
       const gs = WordScrambleLib.loadGameState(initialGameState as WordScrambleGameState);
-      setGameState(gs);
-      setGameState({...gs, showNewGame: startNewGame === 'new'});
-      WordScrambleLib.findWords(gs);
+      const words: string[] = WordScrambleLib.findWords(gs);
+      console.log(`Found ${words.length} unique words`);
+      
+      setGameState({...gs, showNewGame: startNewGame === 'new', possibleWordCount: words.length});
+      WordScrambleLib.saveGameState(gs);
+
   }, [startNewGame]);
 
   const getCellIdAtLocation = (clientX: number, clientY: number) => {
@@ -81,7 +84,7 @@ function WordScrambleGame(props: any) {
   const onMouseUp = (e: any) => {
     
     if(dragging) {
-      console.log('onDragEnd', e);
+      //console.log('onDragEnd', e);
       onSelectionComplete();
     }
   }
