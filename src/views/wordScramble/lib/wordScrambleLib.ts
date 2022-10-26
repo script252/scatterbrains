@@ -17,11 +17,12 @@ export function init(settings: NewGameSettings): WordScrambleGameState {
         cells: emptyCells.map((cell, index:number) => {
             const row: number = Math.floor(index / settings.boardSize);
             const col: number = Math.floor(index % settings.boardSize);
+            const letter = rolledCubes[index]
             return {
                 id: index, 
                 col: col, 
                 row: row, 
-                value: rolledCubes[index], 
+                value: letter === 'Q' ? 'QU' : letter,   // UGLY hack to add QU
             } as CellData;
         }),
     };
@@ -40,11 +41,12 @@ export function roll(gameState: WordScrambleGameState): WordScrambleGameState {
         cells: gameState.cells.map((cell, index:number) => {
             const row: number = Math.floor(index / gameState.gameSettings.boardSize);
             const col: number = Math.floor(index % gameState.gameSettings.boardSize);
+            const letter = rolledCubes[index]
             return {
                 id: index, 
                 col: col, 
                 row: row, 
-                value: rolledCubes[index], 
+                value: letter === 'Q' ? 'QU' : letter,   // UGLY hack to add QU
             } as CellData;
         }),
     };

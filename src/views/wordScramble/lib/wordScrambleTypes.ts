@@ -66,6 +66,7 @@ export class WordScrambleGameState {
     lastWrongWord: number[] = [];
     showVictory: boolean = false;
     showNewGame: boolean = false;
+    currentTurn: number = 0;
     score: ScoreState = new ScoreState();
     possibleWordCount: number = -1;
     possibleWords: string[] = [];
@@ -75,4 +76,6 @@ export class NewGameSettings {
     boardSize: number = 4;
     timed: boolean = true;
     timeLimit: number = 60;  // Seconds
+    combineQU: boolean = true;
+    includeRedCube: boolean = true;
 }
