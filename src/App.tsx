@@ -1,6 +1,7 @@
 import React from 'react';
 import './App.css';
 import { Box, ChakraProvider, Flex, Icon, MenuItem, Spacer } from '@chakra-ui/react'
+import * as themes from '@chakra-ui/theme';
 import { Routes, Route, Link, useNavigate } from "react-router-dom";
 
 import NavBar from './components/NavBar/NavBar';
@@ -18,7 +19,7 @@ function App() {
   const n = useNavigate();
 
   return (
-    <ChakraProvider>
+    <ChakraProvider theme={themes.default}>
         <Box className="App" height="100vh">
             
             {/* <header className="App-header"> */}

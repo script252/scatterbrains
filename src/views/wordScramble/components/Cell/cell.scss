@@ -1,6 +1,5 @@
 .text {
     user-select: none;
-    //height: "100%";
     text-align: center;
 }
 
@@ -29,4 +28,43 @@
     align-items: center;
     justify-content: center;
     color: black;
+}
+
+.cell {
+    width: 100%;
+    height: 100%;
+    background-color: lightgray;
+    border: 1px;
+    border-color: var(--chakra-colors-gray-500);
+    display: flex;
+}
+
+.selected {
+    background-color: var(--chakra-colors-cyan-200) !important;
+}
+
+@keyframes flash-score-keyframes {
+    0% { background-color: lightgray }
+    10% { background-color: var(--chakra-colors-yellow-200) }
+    20% { background-color: var(--chakra-colors-yellow-400) }
+    80% { background-color: var(--chakra-colors-yellow-400) }
+    100% { background-color: lightgray }
+}
+
+.flash-word-score {
+    animation: flash-score-keyframes 2s linear;
+    background-color: lightgray;
+}
+
+@keyframes flash-wrong-keyframes {
+    0% { background-color: lightgray }
+    10% { background-color: var(--chakra-colors-red-200) }
+    20% { background-color: var(--chakra-colors-red-400) }
+    80% { background-color: var(--chakra-colors-red-400) }
+    100% { background-color: lightgray }
+  }
+
+.flash-word-wrong {
+    animation: flash-wrong-keyframes 0.5s linear;
+    background-color: lightgray;
 }

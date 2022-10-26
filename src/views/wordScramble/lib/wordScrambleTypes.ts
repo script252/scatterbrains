@@ -62,6 +62,8 @@ export class WordScrambleGameState {
     gameSettings: NewGameSettings = new NewGameSettings();
     cells: CellData[] = [];
     selected: number[] = [];
+    lastScoredWord: number[] = [];
+    lastWrongWord: number[] = [];
     showVictory: boolean = false;
     showNewGame: boolean = false;
     score: ScoreState = new ScoreState();

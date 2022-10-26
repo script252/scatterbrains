@@ -35,6 +35,8 @@ export function roll(gameState: WordScrambleGameState): WordScrambleGameState {
     const gs: WordScrambleGameState = {
         ...gameState,
         score: new WordScrambleGameState().score,
+        selected: [],
+        lastScoredWord: [],
         cells: gameState.cells.map((cell, index:number) => {
             const row: number = Math.floor(index / gameState.gameSettings.boardSize);
             const col: number = Math.floor(index % gameState.gameSettings.boardSize);
@@ -143,11 +145,21 @@ export function onSelectionComplete(gameState: WordScrambleGameState, validate: 
     const valid = validate === true ? isWordValid(word, gameState) : true;
     if(valid === true) {
         gs.score.discoveredWordsSet.add(word.toLowerCase());
-        console.log('Found a valid word!', word);
-        console.log('State:', gs);
+        gs.lastScoredWord = [...gameState.selected];
+    } else {
+        gs.lastWrongWord = [...gameState.selected];
     }
 
     return gs;
+}
+
+export function clearSelected(gameState: WordScrambleGameState, clearSelection: boolean = true, clearScored: boolean = true, clearWrong: boolean = true): WordScrambleGameState {
+    return {
+        ...gameState, 
+        selected: clearSelection === true ? [] : [...gameState.selected], 
+        lastScoredWord: clearScored === true ? [] : [...gameState.lastScoredWord],
+        lastWrongWord: clearWrong === true ? [] : [...gameState.lastWrongWord],
+    };
 }
 
 export function onCellClicked(cell: CellData, gameState: WordScrambleGameState, dragging: boolean = false): WordScrambleGameState {
@@ -163,7 +175,7 @@ export function onCellClicked(cell: CellData, gameState: WordScrambleGameState, 
         // Otherwise, cut the selection chain back to the clicked cell
         if(gameState.selected.some((id:number)=> id === cell.id)) {
             if(dragging === false) {
-                return {...gameState, selected: []};
+                return {...gameState, selected: [], lastWrongWord: [...gameState.selected]};
             } else {
                 // If dragging over the previous cell, clip selected
                 const prevCell = gameState.selected.findIndex(s => s === cell.id);
