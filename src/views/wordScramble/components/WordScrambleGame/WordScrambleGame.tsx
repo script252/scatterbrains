@@ -122,10 +122,11 @@ function WordScrambleGame(props: any) {
   return (
               <Container height="100vh" maxW="xl" className="prevent-scrolling">
                   <Flex height="90%" flexDirection="column" >
-                      <Container maxW="100%" className="cell-grid-container" m="0" p="0" mt="1rem" bgColor="gray.700" borderRadius="0.5rem" overflow="hidden">
+                      <Container maxW="100%" className="cell-grid-container" 
+                      m="0" p="0" mt="1rem" bgColor="gray.700" borderRadius="0.5rem">
                           <SimpleGrid 
                             spacing={0} columns={gameState.gameSettings.boardSize} 
-                            gap={2} p="4px" className="cell-grid" width="100%" 
+                            gap={4} p="4px" className="cell-grid" width="100%" 
                             overflow="hidden"
                             onTouchMove={onTouchDrag}
                             onTouchEnd={onTouchEnd}
