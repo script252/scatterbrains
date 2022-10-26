@@ -7,10 +7,10 @@ function dfs(board: string[][], s: string, i: number, j: number, n: number, m: n
         return false;
     }
      
-    if(s[idx]!= board[i][j]){
+    if(s[idx] !== board[i][j]){
         return false;
     }
-    if(idx == s.length-1){
+    if(idx === s.length-1){
         return true;
     }
      

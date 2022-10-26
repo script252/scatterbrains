@@ -41,12 +41,21 @@ export class Word {
     score: number = 0;
 }
 
+// Word scoring for length
+export const wordScores = [0,0,0,1,1,2,3,5,11];
+
 export class ScoreState {
     // So we can quickly check for already added words
     // This doesn't convert to json!
     discoveredWordsSet: Set<string> = new Set();
     // Words with their associated scores
     discoveredWords: string[] = [];
+}
+
+export interface TurnScore {
+    turnScore: number;
+    found: number;
+    wordsInBoard: number;
 }
 
 export class WordScrambleGameState {
@@ -57,6 +66,7 @@ export class WordScrambleGameState {
     showNewGame: boolean = false;
     score: ScoreState = new ScoreState();
     possibleWordCount: number = -1;
+    possibleWords: string[] = [];
 }
 
 export class NewGameSettings {

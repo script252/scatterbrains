@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import './wordScrambleGame.scss';
 import * as WordScrambleLib from '../../lib/wordScrambleLib';
-import { Container, Flex, SimpleGrid } from '@chakra-ui/react';
+import { Box, Button, Container, Flex, HStack, SimpleGrid, Spacer, Text } from '@chakra-ui/react';
 import { useParams } from 'react-router-dom';
-import { CellData, NewGameSettings, WordScrambleGameState } from '../../lib/wordScrambleTypes';
+import { CellData, NewGameSettings, TurnScore, wordScores, WordScrambleGameState } from '../../lib/wordScrambleTypes';
 import Cell from '../Cell/Cell';
+import WordList from '../WordList/WordList';
 
 function WordScrambleGame(props: any) {
 
@@ -28,7 +29,7 @@ function WordScrambleGame(props: any) {
       const words: string[] = WordScrambleLib.findWords(gs);
       console.log(`Found ${words.length} unique words`);
       
-      setGameState({...gs, showNewGame: startNewGame === 'new', possibleWordCount: words.length});
+      setGameState({...gs, showNewGame: startNewGame === 'new', possibleWordCount: words.length, possibleWords: words});
       WordScrambleLib.saveGameState(gs);
 
   }, [startNewGame]);
@@ -42,7 +43,6 @@ function WordScrambleGame(props: any) {
   const onClick = (cell: CellData, gs: WordScrambleGameState, dragging: boolean = false) => {
       //console.log('onClick, dragging: ', dragging);
       setDragging(dragging);
-      //setGameState(WordScrambleLib.saveGameState(WordScrambleLib.onCellClicked(cell, gs)));
       setGameState(WordScrambleLib.saveGameState(WordScrambleLib.onCellClicked(cell, gs, dragging)));
   }
 
@@ -54,7 +54,6 @@ function WordScrambleGame(props: any) {
         setGameState(WordScrambleLib.saveGameState(WordScrambleLib.onCellClicked(gameState.cells[cellId], gameState, false)));
       }
     }
-    //e.preventDefault();  // Don't trigger a mouse click event
   }
 
   const onTouchDrag = (e: any) => {
@@ -100,6 +99,11 @@ function WordScrambleGame(props: any) {
     setGameState(WordScrambleLib.saveGameState(WordScrambleLib.onSelectionComplete(gameState)));
   }
 
+  const onRoll = () => {
+    setGameState(WordScrambleLib.roll(gameState));
+    WordScrambleLib.saveGameState(gameState);
+  }
+
   // const onStartNewGame = (settings: NewGameSettings) => {
   //     const newGameState = WordScrambleLib.init(settings);
   //     if(newGameState !== null) {
@@ -114,7 +118,8 @@ function WordScrambleGame(props: any) {
   //     setGameState({...gameState, showNewGame: false});
   //     onCloseNewGameModal();
   // }
-  
+
+  const scoreInfo: TurnScore = WordScrambleLib.getScore(gameState);
 
   return (
               <Container height="100vh" maxW="xl">
@@ -144,6 +149,22 @@ function WordScrambleGame(props: any) {
                               })}
                           </SimpleGrid>
                       </Container>
+                      <Container mt='1rem' maxW="xl" ml="0" mr="0" p="0">
+                        <WordList>
+                          {Array.from(gameState.score.discoveredWordsSet).map((word: string, index: number) => (<Flex pl='1rem' pr='1rem' key={index}><Text color='gray.300'>{word}</Text><Spacer></Spacer><Text color="gray.100">{wordScores[Math.min(word.length, 8)]}</Text></Flex>))}
+                        </WordList>
+                      </Container>
+                      <Container mt='1rem' maxW="xl" ml="0" mr="0" p="0">
+                        <HStack width="100%" height="20%" pl="0" pr="0">
+                              <Box>
+                                <Text color='gray.100'>Score: {scoreInfo.turnScore}</Text>
+                              </Box>
+                              <Box>
+                                <Text color='gray.100'>Found: {scoreInfo.found}/{scoreInfo.wordsInBoard}</Text>
+                              </Box>
+                        </HStack>
+                      </Container>
+                      <Button mt='1rem' colorScheme='gray' onClick={onRoll}>Roll</Button>
                       {/* <VStack spacing='10px' width="100%" flexGrow="1">
                           <CellInputButtons onClick={(value: number) => onEnterCellValue(value, gameState.noteMode)}></CellInputButtons>
                           <HStack width="100%" height="20%" pl="8px" pr="8px">
