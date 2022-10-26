@@ -122,7 +122,7 @@ function WordScrambleGame(props: any) {
   const scoreInfo: TurnScore = WordScrambleLib.getScore(gameState);
 
   return (
-              <Container height="100vh" maxW="xl" overflow="hidden">
+              <Container height="100vh" maxW="xl" className="prevent-scrolling">
                   <Flex height="90%" flexDirection="column" >
                       <Container maxW="100%" className="cell-grid-container" m="0" p="0">
                           <SimpleGrid 
