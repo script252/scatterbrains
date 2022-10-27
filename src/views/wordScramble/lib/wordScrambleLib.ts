@@ -14,6 +14,7 @@ export function init(settings: NewGameSettings): WordScrambleGameState {
 
     const initialState: WordScrambleGameState = {
         ...new WordScrambleGameState(),
+        gameSettings: {...settings},
         cells: emptyCells.map((cell, index:number) => {
             const row: number = Math.floor(index / settings.boardSize);
             const col: number = Math.floor(index % settings.boardSize);
@@ -22,7 +23,7 @@ export function init(settings: NewGameSettings): WordScrambleGameState {
                 id: index, 
                 col: col, 
                 row: row, 
-                value: letter === 'Q' ? 'QU' : letter,   // UGLY hack to add QU
+                value: addQU(settings, letter)
             } as CellData;
         }),
     };
@@ -30,11 +31,21 @@ export function init(settings: NewGameSettings): WordScrambleGameState {
     return initialState;
 }
 
+function addQU(settings: NewGameSettings, letter: string) {
+    if(settings.combineQU === true) {
+        return letter === 'Q' ? 'QU' : letter;   // UGLY hack to add QU
+    }
+    return letter;
+}
+
 export function roll(gameState: WordScrambleGameState): WordScrambleGameState {
+
+    console.log(gameState.gameSettings);
 
     const rolledCubes = getRolledCubes();
     const gs: WordScrambleGameState = {
         ...gameState,
+        gameSettings: gameState.gameSettings,
         score: new WordScrambleGameState().score,
         selected: [],
         lastScoredWord: [],
@@ -46,7 +57,7 @@ export function roll(gameState: WordScrambleGameState): WordScrambleGameState {
                 id: index, 
                 col: col, 
                 row: row, 
-                value: letter === 'Q' ? 'QU' : letter,   // UGLY hack to add QU
+                value: addQU(gameState.gameSettings, letter)
             } as CellData;
         }),
     };

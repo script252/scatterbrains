@@ -6,10 +6,11 @@ import { useParams } from 'react-router-dom';
 import { CellData, NewGameSettings, TurnScore, wordScores, WordScrambleGameState } from '../../lib/wordScrambleTypes';
 import Cell from '../Cell/Cell';
 import WordList from '../WordList/WordList';
+import DialogNewGame from '../DialogNewGame/DialogNewGame';
 
 function WordScrambleGame(props: any) {
 
-  //const {onCloseNewGameModal} = props;
+  const {onCloseNewGameModal} = props;
 
   const [gameState, setGameState] = useState(new WordScrambleGameState());
   const [dragging, setDragging] = useState(false);
@@ -102,20 +103,20 @@ function WordScrambleGame(props: any) {
     WordScrambleLib.saveGameState(gameState);
   }
 
-  // const onStartNewGame = (settings: NewGameSettings) => {
-  //     const newGameState = WordScrambleLib.init(settings);
-  //     if(newGameState !== null) {
-  //         const gs = {...newGameState, showNewGame: false};
-  //         setGameState(gs);
-  //         WordScrambleLib.saveGameState(gs);
-  //         onCloseNewGameModal();
-  //     }
-  // }
+  const onStartNewGame = (settings: NewGameSettings) => {
+      const newGameState = WordScrambleLib.init(settings);
+      if(newGameState !== null) {
+          const gs = {...newGameState, showNewGame: false};
+          setGameState(gs);
+          WordScrambleLib.saveGameState(gs);
+          onCloseNewGameModal();
+      }
+  }
 
-  // const onNewGameCancel = () => {
-  //     setGameState({...gameState, showNewGame: false});
-  //     onCloseNewGameModal();
-  // }
+  const onNewGameCancel = () => {
+      setGameState({...gameState, showNewGame: false});
+      onCloseNewGameModal();
+  }
 
   const scoreInfo: TurnScore = WordScrambleLib.getScore(gameState);
 
@@ -175,8 +176,8 @@ function WordScrambleGame(props: any) {
                           </HStack>
                       </VStack> */}
                   </Flex>
-                  {/* <DialogNewGame startNewGameState={gameState.showNewGame} onConfirm={(settings: any) => onStartNewGame(settings)} onCancel={onNewGameCancel}></DialogNewGame>
-                  <DialogVictory gameState={gameState} onCloseVictory={() => setGameState({...gameState, showVictory: false})}></DialogVictory> */}
+                  <DialogNewGame startNewGameState={gameState.showNewGame} onSettingsConfirmed={(settings: any) => onStartNewGame(settings)} onCancel={onNewGameCancel}></DialogNewGame>
+                  {/* <DialogVictory gameState={gameState} onCloseVictory={() => setGameState({...gameState, showVictory: false})}></DialogVictory> */}
               </Container>
   );
 }

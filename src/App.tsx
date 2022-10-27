@@ -54,7 +54,7 @@ function App() {
                 <Route path="/memory" element={<MemoryGame />} />
                 <Route path="/sudoku/:startNewGame" element={<SudokuGame onCloseNewGameModal={() => {n('sudoku')}}/>} />
                 <Route path="/sudoku" element={<SudokuGame/>} />
-                <Route path="/word-scramble/:startNewGame" element={<WordScrambleGame onCloseNewGameModal={() => {n('sudoku')}}/>} />
+                <Route path="/word-scramble/:startNewGame" element={<WordScrambleGame onCloseNewGameModal={() => {n('word-scramble')}}/>} />
                 <Route path="/word-scramble" element={<WordScrambleGame/>} />
               </Routes>
             </Flex>
