@@ -50,12 +50,15 @@ export class ScoreState {
     discoveredWordsSet: Set<string> = new Set();
     // Words with their associated scores
     discoveredWords: string[] = [];
+    turnScore: number = 0;
+    found: number = 0;
+    wordsInBoard: number = 0;
 }
 
-export interface TurnScore {
-    turnScore: number;
-    found: number;
-    wordsInBoard: number;
+export class TurnScore {
+    turnScore: number = 0;
+    found: number = 0;
+    wordsInBoard: number = 0;
 }
 
 export class WordScrambleGameState {
@@ -67,7 +70,8 @@ export class WordScrambleGameState {
     showVictory: boolean = false;
     showNewGame: boolean = false;
     currentTurn: number = 0;
-    score: ScoreState = new ScoreState();
+    gameOver: boolean = false;
+    score: ScoreState[] = [new ScoreState()];
     possibleWordCount: number = -1;
     possibleWords: string[] = [];
 }
@@ -75,7 +79,8 @@ export class WordScrambleGameState {
 export class NewGameSettings {
     boardSize: number = 4;
     timed: boolean = true;
-    timeLimit: number = 60 * 3;  // Seconds
+    timeLimit: number = 10;//60 * 3;  // Seconds
+    rounds: number = 3;
     combineQU: boolean = true;
     includeRedCube: boolean = true;
 }

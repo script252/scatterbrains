@@ -1,8 +1,20 @@
 import { ensureFieldsPresent } from "../../../lib/utilities";
 import { findWordsFast } from "./cellUtilitiesFast";
-import { CellData, CellDirs, CellDir, NewGameSettings, standardCubes, WordScrambleGameState, DirStrings, wordScores, TurnScore } from "./wordScrambleTypes";
+import { CellData, CellDirs, CellDir, NewGameSettings, standardCubes, WordScrambleGameState, DirStrings, wordScores, TurnScore, ScoreState } from "./wordScrambleTypes";
 
 const words: string[] = require('an-array-of-english-words');
+
+function createScores(settings: NewGameSettings): ScoreState[] {
+
+    let scoreStates: ScoreState[] = [];
+    for(let i = 0; i < settings.rounds; i++) {
+        scoreStates.push(new ScoreState());
+        console.log(scoreStates);
+        scoreStates[i].discoveredWordsSet.has('bob');
+    }
+
+    return scoreStates;
+}
 
 export function init(settings: NewGameSettings): WordScrambleGameState {
 
@@ -15,6 +27,7 @@ export function init(settings: NewGameSettings): WordScrambleGameState {
     const initialState: WordScrambleGameState = {
         ...new WordScrambleGameState(),
         gameSettings: {...settings},
+        score: createScores(settings),
         cells: emptyCells.map((cell, index:number) => {
             const row: number = Math.floor(index / settings.boardSize);
             const col: number = Math.floor(index % settings.boardSize);
@@ -28,6 +41,7 @@ export function init(settings: NewGameSettings): WordScrambleGameState {
         }),
     };
 
+    //console.log('init', initialState);
     return initialState;
 }
 
@@ -42,13 +56,23 @@ export function roll(gameState: WordScrambleGameState): WordScrambleGameState {
 
     console.log(gameState.gameSettings);
 
+    if(gameState.currentTurn >= gameState.gameSettings.rounds - 1) {
+        const gs: WordScrambleGameState = {
+            ...gameState,
+            gameOver: true,
+            showVictory: true
+        };
+
+        return gs;
+    }
+
     const rolledCubes = getRolledCubes();
     const gs: WordScrambleGameState = {
         ...gameState,
         gameSettings: gameState.gameSettings,
-        score: new WordScrambleGameState().score,
         selected: [],
         lastScoredWord: [],
+        currentTurn: gameState.currentTurn + 1,
         cells: gameState.cells.map((cell, index:number) => {
             const row: number = Math.floor(index / gameState.gameSettings.boardSize);
             const col: number = Math.floor(index % gameState.gameSettings.boardSize);
@@ -91,9 +115,8 @@ function isWordValid(word: string, gameState: WordScrambleGameState): boolean {
     // isn't already in discovered word list
     const lowerCaseWord = word.toLowerCase();
     const minLength: boolean = lowerCaseWord.length > 2;
-    if(minLength === true) {
-        
-        const newWord: boolean = !gameState.score.discoveredWordsSet.has(lowerCaseWord);
+    if(minLength === true) {        
+        const newWord: boolean = !getTurnScore(gameState).discoveredWordsSet.has(lowerCaseWord);
         if(newWord === true) {
             const isWord: boolean = words.some((dw:string) => {return lowerCaseWord === dw});
             return isWord === true;
@@ -157,8 +180,9 @@ export function onSelectionComplete(gameState: WordScrambleGameState, validate: 
     const word: string = getSelectedString(gameState);
     const valid = validate === true ? isWordValid(word, gameState) : true;
     if(valid === true) {
-        gs.score.discoveredWordsSet.add(word.toLowerCase());
+        getTurnScore(gs).discoveredWordsSet.add(word.toLowerCase());
         gs.lastScoredWord = [...gameState.selected];
+        gs.score[gs.currentTurn] = calcTurnScore(gs, gs.score[gs.currentTurn]);
     } else {
         gs.lastWrongWord = [...gameState.selected];
     }
@@ -225,7 +249,7 @@ export function onCellClicked(cell: CellData, gameState: WordScrambleGameState, 
 export function saveGameState(gs: WordScrambleGameState): WordScrambleGameState {
     
     // Stick set into array so it can be saved
-    gs.score.discoveredWords = Array.from(gs.score.discoveredWordsSet);
+    getTurnScore(gs).discoveredWords = Array.from(getTurnScore(gs).discoveredWordsSet);
 
     localStorage.setItem('wordScrambleGameState', JSON.stringify(gs));
     return gs;
@@ -241,7 +265,7 @@ export function loadGameState(gameState: WordScrambleGameState): WordScrambleGam
         const fieldsFilled: WordScrambleGameState = ensureFieldsPresent(loadedStateParsed, new WordScrambleGameState(), WordScrambleGameState);
 
         // Fill set with saved scored words
-        fieldsFilled.score.discoveredWordsSet = new Set<string>(fieldsFilled.score.discoveredWords);
+        fieldsFilled.score.map((s: ScoreState) => s.discoveredWordsSet = new Set<string>(s.discoveredWords));
         return fieldsFilled;
     } catch (err) {
         console.warn('No save state found, generating new game', gameState);
@@ -253,16 +277,37 @@ export function findWords(gameState: WordScrambleGameState): string[] {
     return findWordsFast(gameState, words.filter((w:string) => w.length <= 16));
 }
 
-export function getScore(gameState: WordScrambleGameState): TurnScore {
-    const allScores: number[] = Array.from(gameState.score.discoveredWordsSet).map((word: string) => wordScores[Math.min(word.length, 8)]);
+export function getCurrentTurnScore(gameState: WordScrambleGameState): TurnScore {
+    const allScores: number[] = Array.from(getTurnScore(gameState).discoveredWordsSet).map((word: string) => wordScores[Math.min(word.length, 8)]);
     const turnScore = allScores.length > 0 ? allScores.reduce((prev: number, curr: number, index: number) => curr + prev) : 0;
 
-    const found: number = gameState.score.discoveredWordsSet.size;
+    const found: number = getTurnScore(gameState).discoveredWordsSet.size;
     const wordsInBoard: number = gameState.possibleWordCount;
 
     return {
         turnScore: turnScore,
         found: found,
         wordsInBoard: wordsInBoard
+    };
+}
+
+export function getTurnScore(gameState: WordScrambleGameState): ScoreState {
+    return gameState.score[gameState.currentTurn];
+}
+
+export function calcTurnScore(gameState: WordScrambleGameState, score: ScoreState): ScoreState {
+
+    const allScores: number[] = Array.from(score.discoveredWordsSet).map((word: string) => wordScores[Math.min(word.length, 8)]);
+    const turnScore = allScores.length > 0 ? allScores.reduce((prev: number, curr: number, index: number) => curr + prev) : 0;
+
+    const found: number = score.discoveredWordsSet.size;
+    const wordsInBoard: number = gameState.possibleWordCount;
+
+    return {
+        turnScore: turnScore,
+        found: found,
+        wordsInBoard: wordsInBoard,
+        discoveredWordsSet: score.discoveredWordsSet,
+        discoveredWords: score.discoveredWords
     };
 }

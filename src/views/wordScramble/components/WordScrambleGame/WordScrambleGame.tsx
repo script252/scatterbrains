@@ -7,6 +7,8 @@ import { CellData, NewGameSettings, TurnScore, wordScores, WordScrambleGameState
 import Cell from '../Cell/Cell';
 import WordList from '../WordList/WordList';
 import DialogNewGame from '../DialogNewGame/DialogNewGame';
+import DialogVictory from '../../DialogVictory/DialogVictory';
+import Timer from '../Timer/Timer';
 
 function WordScrambleGame(props: any) {
 
@@ -14,6 +16,7 @@ function WordScrambleGame(props: any) {
 
   const [gameState, setGameState] = useState(new WordScrambleGameState());
   const [dragging, setDragging] = useState(false);
+  const [timerExpireAt, setTimerExpireAt] = useState(new Date());
   const cellSize = 52;
 
   // OPTIMIZE: sets would be faster
@@ -36,6 +39,7 @@ function WordScrambleGame(props: any) {
       setGameState({...gs, showNewGame: startNewGame === 'new', possibleWordCount: words.length, possibleWords: words});
       WordScrambleLib.saveGameState(gs);
 
+      console.log('postInit', gs);
   }, [startNewGame]);
 
   const getCellIdAtLocation = (clientX: number, clientY: number) => {
@@ -101,6 +105,10 @@ function WordScrambleGame(props: any) {
   const onRoll = () => {
     setGameState(WordScrambleLib.roll(gameState));
     WordScrambleLib.saveGameState(gameState);
+
+    const future = new Date(0, 0, 0, 0, 0, gameState.gameSettings.timeLimit);
+    const now = Date.now();
+    setTimerExpireAt(future);
   }
 
   const onStartNewGame = (settings: NewGameSettings) => {
@@ -118,11 +126,16 @@ function WordScrambleGame(props: any) {
       onCloseNewGameModal();
   }
 
-  const scoreInfo: TurnScore = WordScrambleLib.getScore(gameState);
+  const scoreInfo: TurnScore = WordScrambleLib.getCurrentTurnScore(gameState);
+
+  const onTimeout = () => {
+    
+  }
 
   return (
               <Container height="100vh" maxW="xl" className="prevent-scrolling">
                   <Flex height="90%" flexDirection="column" >
+                      <Timer startTime={gameState.gameSettings.timeLimit} expireAt={timerExpireAt} onTimeout={() => onTimeout()}></Timer>
                       <Container maxW="100%" className="cell-grid-container" 
                       m="0" p="0" mt="1rem" bgColor="gray.700" borderRadius="0.5rem">
                           <SimpleGrid 
@@ -154,11 +167,14 @@ function WordScrambleGame(props: any) {
                       </Container>
                       <Container mt='1rem' maxW="xl" ml="0" mr="0" p="0">
                         <WordList>
-                          {Array.from(gameState.score.discoveredWordsSet).map((word: string, index: number) => (<Flex pl='1rem' pr='1rem' key={index}><Text color='gray.300'>{word}</Text><Spacer></Spacer><Text color="gray.100">{wordScores[Math.min(word.length, 8)]}</Text></Flex>))}
+                          {Array.from(WordScrambleLib.getTurnScore(gameState).discoveredWordsSet).map((word: string, index: number) => (<Flex pl='1rem' pr='1rem' key={index}><Text color='gray.300'>{word}</Text><Spacer></Spacer><Text color="gray.100">{wordScores[Math.min(word.length, 8)]}</Text></Flex>))}
                         </WordList>
                       </Container>
                       <Container mt='1rem' maxW="xl" ml="0" mr="0" p="0">
                         <HStack width="100%" height="20%" pl="0" pr="0">
+                              <Box width="100%">
+                                <Text color='gray.100'>Turn: {gameState.currentTurn}</Text>
+                              </Box>
                               <Box width="100%">
                                 <Text color='gray.100'>Score: {scoreInfo.turnScore}</Text>
                               </Box>
@@ -177,7 +193,7 @@ function WordScrambleGame(props: any) {
                       </VStack> */}
                   </Flex>
                   <DialogNewGame startNewGameState={gameState.showNewGame} onSettingsConfirmed={(settings: any) => onStartNewGame(settings)} onCancel={onNewGameCancel}></DialogNewGame>
-                  {/* <DialogVictory gameState={gameState} onCloseVictory={() => setGameState({...gameState, showVictory: false})}></DialogVictory> */}
+                  <DialogVictory gameState={gameState} onCloseVictory={() => setGameState({...gameState, showVictory: false})}></DialogVictory>
               </Container>
   );
 }
