@@ -40,9 +40,8 @@ function DialogVictory(props: any) {
                 <Center>
                     
                     <VStack>
-                      <Text>Totals:</Text>
-                      <Text>Score: {scoreTotals.turnScore}</Text>
-                      <Text>Words found: {scoreTotals.found} of {scoreTotals.wordsInBoard}</Text>
+                      <Text>Total score: {scoreTotals.turnScore}</Text>
+                      <Text>Total found: {scoreTotals.found}/{scoreTotals.wordsInBoard}</Text>
                     </VStack>
                 </Center>
             </ModalBody>

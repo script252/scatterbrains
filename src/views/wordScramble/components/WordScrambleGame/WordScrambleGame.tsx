@@ -104,7 +104,7 @@ function WordScrambleGame(props: any) {
                       <Container mt='1rem' maxW="xl" ml="0" mr="0" p="0">
                         <HStack width="100%" height="20%" pl="0" pr="0">
                               <Box width="100%">
-                                <Text color='gray.100'>Turn: {gameState.currentTurn+1}</Text>
+                                <Text color='gray.100'>Turn: {gameState.currentTurn+1}/{gameState.gameSettings.rounds}</Text>
                               </Box>
                               <Box width="100%">
                                 <Text color='gray.100'>Score: {scoreInfo.turnScore}</Text>

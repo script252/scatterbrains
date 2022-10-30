@@ -42,6 +42,15 @@ function DialogNewGame(props: any) {
                     <ModalBody>
                         <Center>
                             <VStack>
+                            <RadioGroup colorScheme="blue" onChange={(v) => settingsChanged({rounds: Number(v)})} defaultValue='3'>
+                            <Stack direction='row'>
+                                <Text>Rounds:</Text>
+                                <Radio colorScheme="blue" value='1'>1</Radio>
+                                <Radio colorScheme="blue" value='3'>3</Radio>
+                                <Radio colorScheme="blue" value='5'>5</Radio>
+                                <Radio colorScheme="blue" value='10'>10</Radio>
+                            </Stack>
+                            </RadioGroup>
                             <RadioGroup colorScheme="blue" onChange={setTimeLimit} defaultValue='2'>
                             <Stack direction='row'>
                                 <Text>Round time:</Text>
