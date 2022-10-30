@@ -7,7 +7,7 @@ import { CellData, NewGameSettings, TurnScore, wordScores, WordScrambleGameState
 import Cell from '../Cell/Cell';
 import WordList from '../WordList/WordList';
 import DialogNewGame from '../DialogNewGame/DialogNewGame';
-import DialogVictory from '../../DialogVictory/DialogVictory';
+import DialogVictory from '../DialogVictory/DialogVictory';
 import Timer from '../Timer/Timer';
 
 function WordScrambleGame(props: any) {
@@ -16,7 +16,7 @@ function WordScrambleGame(props: any) {
 
   const [gameState, setGameState] = useState(new WordScrambleGameState());
   const [dragging, setDragging] = useState(false);
-  const [timerExpireAt, setTimerExpireAt] = useState(new Date());
+  const [timerExpireAt, setTimerExpireAt] = useState([new Date(), new Date()]);
   const cellSize = 52;
 
   // OPTIMIZE: sets would be faster
@@ -106,9 +106,10 @@ function WordScrambleGame(props: any) {
     setGameState(WordScrambleLib.roll(gameState));
     WordScrambleLib.saveGameState(gameState);
 
-    const future = new Date(0, 0, 0, 0, 0, gameState.gameSettings.timeLimit);
-    const now = Date.now();
-    setTimerExpireAt(future);
+    const future = new Date();
+    future.setSeconds(future.getSeconds() + gameState.gameSettings.timeLimit);
+    console.log('Setting future: ', future);
+    setTimerExpireAt([future, new Date()]);
   }
 
   const onStartNewGame = (settings: NewGameSettings) => {
@@ -118,6 +119,11 @@ function WordScrambleGame(props: any) {
           setGameState(gs);
           WordScrambleLib.saveGameState(gs);
           onCloseNewGameModal();
+
+          const future = new Date();
+          future.setSeconds(future.getSeconds() + gameState.gameSettings.timeLimit);
+          console.log('Setting future: ', future);
+          setTimerExpireAt([future, new Date()]);
       }
   }
 
@@ -135,7 +141,7 @@ function WordScrambleGame(props: any) {
   return (
               <Container height="100vh" maxW="xl" className="prevent-scrolling">
                   <Flex height="90%" flexDirection="column" >
-                      <Timer startTime={gameState.gameSettings.timeLimit} expireAt={timerExpireAt} onTimeout={() => onTimeout()}></Timer>
+                      <Timer expireAtAndStartTime={timerExpireAt} onTimeout={() => onTimeout()}></Timer>
                       <Container maxW="100%" className="cell-grid-container" 
                       m="0" p="0" mt="1rem" bgColor="gray.700" borderRadius="0.5rem">
                           <SimpleGrid 

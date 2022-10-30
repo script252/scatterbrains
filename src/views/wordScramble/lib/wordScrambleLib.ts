@@ -41,7 +41,7 @@ export function init(settings: NewGameSettings): WordScrambleGameState {
         }),
     };
 
-    //console.log('init', initialState);
+    console.log('init', initialState);
     return initialState;
 }
 

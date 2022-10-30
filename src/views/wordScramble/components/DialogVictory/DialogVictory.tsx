@@ -2,7 +2,7 @@ import React from 'react';
 import { useDisclosure } from "@chakra-ui/hooks";
 import { Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, ModalBody, ModalFooter, Center, VStack } from "@chakra-ui/react";
 import { Button, Text } from "@chakra-ui/react";
-import { ScoreState, WordScrambleGameState } from '../lib/wordScrambleTypes';
+import { ScoreState, WordScrambleGameState } from '../../lib/wordScrambleTypes';
 
 function getScoreTotals(gs: WordScrambleGameState): ScoreState {
   console.log(gs);

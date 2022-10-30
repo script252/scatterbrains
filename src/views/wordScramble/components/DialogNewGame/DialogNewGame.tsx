@@ -9,7 +9,7 @@ function DialogNewGame(props: any) {
   
     const { onSettingsConfirmed, startNewGameState, onCancel } = props;
 
-    const [state, setState] = useState(new NewGameSettings());
+    const [state, setState] = useState({...new NewGameSettings()});
 
     const cancelled = () => {
         onCancel();
@@ -27,6 +27,15 @@ function DialogNewGame(props: any) {
         setState({...state, timeLimit: 60 * value});
     }
 
+    const onConfirm = () => {
+        onSettingsConfirmed({...state});
+        // setState((prev: NewGameSettings) => {
+        //     console.log(prev);
+        //     onSettingsConfirmed({...new NewGameSettings(), ...state});
+        //     return {...new NewGameSettings(), ...state};
+        // });
+    }
+
     return (
         <>
             <Modal onClose={cancelled} isOpen={isOpen || startNewGameState} isCentered size={"xl"}>
@@ -37,7 +46,7 @@ function DialogNewGame(props: any) {
                     <ModalBody>
                         <Center>
                             <VStack>
-                            <RadioGroup onChange={setTimeLimit} value={2}>
+                            <RadioGroup onChange={setTimeLimit} value={1}>
                             <Stack direction='row'>
                                 <Radio value='1'>1</Radio>
                                 <Radio value='2'>2</Radio>
@@ -53,7 +62,7 @@ function DialogNewGame(props: any) {
                     </ModalBody>
                     <ModalFooter>
                     <Button onClick={cancelled}>Cancel</Button>
-                    <Button onClick={() => onSettingsConfirmed(state)}>Accept</Button>
+                    <Button onClick={() => onConfirm()}>Accept</Button>
                     </ModalFooter>
                 </ModalContent>
             </Modal>

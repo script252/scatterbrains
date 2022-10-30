@@ -79,7 +79,7 @@ export class WordScrambleGameState {
 export class NewGameSettings {
     boardSize: number = 4;
     timed: boolean = true;
-    timeLimit: number = 10;//60 * 3;  // Seconds
+    timeLimit: number = 60 * 1;  // Seconds
     rounds: number = 3;
     combineQU: boolean = true;
     includeRedCube: boolean = true;
