@@ -5,7 +5,6 @@ import { Button, Text } from "@chakra-ui/react";
 import { ScoreState, WordScrambleGameState } from '../../lib/wordScrambleTypes';
 
 function getScoreTotals(gs: WordScrambleGameState): ScoreState {
-  console.log(gs);
   return gs.score.reduce((prev: ScoreState, curr: ScoreState): ScoreState => {
     return {
       turnScore: prev.turnScore + curr.turnScore, 

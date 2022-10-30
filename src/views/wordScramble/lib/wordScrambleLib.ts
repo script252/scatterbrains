@@ -9,7 +9,6 @@ function createScores(settings: NewGameSettings): ScoreState[] {
     let scoreStates: ScoreState[] = [];
     for(let i = 0; i < settings.rounds; i++) {
         scoreStates.push(new ScoreState());
-        console.log(scoreStates);
         scoreStates[i].discoveredWordsSet.has('bob');
     }
 
@@ -41,7 +40,7 @@ export function init(settings: NewGameSettings): WordScrambleGameState {
         }),
     };
 
-    console.log('init', initialState);
+    //console.log('init', initialState);
     return initialState;
 }
 
@@ -54,7 +53,7 @@ function addQU(settings: NewGameSettings, letter: string) {
 
 export function roll(gameState: WordScrambleGameState): WordScrambleGameState {
 
-    console.log(gameState.gameSettings);
+    //console.log(gameState.gameSettings);
 
     if(gameState.currentTurn >= gameState.gameSettings.rounds - 1) {
         const gs: WordScrambleGameState = {

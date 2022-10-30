@@ -32,7 +32,7 @@ function WordScrambleGame(props: any) {
       setGameState({...gs, showNewGame: startNewGame === 'new', possibleWordCount: words.length, possibleWords: words});
       WordScrambleLib.saveGameState(gs);
 
-      console.log('postInit', gs);
+      //console.log('postInit', gs);
   }, [startNewGame]);
 
   const onRoll = () => {
@@ -41,11 +41,11 @@ function WordScrambleGame(props: any) {
 
     const future = new Date();
     future.setSeconds(future.getSeconds() + gameState.gameSettings.timeLimit);
-    console.log('Setting future: ', future);
     setTimerExpireAt([future, new Date()]);
   }
 
   const onStartNewGame = (settings: NewGameSettings) => {
+      //console.log('onStartNewGame', settings);
       const newGameState = WordScrambleLib.init(settings);
       if(newGameState !== null) {
           const gs = {...newGameState, showNewGame: false};
@@ -80,9 +80,16 @@ function WordScrambleGame(props: any) {
       setGameState(gs);
       WordScrambleLib.saveGameState(gs);
     } else {
-      setGameState({...gameState, turnHasEnded: true});
-      WordScrambleLib.saveGameState({...gameState, turnHasEnded: true});
+      setGameState({...gameState, turnHasEnded: gameState.gameSettings.timed ? true : false});
+      WordScrambleLib.saveGameState({...gameState, turnHasEnded: gameState.gameSettings.timed ? true : false});
     }
+  }, []);
+
+  // Lots of copying and saving happening here, every 100ms
+  const onTimerTick = useCallback((timerValue: number) => {
+    console.log('timer tick: ', timerValue);
+    WordScrambleLib.saveGameState({...gameState, timer: timerValue});
+    setGameState({...gameState, timer: timerValue});
   }, []);
 
   const isRollDisabled = () => {
@@ -94,7 +101,7 @@ function WordScrambleGame(props: any) {
   return (
               <Container height="100vh" maxW="xl" className="prevent-scrolling">
                   <Flex height="90%" flexDirection="column" >
-                      <Timer locked={gameState.turnHasEnded} expireAtAndStartTime={timerExpireAt} onTimeout={() => onTimeout(gameState)}></Timer>
+                      <Timer hidden={gameState.gameSettings.timed === false} locked={gameState.turnHasEnded} expireAtAndStartTime={timerExpireAt} onTick={(value: number) => onTimerTick(value)} onTimeout={() => onTimeout(gameState)}></Timer>
                       <WordBoard locked={gameState.turnHasEnded} gameState={gameState} onStateChange={(newState: WordScrambleGameState)=> setGameState(newState)}></WordBoard>
                       <Container mt='1rem' maxW="xl" ml="0" mr="0" p="0">
                         <WordList>
@@ -123,7 +130,7 @@ function WordScrambleGame(props: any) {
                           </HStack>
                       </VStack> */}
                   </Flex>
-                  <DialogNewGame startNewGameState={gameState.showNewGame} onSettingsConfirmed={(settings: any) => onStartNewGame(settings)} onCancel={onNewGameCancel}></DialogNewGame>
+                  <DialogNewGame startNewGameState={gameState.showNewGame} onSettingsConfirmed={(settings: NewGameSettings) => onStartNewGame(settings)} onCancel={onNewGameCancel}></DialogNewGame>
                   <DialogVictory gameState={gameState} onCloseVictory={() => {setGameState({...gameState, showVictory: false}); WordScrambleLib.saveGameState({...gameState, showVictory: false}); }}></DialogVictory>
               </Container>
   );

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDisclosure } from "@chakra-ui/hooks";
 import { Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, ModalBody, ModalFooter, Center, Checkbox, VStack, Radio, RadioGroup, Stack, Text } from "@chakra-ui/react";
 import { Button } from "@chakra-ui/react";
@@ -9,7 +9,7 @@ function DialogNewGame(props: any) {
   
     const { onSettingsConfirmed, startNewGameState, onCancel } = props;
 
-    const [state, setState] = useState({...new NewGameSettings()});
+    const [state, setState] = useState(new NewGameSettings());
 
     const cancelled = () => {
         onCancel();
@@ -24,13 +24,26 @@ function DialogNewGame(props: any) {
         if(value === '-1') {
             setState({...state, timed: false, timeLimit: -1});
         } else {
-            setState({...state, timed: true, timeLimit: 60 * value});
+            setState({...state, timed: true, timeLimit: 60 * Number(value)});
         }
     }
 
-    const onConfirm = () => {
-        onSettingsConfirmed({...state});
+    const onConfirm = (state: NewGameSettings) => {
+
+        //const init = new NewGameSettings();
+
+        if(state.timeLimit === -1) {
+            onSettingsConfirmed({...state, timed: false});
+            onClose();
+        } else {
+            onSettingsConfirmed({...state, timed: true});
+            onClose();
+        }
     }
+
+    useEffect(() => {
+        setState(new NewGameSettings());
+    }, [startNewGameState]);
 
     return (
         <>
@@ -55,8 +68,10 @@ function DialogNewGame(props: any) {
                             <Stack direction='row'>
                                 <Text>Round time:</Text>
                                 <Radio colorScheme="blue" value='0.10'>0.10</Radio>
+                                <Radio colorScheme="blue" value='1'>1</Radio>
                                 <Radio colorScheme="blue" value='2'>2</Radio>
                                 <Radio colorScheme="blue" value='3'>3</Radio>
+                                <Radio colorScheme="blue" value='5'>5</Radio>
                                 <Radio colorScheme="blue" value='-1'>Unlimited</Radio>
                             </Stack>
                             </RadioGroup>
@@ -68,7 +83,7 @@ function DialogNewGame(props: any) {
                     </ModalBody>
                     <ModalFooter>
                     <Button onClick={cancelled}>Cancel</Button>
-                    <Button onClick={() => onConfirm()}>Accept</Button>
+                    <Button onClick={() => onConfirm(state)}>Accept</Button>
                     </ModalFooter>
                 </ModalContent>
             </Modal>
