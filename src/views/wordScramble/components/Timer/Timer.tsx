@@ -4,27 +4,25 @@ import React, { useEffect, useState } from 'react';
 
 function Timer(props: any) {
 
-    const {onTimeout, expireAtAndStartTime} = props;
+    const {onTimeout, expireAtAndStartTime, locked=false} = props;
 
     const [timerValue, setTimerValue] = useState(100);
     //const [startTime, setStartTime] = useState(new Date(Date.now()));
     
 
     useEffect(() => {
-
+        if(locked === true) return;
+        console.log('timer');
         const expireAt = expireAtAndStartTime[0];
         const startTime = expireAtAndStartTime[1];
 
         //const startTime = new Date();
         const initialDiff = expireAt.getTime() - startTime.getTime();
-        console.log('Exp at, start time:', expireAt, startTime);
+        //console.log('Exp at, start time:', expireAt, startTime);
 
         const interval = setInterval(() => {
            
             const diff = expireAt.getTime() - Date.now();
-            
-            //console.log('Exp at, now:', expireAt.getTime(), Date.now());
-            //console.log('Diff and initDiff: ', diff, initialDiff);
 
             setTimerValue((prev: number) => {
                 //console.log('Timer value:', prev);
@@ -33,12 +31,12 @@ function Timer(props: any) {
                     clearInterval(interval);
                     if(onTimeout) onTimeout();
                 }
-                return Math.max(0, (diff / (10 * initialDiff)) * 1000);
+                return newVal;
             });
 
-        }, 1000);
+        }, 100);
         return () => clearInterval(interval);
-    }, [onTimeout, timerValue, expireAtAndStartTime]);
+    }, [locked, onTimeout, expireAtAndStartTime]);
 
     return (
         <Progress value={timerValue}/>

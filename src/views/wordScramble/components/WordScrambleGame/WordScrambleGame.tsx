@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import './wordScrambleGame.scss';
 import * as WordScrambleLib from '../../lib/wordScrambleLib';
-import { Box, Button, Container, Flex, HStack, SimpleGrid, Spacer, Text } from '@chakra-ui/react';
+import { Box, Button, Container, Flex, HStack, Spacer, Text } from '@chakra-ui/react';
 import { useParams } from 'react-router-dom';
-import { CellData, NewGameSettings, TurnScore, wordScores, WordScrambleGameState } from '../../lib/wordScrambleTypes';
-import Cell from '../Cell/Cell';
+import { NewGameSettings, TurnScore, wordScores, WordScrambleGameState } from '../../lib/wordScrambleTypes';
 import WordList from '../WordList/WordList';
+import WordBoard from '../WordBoard/WordBoard';
 import DialogNewGame from '../DialogNewGame/DialogNewGame';
 import DialogVictory from '../DialogVictory/DialogVictory';
 import Timer from '../Timer/Timer';
@@ -15,14 +15,7 @@ function WordScrambleGame(props: any) {
   const {onCloseNewGameModal} = props;
 
   const [gameState, setGameState] = useState(new WordScrambleGameState());
-  const [dragging, setDragging] = useState(false);
   const [timerExpireAt, setTimerExpireAt] = useState([new Date(), new Date()]);
-  const cellSize = 52;
-
-  // OPTIMIZE: sets would be faster
-  const isCellSelected = (id: number|null) => gameState.selected.some((c:number|null) => c === id);
-  const isCellScored = (id: number|null) => gameState.lastScoredWord.some((c:number|null) => c === id);
-  const isCellWrong = (id: number|null) => gameState.lastWrongWord.some((c:number|null) => c === id);
 
   const {startNewGame} = useParams();
   useEffect(() => {
@@ -41,66 +34,6 @@ function WordScrambleGame(props: any) {
 
       console.log('postInit', gs);
   }, [startNewGame]);
-
-  const getCellIdAtLocation = (clientX: number, clientY: number) => {
-    const elem = document.elementFromPoint(clientX, clientY);
-    const cellId:number = elem?.id ? Number(elem?.id) : -1;
-    return cellId;
-  }
-
-  const onClick = (cell: CellData, gs: WordScrambleGameState, dragging: boolean = false) => {
-      //console.log('onClick, dragging: ', dragging);
-      setDragging(dragging);
-      const clearedScored = WordScrambleLib.clearSelected(gs, false, true, true);
-      setGameState(WordScrambleLib.saveGameState(WordScrambleLib.onCellClicked(cell, clearedScored, dragging)));
-  }
-
-  const onTouchStart = (e: any) => {
-    if(dragging === false) {
-      //console.log('onTouchStart: single click', e);
-      const cellId = getCellIdAtLocation(e.touches[0].clientX, e.touches[0].clientY);
-      if(cellId !== -1) {
-        const clearedScored = WordScrambleLib.clearSelected(gameState, false, true, true);
-        setGameState(WordScrambleLib.saveGameState(WordScrambleLib.onCellClicked(gameState.cells[cellId], clearedScored, false)));
-      }
-    }
-  }
-
-  const onTouchDrag = (e: any) => {
-    //console.log('onTouchDrag');
-    const cellId = getCellIdAtLocation(e.touches[0].clientX, e.touches[0].clientY);
-    if(cellId !== -1) {
-      onClick(gameState.cells[cellId], gameState, true);
-    }
-  }
-
-  const onTouchEnd = (e: any) => {
-    if(dragging === true) {
-      //console.log('onTouchEnd', e);
-      setDragging(false);
-      onSelectionComplete();
-    }
-    e.preventDefault();  // Don't trigger a mouse click event
-  }
-
-  const onMouseUp = (e: any) => {
-    
-    if(dragging) {
-      //console.log('onDragEnd', e);
-      onSelectionComplete();
-    }
-  }
-
-  const onMouseDown = (e: any, cell: CellData) => {
-    //console.log('onDragStart', e);
-    onClick(cell, gameState, false);
-    
-    e.preventDefault();
-  }
-
-  const onSelectionComplete = () => {
-    setGameState(WordScrambleLib.saveGameState(WordScrambleLib.onSelectionComplete(gameState)));
-  }
 
   const onRoll = () => {
     setGameState(WordScrambleLib.roll(gameState));
@@ -121,56 +54,48 @@ function WordScrambleGame(props: any) {
           onCloseNewGameModal();
 
           const future = new Date();
-          future.setSeconds(future.getSeconds() + gameState.gameSettings.timeLimit);
-          console.log('Setting future: ', future);
+          future.setSeconds(future.getSeconds() + settings.timeLimit);
           setTimerExpireAt([future, new Date()]);
       }
   }
 
   const onNewGameCancel = () => {
-      setGameState({...gameState, showNewGame: false});
+      setGameState({...gameState, showNewGame: false, showVictory: false});
       onCloseNewGameModal();
   }
 
   const scoreInfo: TurnScore = WordScrambleLib.getCurrentTurnScore(gameState);
 
-  const onTimeout = () => {
-    
-  }
+  const onTimeout = useCallback((gameState: WordScrambleGameState) => {
+    // Turn over
+    // Lock the board, unlock roll button,
+    // Show victory modal if final turn
+    if(gameState.currentTurn + 1 >= gameState.gameSettings.rounds) {
+      const gs: WordScrambleGameState = {
+        ...gameState,
+        turnHasEnded: true,
+        gameOver: true,
+        showVictory: true
+      };
+      setGameState(gs);
+      WordScrambleLib.saveGameState(gs);
+    } else {
+      setGameState({...gameState, turnHasEnded: true});
+      WordScrambleLib.saveGameState({...gameState, turnHasEnded: true});
+    }
+  }, []);
 
+  const isRollDisabled = () => {
+    if(gameState.gameSettings.timed === false) return false;
+
+    return !gameState.turnHasEnded || (gameState.currentTurn + 1) >= gameState.gameSettings.rounds;
+  }
+  
   return (
               <Container height="100vh" maxW="xl" className="prevent-scrolling">
                   <Flex height="90%" flexDirection="column" >
-                      <Timer expireAtAndStartTime={timerExpireAt} onTimeout={() => onTimeout()}></Timer>
-                      <Container maxW="100%" className="cell-grid-container" 
-                      m="0" p="0" mt="1rem" bgColor="gray.700" borderRadius="0.5rem">
-                          <SimpleGrid 
-                            spacing={0} columns={gameState.gameSettings.boardSize} 
-                            gap={4} p="4px" className="cell-grid" width="100%" 
-                            overflow="hidden"
-                            onTouchMove={onTouchDrag}
-                            onTouchEnd={onTouchEnd}
-                            onTouchStart={onTouchStart}
-                            >
-                              {gameState.cells.map((cell: CellData, index: number) => {
-                                  return (
-                                      <Cell 
-                                          key={index} 
-                                          {...cell}
-                                          isSelected={ isCellSelected(index) }
-                                          isScored={ isCellScored(index) }
-                                          isWrong={ isCellWrong(index) }
-                                          size={cellSize+"px"} 
-                                          //onClick={(e: any) => {console.log('Cell onClick'); onClick(cell, gameState)}}
-                                          onDrag={(e: any) => onClick(cell, gameState, true)}
-                                          onMouseUp={(e:any) => onMouseUp(e)}
-                                          onMouseDown={(e: any) => onMouseDown(e, cell)}
-                                          // debugText={cell.id}
-                                      ></Cell>
-                                  )
-                              })}
-                          </SimpleGrid>
-                      </Container>
+                      <Timer locked={gameState.turnHasEnded} expireAtAndStartTime={timerExpireAt} onTimeout={() => onTimeout(gameState)}></Timer>
+                      <WordBoard locked={gameState.turnHasEnded} gameState={gameState} onStateChange={(newState: WordScrambleGameState)=> setGameState(newState)}></WordBoard>
                       <Container mt='1rem' maxW="xl" ml="0" mr="0" p="0">
                         <WordList>
                           {Array.from(WordScrambleLib.getTurnScore(gameState).discoveredWordsSet).map((word: string, index: number) => (<Flex pl='1rem' pr='1rem' key={index}><Text color='gray.300'>{word}</Text><Spacer></Spacer><Text color="gray.100">{wordScores[Math.min(word.length, 8)]}</Text></Flex>))}
@@ -179,7 +104,7 @@ function WordScrambleGame(props: any) {
                       <Container mt='1rem' maxW="xl" ml="0" mr="0" p="0">
                         <HStack width="100%" height="20%" pl="0" pr="0">
                               <Box width="100%">
-                                <Text color='gray.100'>Turn: {gameState.currentTurn}</Text>
+                                <Text color='gray.100'>Turn: {gameState.currentTurn+1}</Text>
                               </Box>
                               <Box width="100%">
                                 <Text color='gray.100'>Score: {scoreInfo.turnScore}</Text>
@@ -189,7 +114,7 @@ function WordScrambleGame(props: any) {
                               </Box>
                         </HStack>
                       </Container>
-                      <Button mt='1rem' colorScheme='gray' onClick={onRoll}>Roll</Button>
+                      <Button disabled={isRollDisabled()} mt='1rem' colorScheme='gray' onClick={onRoll}>Roll</Button>
                       {/* <VStack spacing='10px' width="100%" flexGrow="1">
                           <CellInputButtons onClick={(value: number) => onEnterCellValue(value, gameState.noteMode)}></CellInputButtons>
                           <HStack width="100%" height="20%" pl="8px" pr="8px">
@@ -199,7 +124,7 @@ function WordScrambleGame(props: any) {
                       </VStack> */}
                   </Flex>
                   <DialogNewGame startNewGameState={gameState.showNewGame} onSettingsConfirmed={(settings: any) => onStartNewGame(settings)} onCancel={onNewGameCancel}></DialogNewGame>
-                  <DialogVictory gameState={gameState} onCloseVictory={() => setGameState({...gameState, showVictory: false})}></DialogVictory>
+                  <DialogVictory gameState={gameState} onCloseVictory={() => {setGameState({...gameState, showVictory: false}); WordScrambleLib.saveGameState({...gameState, showVictory: false}); }}></DialogVictory>
               </Container>
   );
 }

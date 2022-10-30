@@ -73,6 +73,7 @@ export function roll(gameState: WordScrambleGameState): WordScrambleGameState {
         selected: [],
         lastScoredWord: [],
         currentTurn: gameState.currentTurn + 1,
+        turnHasEnded: false,
         cells: gameState.cells.map((cell, index:number) => {
             const row: number = Math.floor(index / gameState.gameSettings.boardSize);
             const col: number = Math.floor(index % gameState.gameSettings.boardSize);
@@ -274,7 +275,7 @@ export function loadGameState(gameState: WordScrambleGameState): WordScrambleGam
 }
 
 export function findWords(gameState: WordScrambleGameState): string[] {
-    return findWordsFast(gameState, words.filter((w:string) => w.length <= 16));
+    return findWordsFast(gameState, words.filter((w:string) => w.length <= gameState.cells.length && w.length > 2));
 }
 
 export function getCurrentTurnScore(gameState: WordScrambleGameState): TurnScore {

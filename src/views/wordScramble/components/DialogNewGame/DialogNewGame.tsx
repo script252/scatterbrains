@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useDisclosure } from "@chakra-ui/hooks";
-import { Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, ModalBody, ModalFooter, Center, Checkbox, VStack, Radio, RadioGroup, Stack } from "@chakra-ui/react";
+import { Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, ModalBody, ModalFooter, Center, Checkbox, VStack, Radio, RadioGroup, Stack, Text } from "@chakra-ui/react";
 import { Button } from "@chakra-ui/react";
 import { NewGameSettings } from '../../lib/wordScrambleTypes';
 
@@ -21,19 +21,15 @@ function DialogNewGame(props: any) {
     }
 
     const setTimeLimit = (value: any) => {
-        if(value === 0) {
-            setState({...state, timed: false});
+        if(value === '-1') {
+            setState({...state, timed: false, timeLimit: -1});
+        } else {
+            setState({...state, timed: true, timeLimit: 60 * value});
         }
-        setState({...state, timeLimit: 60 * value});
     }
 
     const onConfirm = () => {
         onSettingsConfirmed({...state});
-        // setState((prev: NewGameSettings) => {
-        //     console.log(prev);
-        //     onSettingsConfirmed({...new NewGameSettings(), ...state});
-        //     return {...new NewGameSettings(), ...state};
-        // });
     }
 
     return (
@@ -46,17 +42,18 @@ function DialogNewGame(props: any) {
                     <ModalBody>
                         <Center>
                             <VStack>
-                            <RadioGroup onChange={setTimeLimit} value={1}>
+                            <RadioGroup colorScheme="blue" onChange={setTimeLimit} defaultValue='2'>
                             <Stack direction='row'>
-                                <Radio value='1'>1</Radio>
-                                <Radio value='2'>2</Radio>
-                                <Radio value='3'>3</Radio>
-                                <Radio value='0'>Unlimited</Radio>
+                                <Text>Round time:</Text>
+                                <Radio colorScheme="blue" value='0.10'>0.10</Radio>
+                                <Radio colorScheme="blue" value='2'>2</Radio>
+                                <Radio colorScheme="blue" value='3'>3</Radio>
+                                <Radio colorScheme="blue" value='-1'>Unlimited</Radio>
                             </Stack>
                             </RadioGroup>
                             <Checkbox defaultChecked onChange={(v: any) => settingsChanged({combineQU: v.target.checked})}>Use QU</Checkbox>
-                            <Checkbox disabled onChange={(v: any) => settingsChanged({includeRedCube: v.target.checked})}>Use bonus die</Checkbox>
                             <Checkbox disabled onChange={(v: any) => settingsChanged({boardSize: v.target.checked === true ? 5 : 4})}>Use big board (5x5)</Checkbox>
+                            <Checkbox disabled onChange={(v: any) => settingsChanged({includeRedCube: v.target.checked})}>Use bonus die</Checkbox>
                             </VStack>
                         </Center>
                     </ModalBody>

@@ -70,6 +70,7 @@ export class WordScrambleGameState {
     showVictory: boolean = false;
     showNewGame: boolean = false;
     currentTurn: number = 0;
+    turnHasEnded: boolean = false;
     gameOver: boolean = false;
     score: ScoreState[] = [new ScoreState()];
     possibleWordCount: number = -1;
