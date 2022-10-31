@@ -122,43 +122,41 @@ function WordScrambleGame(props: any) {
     setGameState({...newState, timer: timerValue});
   }
 
-  return (
-            
-              <Container height="100vh" maxW="xl" className="prevent-scrolling">
-                  <Flex height="90%" flexDirection="column" >
-                      <Timer value={timerValue} hidden={gameState.gameSettings.timed === false} locked={gameState.turnHasEnded === true || gameState.gameSettings.timed === false || initialized === false} expireAtAndStartTime={timerExpireAt} onTick={onTimerTick} onTimeout={onTimeout}></Timer>
-                      <WordBoard locked={gameState.turnHasEnded} gameState={gameState} onStateChange={onStateChanged}></WordBoard>
-                      <Container mt='1rem' maxW="xl" ml="0" mr="0" p="0">
-                        <WordList>
-                          {Array.from(WordScrambleLib.getTurnScore(gameState).discoveredWordsSet).map((word: string, index: number) => (<Flex pl='1rem' pr='1rem' key={index}><Text color='gray.300'>{word}</Text><Spacer></Spacer><Text color="gray.100">{wordScores[Math.min(word.length, 8)]}</Text></Flex>))}
-                        </WordList>
-                      </Container>
-                      <Container mt='1rem' maxW="xl" ml="0" mr="0" p="0">
-                        <HStack width="100%" height="20%" pl="0" pr="0">
-                              <Box width="100%">
-                                <Text color='gray.100'>Turn: {gameState.currentTurn+1}/{gameState.gameSettings.rounds}</Text>
-                              </Box>
-                              <Box width="100%">
-                                <Text color='gray.100'>Score: {scoreInfo.turnScore}</Text>
-                              </Box>
-                              <Box width="100%">
-                                <Text color='gray.100' textAlign='end'>Found: {scoreInfo.found}/{scoreInfo.wordsInBoard}</Text>
-                              </Box>
-                        </HStack>
-                      </Container>
-                      <Button disabled={isRollDisabled()} mt='1rem' colorScheme='gray' onClick={onRoll}>Roll</Button>
-                      {/* <VStack spacing='10px' width="100%" flexGrow="1">
-                          <CellInputButtons onClick={(value: number) => onEnterCellValue(value, gameState.noteMode)}></CellInputButtons>
-                          <HStack width="100%" height="20%" pl="8px" pr="8px">
-                              <Button mr="8px" colorScheme={gameState.noteMode ? 'green' : 'gray'} width="100%" height="100%" onClick={() => setGameState({...gameState, noteMode: !gameState.noteMode})}>Note</Button>
-                              <Button ml="8px" width="100%" height="100%" onClick={() => onEnterCellValue(0)}>Clear</Button>
-                          </HStack>
-                      </VStack> */}
-                  </Flex>
-                  <DialogNewGame startNewGameState={gameState.showNewGame} onSettingsConfirmed={(settings: NewGameSettings) => onStartNewGame(settings)} onCancel={onNewGameCancel}></DialogNewGame>
-                  <DialogVictory gameState={gameState} onCloseVictory={() => {setGameState({...gameState, showVictory: false}); WordScrambleLib.saveGameState({...gameState, showVictory: false}); }}></DialogVictory>
-              </Container>
-            
+  return (  
+    <Container height="100vh" maxW="xl" className="prevent-scrolling">
+        <Flex height="90%" flexDirection="column" >
+            <WordBoard locked={gameState.turnHasEnded} gameState={gameState} onStateChange={onStateChanged}></WordBoard>
+            <Timer value={timerValue} hidden={gameState.gameSettings.timed === false} locked={gameState.turnHasEnded === true || gameState.gameSettings.timed === false || initialized === false} expireAtAndStartTime={timerExpireAt} onTick={onTimerTick} onTimeout={onTimeout}></Timer>
+            <Container mt='1rem' maxW="xl" ml="0" mr="0" p="0">
+              <WordList>
+                {Array.from(WordScrambleLib.getTurnScore(gameState).discoveredWordsSet).map((word: string, index: number) => (<Flex pl='1rem' pr='1rem' key={index}><Text color='gray.300'>{word}</Text><Spacer></Spacer><Text color="gray.100">{wordScores[Math.min(word.length, 8)]}</Text></Flex>))}
+              </WordList>
+            </Container>
+            <Container mt='1rem' maxW="xl" ml="0" mr="0" p="0">
+              <HStack width="100%" height="20%" pl="0" pr="0">
+                    <Box width="100%">
+                      <Text color='gray.100'>Turn: {gameState.currentTurn+1}/{gameState.gameSettings.rounds}</Text>
+                    </Box>
+                    <Box width="100%">
+                      <Text color='gray.100'>Score: {scoreInfo.turnScore}</Text>
+                    </Box>
+                    <Box width="100%">
+                      <Text color='gray.100' textAlign='end'>Found: {scoreInfo.found}/{scoreInfo.wordsInBoard}</Text>
+                    </Box>
+              </HStack>
+            </Container>
+            <Button disabled={isRollDisabled()} mt='1rem' colorScheme='gray' onClick={onRoll}>Roll</Button>
+            {/* <VStack spacing='10px' width="100%" flexGrow="1">
+                <CellInputButtons onClick={(value: number) => onEnterCellValue(value, gameState.noteMode)}></CellInputButtons>
+                <HStack width="100%" height="20%" pl="8px" pr="8px">
+                    <Button mr="8px" colorScheme={gameState.noteMode ? 'green' : 'gray'} width="100%" height="100%" onClick={() => setGameState({...gameState, noteMode: !gameState.noteMode})}>Note</Button>
+                    <Button ml="8px" width="100%" height="100%" onClick={() => onEnterCellValue(0)}>Clear</Button>
+                </HStack>
+            </VStack> */}
+        </Flex>
+        <DialogNewGame startNewGameState={gameState.showNewGame} onSettingsConfirmed={(settings: NewGameSettings) => onStartNewGame(settings)} onCancel={onNewGameCancel}></DialogNewGame>
+        <DialogVictory gameState={gameState} onCloseVictory={() => {setGameState({...gameState, showVictory: false}); WordScrambleLib.saveGameState({...gameState, showVictory: false}); }}></DialogVictory>
+    </Container>      
   );
 }
 
