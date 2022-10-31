@@ -10,6 +10,7 @@ function WordBoard(props: any) {
     const {gameState, onStateChange = () => null, cellSize=52, locked=false}: {
         gameState: WordScrambleGameState, 
         onStateChange: any, 
+        onSelectionComplete: any,
         cellSize: number, 
         locked: boolean
     } = props;

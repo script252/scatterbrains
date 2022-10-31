@@ -73,6 +73,7 @@ export function roll(gameState: WordScrambleGameState): WordScrambleGameState {
         lastScoredWord: [],
         currentTurn: gameState.currentTurn + 1,
         turnHasEnded: false,
+        timer: 100,
         cells: gameState.cells.map((cell, index:number) => {
             const row: number = Math.floor(index / gameState.gameSettings.boardSize);
             const col: number = Math.floor(index % gameState.gameSettings.boardSize);
@@ -91,6 +92,7 @@ export function roll(gameState: WordScrambleGameState): WordScrambleGameState {
         ...gs,
         possibleWordCount: words.length, possibleWords: words,
     }
+    console.log('Rolled: ', gsWithWords);
     return gsWithWords;
 }
 
@@ -252,7 +254,8 @@ export function saveGameState(gs: WordScrambleGameState): WordScrambleGameState 
     getTurnScore(gs).discoveredWords = Array.from(getTurnScore(gs).discoveredWordsSet);
 
     localStorage.setItem('wordScrambleGameState', JSON.stringify(gs));
-    return gs;
+    console.log('Saved state: ', gs);
+    return gs;  // Doesn't get changed
 }
 
 export function loadGameState(gameState: WordScrambleGameState): WordScrambleGameState {
