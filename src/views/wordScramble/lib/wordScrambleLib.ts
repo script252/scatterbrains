@@ -92,7 +92,7 @@ export function roll(gameState: WordScrambleGameState): WordScrambleGameState {
         ...gs,
         possibleWordCount: words.length, possibleWords: words,
     }
-    console.log('Rolled: ', gsWithWords);
+    //console.log('Rolled: ', gsWithWords);
     return gsWithWords;
 }
 
@@ -254,7 +254,7 @@ export function saveGameState(gs: WordScrambleGameState): WordScrambleGameState 
     getTurnScore(gs).discoveredWords = Array.from(getTurnScore(gs).discoveredWordsSet);
 
     localStorage.setItem('wordScrambleGameState', JSON.stringify(gs));
-    console.log('Saved state: ', gs);
+    //console.log('Saved state: ', gs);
     return gs;  // Doesn't get changed
 }
 

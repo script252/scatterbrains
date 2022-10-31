@@ -33,17 +33,12 @@ function Timer(props: any) {
     useEffect(() => {
         if(locked === true || hidden === true) return;
         if(timerValue <= 0) {
-            console.log('onTick/onTimeout values: ', timerValue, value);
             if(onTick) onTick(timerValue);
             if(onTimeout) onTimeout();
             setTimerValue(100);
         } else {
 
-            console.log('onTick values: ', timerValue, value);
             if(onTick) onTick(timerValue);
-            if(timerValue === 0 && value !== 0){
-                setTimerValue(100);
-            }
         }
       }, [onTimeout, onTick, timerValue, locked, hidden, value]);
 
