@@ -1,6 +1,6 @@
 import { ensureFieldsPresent } from "../../../lib/utilities";
 import { findWordsFast } from "./cellUtilitiesFast";
-import { CellData, CellDirs, CellDir, NewGameSettings, standardCubes, WordScrambleGameState, DirStrings, wordScores, TurnScore, ScoreState } from "./wordScrambleTypes";
+import { CellData, CellDirs, CellDir, NewGameSettings, standardCubes, WordScrambleGameState, DirStrings, wordScores, TurnScore, ScoreState, bigCubes } from "./wordScrambleTypes";
 
 const words: string[] = require('an-array-of-english-words');
 
@@ -9,7 +9,6 @@ function createScores(settings: NewGameSettings): ScoreState[] {
     let scoreStates: ScoreState[] = [];
     for(let i = 0; i < settings.rounds; i++) {
         scoreStates.push(new ScoreState());
-        scoreStates[i].discoveredWordsSet.has('bob');
     }
 
     return scoreStates;
@@ -21,7 +20,7 @@ export function init(settings: NewGameSettings): WordScrambleGameState {
     const emptyCells = new Array<any>(settings.boardSize * settings.boardSize)
         .fill(new CellData());
 
-    const rolledCubes = getRolledCubes();
+    const rolledCubes = getRolledCubes(settings.boardSize === 5);
 
     const initialState: WordScrambleGameState = {
         ...new WordScrambleGameState(),
@@ -65,7 +64,7 @@ export function roll(gameState: WordScrambleGameState): WordScrambleGameState {
         return gs;
     }
 
-    const rolledCubes = getRolledCubes();
+    const rolledCubes = getRolledCubes(gameState.gameSettings.boardSize === 5);
     const gs: WordScrambleGameState = {
         ...gameState,
         gameSettings: gameState.gameSettings,
@@ -92,12 +91,16 @@ export function roll(gameState: WordScrambleGameState): WordScrambleGameState {
         ...gs,
         possibleWordCount: words.length, possibleWords: words,
     }
+
+    // FIXME: imperative
+    gs.score[gameState.currentTurn].missedWords = words;
+
     //console.log('Rolled: ', gsWithWords);
     return gsWithWords;
 }
 
-export function getRolledCubes(): string[] {
-    const availableCubes = [...standardCubes];
+export function getRolledCubes(useBig: boolean = false): string[] {
+    const availableCubes = useBig === true ? [...bigCubes] : [...standardCubes];
 
     // This is terribly imperative
     let scrambledCubes = [];
@@ -183,6 +186,7 @@ export function onSelectionComplete(gameState: WordScrambleGameState, validate: 
     const valid = validate === true ? isWordValid(word, gameState) : true;
     if(valid === true) {
         getTurnScore(gs).discoveredWordsSet.add(word.toLowerCase());
+        
         gs.lastScoredWord = [...gameState.selected];
         gs.score[gs.currentTurn] = calcTurnScore(gs, gs.score[gs.currentTurn]);
     } else {
@@ -306,11 +310,14 @@ export function calcTurnScore(gameState: WordScrambleGameState, score: ScoreStat
     const found: number = score.discoveredWordsSet.size;
     const wordsInBoard: number = gameState.possibleWordCount;
 
+    const missedWords: string[] = score.missedWords.filter((missed: string) => !score.discoveredWordsSet.has(missed));
+
     return {
         turnScore: turnScore,
         found: found,
         wordsInBoard: wordsInBoard,
         discoveredWordsSet: score.discoveredWordsSet,
-        discoveredWords: score.discoveredWords
+        discoveredWords: score.discoveredWords,
+        missedWords: missedWords
     };
 }

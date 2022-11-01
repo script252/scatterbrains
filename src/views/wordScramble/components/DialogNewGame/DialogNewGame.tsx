@@ -76,7 +76,7 @@ function DialogNewGame(props: any) {
                             </Stack>
                             </RadioGroup>
                             <Checkbox defaultChecked onChange={(v: any) => settingsChanged({combineQU: v.target.checked})}>Use QU</Checkbox>
-                            <Checkbox disabled onChange={(v: any) => settingsChanged({boardSize: v.target.checked === true ? 5 : 4})}>Use big board (5x5)</Checkbox>
+                            <Checkbox onChange={(v: any) => settingsChanged({boardSize: v.target.checked === true ? 5 : 4})}>Use big board (5x5)</Checkbox>
                             <Checkbox disabled onChange={(v: any) => settingsChanged({includeRedCube: v.target.checked})}>Use bonus die</Checkbox>
                             </VStack>
                         </Center>

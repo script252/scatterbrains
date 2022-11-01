@@ -5,6 +5,14 @@ export const standardCubes: string[] = [
     "EIOSST", "ELRTTY", "HIMNQU", "HLNNRZ"
 ];
 
+export const bigCubes: string[] = [
+    "QBZJXK", "TOUOTO", "OVWRGR", "AAAFSR", "AUMEEG",
+    "HHLRDO", "NHDTHO", "LHNROD", "AFAISR", "YIFASR",
+    "TELPCI", "SSNSEU", "RIYPRH", "DORDLN", "CCWNST",
+    "TTOTEM", "SCTIEP", "EANDNN", "MNNEAG", "UOTOWN",
+    "AFAEEE", "YIFPSR", "EEEEMA", "ITITIE", "ETILIC",
+];
+
 export const CellDirs = new Map([
     ['up', [0, -1]],
     ['upRight', [1, -1]],
@@ -50,6 +58,7 @@ export class ScoreState {
     discoveredWordsSet: Set<string> = new Set();
     // Words with their associated scores
     discoveredWords: string[] = [];
+    missedWords: string[] = [];
     turnScore: number = 0;
     found: number = 0;
     wordsInBoard: number = 0;
@@ -59,6 +68,7 @@ export class TurnScore {
     turnScore: number = 0;
     found: number = 0;
     wordsInBoard: number = 0;
+
 }
 
 export class WordScrambleGameState {

@@ -1,9 +1,9 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import './wordScrambleGame.scss';
 import * as WordScrambleLib from '../../lib/wordScrambleLib';
-import { Box, Button, Container, Flex, HStack, Spacer, Text } from '@chakra-ui/react';
+import { Box, Button, Container, Flex, HStack, Text } from '@chakra-ui/react';
 import { useParams } from 'react-router-dom';
-import { NewGameSettings, TurnScore, wordScores, WordScrambleGameState } from '../../lib/wordScrambleTypes';
+import { NewGameSettings, TurnScore, WordScrambleGameState } from '../../lib/wordScrambleTypes';
 import WordList from '../WordList/WordList';
 import WordBoard from '../WordBoard/WordBoard';
 import DialogNewGame from '../DialogNewGame/DialogNewGame';
@@ -26,6 +26,7 @@ function WordScrambleGame(props: any) {
   const [timerExpireAt, setTimerExpireAt] = useState([new Date(), new Date()]);
   const [timerValue, setTimerValue] = useState(100);
   const [initialized, setInitialized] = useState(false);
+  const [showMissingWords, setShowMissingWords] = useState(false);
 
   const {startNewGame} = useParams();
   useEffect(() => {
@@ -59,6 +60,7 @@ function WordScrambleGame(props: any) {
     setTimerExpireAt(getExpireTime(gs.gameSettings.timeLimit));
     setTimerValue(100);
     setGameState(gs);
+    setShowMissingWords(false);
     setInitialized(true);
   }
 
@@ -73,6 +75,7 @@ function WordScrambleGame(props: any) {
 
           setTimerExpireAt(getExpireTime(gameState.gameSettings.timeLimit));
           setTimerValue(100);
+          setShowMissingWords(false);
       }
   }
 
@@ -118,6 +121,18 @@ function WordScrambleGame(props: any) {
     return !gameState.turnHasEnded || (gameState.currentTurn + 1) >= gameState.gameSettings.rounds;
   }
 
+  const isShowMissingDisabled = () => {
+    if((gameState.currentTurn + 1) >= gameState.gameSettings.rounds) {
+      if(gameState.gameSettings.timed === true) {
+        return false;  
+      }
+    }
+
+    if(gameState.gameSettings.timed === false) return false;
+
+    return !gameState.turnHasEnded || (gameState.currentTurn + 1) >= gameState.gameSettings.rounds;
+  }
+
   const onStateChanged = (newState: WordScrambleGameState) => { 
     setGameState({...newState, timer: timerValue});
   }
@@ -128,8 +143,11 @@ function WordScrambleGame(props: any) {
             <WordBoard locked={gameState.turnHasEnded} gameState={gameState} onStateChange={onStateChanged}></WordBoard>
             <Timer value={timerValue} hidden={gameState.gameSettings.timed === false} locked={gameState.turnHasEnded === true || gameState.gameSettings.timed === false || initialized === false} expireAtAndStartTime={timerExpireAt} onTick={onTimerTick} onTimeout={onTimeout}></Timer>
             <Container mt='1rem' maxW="xl" ml="0" mr="0" p="0">
-              <WordList>
-                {Array.from(WordScrambleLib.getTurnScore(gameState).discoveredWordsSet).map((word: string, index: number) => (<Flex pl='1rem' pr='1rem' key={index}><Text color='gray.300'>{word}</Text><Spacer></Spacer><Text color="gray.100">{wordScores[Math.min(word.length, 8)]}</Text></Flex>))}
+              <WordList
+                foundWords={Array.from(WordScrambleLib.getTurnScore(gameState).discoveredWordsSet)}
+                notFoundWords={gameState.possibleWords.filter((ps: string) => !WordScrambleLib.getTurnScore(gameState).discoveredWordsSet.has(ps))}
+                showNotFound={showMissingWords}
+              >
               </WordList>
             </Container>
             <Container mt='1rem' maxW="xl" ml="0" mr="0" p="0">
@@ -145,7 +163,12 @@ function WordScrambleGame(props: any) {
                     </Box>
               </HStack>
             </Container>
-            <Button disabled={isRollDisabled()} mt='1rem' colorScheme='gray' onClick={onRoll}>Roll</Button>
+            <HStack width="100%" pl="0" pr="0">
+              <Flex flexDirection="row" width="100%">
+                <Button width="100%" mr="1rem" disabled={isRollDisabled()} mt='1rem' colorScheme='gray' onClick={onRoll}>Roll</Button>
+                <Button width="100%" disabled={isShowMissingDisabled()} mt='1rem' colorScheme='gray' onClick={() => setShowMissingWords(true)}>Show missing</Button>
+              </Flex>
+            </HStack>
             {/* <VStack spacing='10px' width="100%" flexGrow="1">
                 <CellInputButtons onClick={(value: number) => onEnterCellValue(value, gameState.noteMode)}></CellInputButtons>
                 <HStack width="100%" height="20%" pl="8px" pr="8px">
