@@ -49,7 +49,7 @@ function wordBoggle(board: string[][], dictionary: string[]): string[] {
 }
 
 export function findWordsFast(gameState: WordScrambleGameState, words: string[]): string[] {
-    const size = 4;
+    const size = gameState.gameSettings.boardSize;
 
     let board = Array.from({ length: size }, () => 
         Array.from({ length: size }, () => '')
