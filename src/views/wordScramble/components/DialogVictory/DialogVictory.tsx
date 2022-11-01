@@ -2,12 +2,12 @@ import React, {} from 'react';
 import { useDisclosure } from "@chakra-ui/hooks";
 import { Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, ModalBody, ModalFooter, Center, VStack } from "@chakra-ui/react";
 import { Button, Text } from "@chakra-ui/react";
-import { ScoreState, WordScrambleGameState } from '../../lib/wordScrambleTypes';
+import { ScoreState, Word, WordScrambleGameState } from '../../lib/wordScrambleTypes';
 
-function getMissedWords(curr: string[], prev: string[]) {
-  const missed: Set<string> = new Set<string>(prev);
-  curr.forEach((word: string) => missed.add(word));
-  return Array.from(missed);
+function getMissedWords(curr: Word[], prev: Word[]) {
+  const missed: Set<string> = new Set<string>(prev.map((w:Word) => w.id));
+  curr.forEach((word: Word) => missed.add(word.id));
+  return Array.from(missed).map((id: string) => new Word());
 }
 
 function getScoreTotals(gs: WordScrambleGameState): ScoreState {
@@ -16,9 +16,10 @@ function getScoreTotals(gs: WordScrambleGameState): ScoreState {
       turnScore: prev.turnScore + curr.turnScore, 
       found: prev.found + curr.found, 
       wordsInBoard: prev.wordsInBoard + curr.wordsInBoard,
-      discoveredWords: Array.from(prev.discoveredWordsSet).concat(Array.from(curr.discoveredWordsSet)),
+      //discoveredWords: Array.from(prev.discoveredWordsSet).concat(Array.from(curr.discoveredWordsSet)),
       discoveredWordsSet: curr.discoveredWordsSet,
-      missedWords: curr.missedWords ? getMissedWords(curr.missedWords, prev.missedWords) : []
+      missedWords: curr.missedWords ? getMissedWords(curr.missedWords, prev.missedWords) : [],
+      foundWords: []
     }
   });
 }

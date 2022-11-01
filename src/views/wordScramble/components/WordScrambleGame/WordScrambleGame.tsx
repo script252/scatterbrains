@@ -3,7 +3,7 @@ import './wordScrambleGame.scss';
 import * as WordScrambleLib from '../../lib/wordScrambleLib';
 import { Box, Button, Container, Flex, HStack, Text } from '@chakra-ui/react';
 import { useParams } from 'react-router-dom';
-import { NewGameSettings, TurnScore, WordScrambleGameState } from '../../lib/wordScrambleTypes';
+import { NewGameSettings, TurnScore, Word, WordScrambleGameState } from '../../lib/wordScrambleTypes';
 import WordList from '../WordList/WordList';
 import WordBoard from '../WordBoard/WordBoard';
 import DialogNewGame from '../DialogNewGame/DialogNewGame';
@@ -37,8 +37,9 @@ function WordScrambleGame(props: any) {
 
       // Set game state from saved value (if there is one)
       const gs = WordScrambleLib.loadGameState(initialGameState as WordScrambleGameState);
-      const words: string[] = WordScrambleLib.findWords(gs);
+      const words: Word[] = WordScrambleLib.findWords(gs);
       console.log(`Found ${words.length} unique words`);
+      //console.log(words);
 
       setGameState({...gs, showNewGame: startNewGame === 'new', possibleWordCount: words.length, possibleWords: words});
       WordScrambleLib.saveGameState(gs);
@@ -144,8 +145,8 @@ function WordScrambleGame(props: any) {
             <Timer value={timerValue} hidden={gameState.gameSettings.timed === false} locked={gameState.turnHasEnded === true || gameState.gameSettings.timed === false || initialized === false} expireAtAndStartTime={timerExpireAt} onTick={onTimerTick} onTimeout={onTimeout}></Timer>
             <Container mt='1rem' maxW="xl" ml="0" mr="0" p="0">
               <WordList
-                foundWords={Array.from(WordScrambleLib.getTurnScore(gameState).discoveredWordsSet)}
-                notFoundWords={gameState.possibleWords.filter((ps: string) => !WordScrambleLib.getTurnScore(gameState).discoveredWordsSet.has(ps))}
+                foundWords={WordScrambleLib.getTurnScore(gameState).foundWords}
+                notFoundWords={gameState.possibleWords.filter((ps: Word) => !WordScrambleLib.getTurnScore(gameState).discoveredWordsSet.has(ps.wordString))}
                 showNotFound={showMissingWords}
               >
               </WordList>
