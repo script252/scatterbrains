@@ -17,7 +17,7 @@ function WordList(props: any) {
                 setCount(foundWords.length);
             }
         }
-    }, [foundWords, notFoundWords]);
+    }, [foundWords, notFoundWords, count]);
 
     return (
         <Box ref={scrollBox} bg='gray.800' w="100%" h="10rem" overflowY="auto" borderRadius="0.5rem" scrollBehavior="auto">
