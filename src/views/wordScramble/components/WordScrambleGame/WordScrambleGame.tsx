@@ -1,7 +1,7 @@
-import React, { useCallback, useEffect, useLayoutEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import './wordScrambleGame.scss';
 import * as WordScrambleLib from '../../lib/wordScrambleLib';
-import { Box, Button, Container, Flex, HStack, Spinner, Text } from '@chakra-ui/react';
+import { Box, Button, Container, Flex, HStack, Text } from '@chakra-ui/react';
 import { useParams } from 'react-router-dom';
 import { NewGameSettings, TurnScore, Word, WordScrambleGameState } from '../../lib/wordScrambleTypes';
 import WordList from '../WordList/WordList';
@@ -9,7 +9,6 @@ import WordBoard from '../WordBoard/WordBoard';
 import DialogNewGame from '../DialogNewGame/DialogNewGame';
 import DialogVictory from '../DialogVictory/DialogVictory';
 import Timer from '../Timer/Timer';
-import { resolve } from 'node:path/win32';
 
 function getExpireTime(seconds: number, secondsPassed:number = 0): any[] {
   const future = new Date();
@@ -31,33 +30,24 @@ function WordScrambleGame(props: any) {
 
   const {startNewGame} = useParams();
 
-  useEffect(()=> {
-    if(startNewGame === 'new') {
-      setInitialized(false);
-      setGameState({...gameState, showNewGame: true});
-    } else {
-      setGameState({...gameState, showNewGame: false});
-    }
-  }, [startNewGame]);
-
-  useLayoutEffect(() => {
+  useEffect(() => {
 
       console.log('Starting Word Scramble');
 
       //FIXME: a lot of this needs to be moved to WordScrambleLib
 
+      const initialGameState: WordScrambleGameState = WordScrambleLib.init(new NewGameSettings());
+
       // Don't initialize when just opening the new game dialog
       if(startNewGame === 'new') {
         setInitialized(false);
-        //setGameState({...gameState, showNewGame: true});
+        setGameState({...initialGameState, showNewGame: true});
         return;
-      } else {
-        //setGameState({...gameState, showNewGame: false});
       }
 
       const buildNewGame = () => {
         return new Promise((resolve:(gs: WordScrambleGameState)=>void ) => {
-          const initialGameState: WordScrambleGameState = WordScrambleLib.init(new NewGameSettings());
+          
 
           // Set game state from saved value (if there is one)
           const gs = WordScrambleLib.loadGameState(initialGameState as WordScrambleGameState);
