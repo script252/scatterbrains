@@ -1,18 +1,20 @@
-import { Container, SimpleGrid } from "@chakra-ui/layout";
+import { Center, Container, SimpleGrid } from "@chakra-ui/layout";
 import { useState } from "react";
 import { CellData, WordScrambleGameState } from "../../lib/wordScrambleTypes";
 import Cell from "../Cell/Cell";
 import * as WordScrambleLib from '../../lib/wordScrambleLib';
+import { Spinner } from "@chakra-ui/react";
 
 
 function WordBoard(props: any) {
 
-    const {gameState, onStateChange = () => null, cellSize=52, locked=false}: {
+    const {gameState, onStateChange = () => null, cellSize=52, locked=false, loading=false}: {
         gameState: WordScrambleGameState, 
         onStateChange: any, 
         onSelectionComplete: any,
         cellSize: number, 
-        locked: boolean
+        locked: boolean,
+        loading: boolean
     } = props;
 
     const [dragging, setDragging] = useState(false);
@@ -91,7 +93,14 @@ function WordBoard(props: any) {
     return (
         <Container maxW="100%" className="cell-grid-container" 
                       m="0" p="0" mt="1rem" bgColor="gray.700" borderRadius="0.5rem">
-            <SimpleGrid 
+            {loading === true && <Center marginTop='40%'><Spinner
+              thickness='4px'
+              speed='0.65s'
+              emptyColor='gray.200'
+              color='teal.500'
+              size='xl'
+            /></Center>}
+            {loading === false && <SimpleGrid 
             spacing={0} columns={gameState.gameSettings.boardSize} 
             gap={4} p="4px" className="cell-grid" width="100%" 
             overflow="hidden"
@@ -118,6 +127,7 @@ function WordBoard(props: any) {
                     )
                 })}
             </SimpleGrid>
+        }
         </Container>
     );
 }

@@ -1,7 +1,7 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useLayoutEffect, useState } from 'react';
 import './wordScrambleGame.scss';
 import * as WordScrambleLib from '../../lib/wordScrambleLib';
-import { Box, Button, Container, Flex, HStack, Text } from '@chakra-ui/react';
+import { Box, Button, Container, Flex, HStack, Spinner, Text } from '@chakra-ui/react';
 import { useParams } from 'react-router-dom';
 import { NewGameSettings, TurnScore, Word, WordScrambleGameState } from '../../lib/wordScrambleTypes';
 import WordList from '../WordList/WordList';
@@ -9,6 +9,7 @@ import WordBoard from '../WordBoard/WordBoard';
 import DialogNewGame from '../DialogNewGame/DialogNewGame';
 import DialogVictory from '../DialogVictory/DialogVictory';
 import Timer from '../Timer/Timer';
+import { resolve } from 'node:path/win32';
 
 function getExpireTime(seconds: number, secondsPassed:number = 0): any[] {
   const future = new Date();
@@ -29,48 +30,83 @@ function WordScrambleGame(props: any) {
   const [showMissingWords, setShowMissingWords] = useState(false);
 
   const {startNewGame} = useParams();
-  useEffect(() => {
+
+  useEffect(()=> {
+    if(startNewGame === 'new') {
+      setInitialized(false);
+      setGameState({...gameState, showNewGame: true});
+    } else {
+      setGameState({...gameState, showNewGame: false});
+    }
+  }, [startNewGame]);
+
+  useLayoutEffect(() => {
 
       console.log('Starting Word Scramble');
 
       //FIXME: a lot of this needs to be moved to WordScrambleLib
 
-      const initialGameState: WordScrambleGameState = WordScrambleLib.init(new NewGameSettings());
+      // Don't initialize when just opening the new game dialog
+      if(startNewGame === 'new') {
+        setInitialized(false);
+        //setGameState({...gameState, showNewGame: true});
+        return;
+      } else {
+        //setGameState({...gameState, showNewGame: false});
+      }
 
-      // Set game state from saved value (if there is one)
-      const gs = WordScrambleLib.loadGameState(initialGameState as WordScrambleGameState);
-      const words: Word[] = WordScrambleLib.findWords(gs);
-      const uniqueWords: Set<string> = new Set<string>(words.map((w:Word)=> w.wordString));
-      console.log(`Found ${uniqueWords.size} unique words, ${words.length} possible word patterns.`);
-      //console.log(words);
+      const buildNewGame = () => {
+        return new Promise((resolve:(gs: WordScrambleGameState)=>void ) => {
+          const initialGameState: WordScrambleGameState = WordScrambleLib.init(new NewGameSettings());
 
-      const gsWithCounts = {...gs, showNewGame: startNewGame === 'new', possibleWordCount: uniqueWords.size, possibleWords: words}
-            
-      // FIXME: imperative, and should be in game lib
-      gsWithCounts.score[gsWithCounts.currentTurn] = WordScrambleLib.calcTurnScore(gsWithCounts, gsWithCounts.score[gsWithCounts.currentTurn], 2);
-      gsWithCounts.score[gsWithCounts.currentTurn].missedWords = words;
-      
-      setGameState(gsWithCounts);
+          // Set game state from saved value (if there is one)
+          const gs = WordScrambleLib.loadGameState(initialGameState as WordScrambleGameState);
+          const words: Word[] = gs.possibleWords.length <= 0 ? WordScrambleLib.findWords(gs) : gs.possibleWords;
+          const uniqueWords: Set<string> = new Set<string>(words.map((w:Word)=> w.wordString));
+          console.log(`Found ${uniqueWords.size} unique words, ${words.length} possible word patterns.`);
+          //console.log(words);
 
-      WordScrambleLib.saveGameState(gs);
-      //console.log('postInit', gs);
-      setInitialized(true);
-      setTimerValue(gs.timer);
-      const timeRemaining = (gs.timer/100) * gs.gameSettings.timeLimit;
-      const secondsPassed = ((100 - gs.timer)/100) * gs.gameSettings.timeLimit;
-      setTimerExpireAt(getExpireTime(timeRemaining, secondsPassed));
+          const gsWithCounts = {...gs, showNewGame: startNewGame === 'new', possibleWordCount: uniqueWords.size, possibleWords: words}
+                
+          // FIXME: imperative, and should be in game lib
+          gsWithCounts.score[gsWithCounts.currentTurn] = WordScrambleLib.calcTurnScore(gsWithCounts, gsWithCounts.score[gsWithCounts.currentTurn], 2);
+          gsWithCounts.score[gsWithCounts.currentTurn].missedWords = words;
+          
+          
+
+          WordScrambleLib.saveGameState(gsWithCounts);
+          //console.log('postInit', gs);
+          
+          setTimerValue(gsWithCounts.timer);
+          const timeRemaining = (gsWithCounts.timer/100) * gsWithCounts.gameSettings.timeLimit;
+          const secondsPassed = ((100 - gsWithCounts.timer)/100) * gsWithCounts.gameSettings.timeLimit;
+          setTimerExpireAt(getExpireTime(timeRemaining, secondsPassed));
+
+          resolve(gsWithCounts);
+        }).then((gs: WordScrambleGameState) => {
+            setGameState(gs);
+            setInitialized(true);
+        });
+      };
+
+      buildNewGame();
 
   }, [startNewGame]);
 
-  const onRoll = () => {
+  const onRoll = async() => {
     setInitialized(false);
-    const gs = WordScrambleLib.saveGameState(WordScrambleLib.roll(gameState));
-    //console.log('Post roll:', gs);
-    setTimerExpireAt(getExpireTime(gs.gameSettings.timeLimit));
-    setTimerValue(100);
-    setGameState(gs);
-    setShowMissingWords(false);
-    setInitialized(true);
+    return new Promise((resolve:(gs: WordScrambleGameState)=>void ) => {
+      const gs = WordScrambleLib.saveGameState(WordScrambleLib.roll(gameState));
+      
+      resolve(gs);
+    }).then((gs: WordScrambleGameState) => {
+      setTimerExpireAt(getExpireTime(gs.gameSettings.timeLimit));
+      setTimerValue(100);
+      setShowMissingWords(false);
+      setGameState(gs);
+      setInitialized(true);
+      //console.log('Post roll:', gs);
+    });
   }
 
   const onStartNewGame = (settings: NewGameSettings) => {
@@ -153,7 +189,7 @@ function WordScrambleGame(props: any) {
   return (  
     <Container height="100vh" maxW="xl" className="prevent-scrolling">
         <Flex height="90%" flexDirection="column" >
-            <WordBoard locked={gameState.turnHasEnded} gameState={gameState} onStateChange={onStateChanged}></WordBoard>
+            <WordBoard loading={initialized === false} locked={gameState.turnHasEnded} gameState={gameState} onStateChange={onStateChanged}></WordBoard>
             <Timer value={timerValue} hidden={gameState.gameSettings.timed === false} locked={gameState.turnHasEnded === true || gameState.gameSettings.timed === false || initialized === false} expireAtAndStartTime={timerExpireAt} onTick={onTimerTick} onTimeout={onTimeout}></Timer>
             <Container mt='1rem' maxW="xl" ml="0" mr="0" p="0">
               <WordList

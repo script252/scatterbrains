@@ -26,6 +26,7 @@ export function init(settings: NewGameSettings): WordScrambleGameState {
         ...new WordScrambleGameState(),
         gameSettings: {...settings},
         score: createScores(settings),
+        timer: 100,
         cells: emptyCells.map((cell, index:number) => {
             const row: number = Math.floor(index / settings.boardSize);
             const col: number = Math.floor(index % settings.boardSize);
