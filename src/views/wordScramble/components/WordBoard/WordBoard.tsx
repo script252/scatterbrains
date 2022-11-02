@@ -21,6 +21,7 @@ function WordBoard(props: any) {
     const isCellSelected = (id: number|null) => gameState.selected.some((c:number|null) => c === id);
     const isCellScored = (id: number|null) => gameState.lastScoredWord.some((c:number|null) => c === id);
     const isCellWrong = (id: number|null) => gameState.lastWrongWord.some((c:number|null) => c === id);
+    const isCellHighlighted = (id: number|null) => gameState.highlighted.some((c:number|null) => c === id); 
 
     const getCellIdAtLocation = (clientX: number, clientY: number) => {
         const elem = document.elementFromPoint(clientX, clientY);
@@ -106,6 +107,7 @@ function WordBoard(props: any) {
                             isSelected={ isCellSelected(index) }
                             isScored={ isCellScored(index) }
                             isWrong={ isCellWrong(index) }
+                            isHighlighted={ isCellHighlighted(index) }
                             size={cellSize+"px"} 
                             //onClick={(e: any) => {console.log('Cell onClick'); onClick(cell, gameState)}}
                             onDrag={(e: any) => onClick(cell, gameState, true)}

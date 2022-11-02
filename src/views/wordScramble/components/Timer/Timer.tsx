@@ -43,7 +43,7 @@ function Timer(props: any) {
       }, [onTimeout, onTick, timerValue, locked, hidden, value]);
 
     return (
-        <Progress colorScheme="orange" size="xs" hidden={hidden} value={value}/>
+        <Progress colorScheme="orange" size="xs" hidden={hidden} value={value} minHeight="0.25rem"/>
     );
 }
 

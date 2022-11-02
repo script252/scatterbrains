@@ -13,6 +13,8 @@ export const bigCubes: string[] = [
     "AFAEEE", "YIFPSR", "EEEEMA", "ITITIE", "ETILIC",
 ];
 
+export const challengeCube: string = "IQMKLU";
+
 export const CellDirs = new Map([
     ['up', [0, -1]],
     ['upRight', [1, -1]],
@@ -22,7 +24,7 @@ export const CellDirs = new Map([
     ['downLeft', [-1, 1]],
     ['left', [-1, 0]],
     ['upLeft', [-1, -1]],
-])
+]);
 
 export const DirStrings = [
     'up',
@@ -42,26 +44,35 @@ export class CellData {
     value: string = '';
     col: number = -1;
     row: number = -1;
-}
-
-export class Word {
-    word: string = '';
-    score: number = 0;
+    isBonus?: boolean = false;
 }
 
 // Word scoring for length
 export const wordScores = [0,0,0,1,1,2,3,5,11];
 
+export class Word {
+    id: string = "";
+    wordString: string = "";
+    wordCellIndices: number[] = [];
+    score: number = 0;
+    hasBonus: boolean = false;
+}
+
 export class ScoreState {
     // So we can quickly check for already added words
     // This doesn't convert to json!
     discoveredWordsSet: Set<string> = new Set();
-    // Words with their associated scores
+    // Sets must be converted in order to save,
+    // this is a copy of discoveredWordsSet
     discoveredWords: string[] = [];
-    missedWords: string[] = [];
+    //discoveredWordCells?: number[][] = [];
+    //missedWords: string[] = [];
     turnScore: number = 0;
     found: number = 0;
     wordsInBoard: number = 0;
+
+    foundWords: Word[] = [];
+    missedWords: Word[] = [];
 }
 
 export class TurnScore {
@@ -75,6 +86,7 @@ export class WordScrambleGameState {
     gameSettings: NewGameSettings = new NewGameSettings();
     cells: CellData[] = [];
     selected: number[] = [];
+    highlighted: number[] = [];     // For when a selection is made by the game: clicking on the word list
     lastScoredWord: number[] = [];
     lastWrongWord: number[] = [];
     showVictory: boolean = false;
@@ -85,7 +97,8 @@ export class WordScrambleGameState {
     gameOver: boolean = false;
     score: ScoreState[] = [new ScoreState()];
     possibleWordCount: number = -1;
-    possibleWords: string[] = [];
+    //possibleWords: string[] = [];
+    possibleWords: Word[] = [];  // Every possible combination of valid words. Includes duplicate words.
 }
 
 export class NewGameSettings {
