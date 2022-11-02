@@ -4,11 +4,12 @@ import "./cell.scss";
 // A single sudoku game cell
 function Cell(props: any) {
 
-    const { id, onClick, onDrag, onMouseDown, onMouseUp, value, isSelected, isScored, isWrong, isBonus, debugText } = props;
+    const { id, onClick, onDrag, onMouseDown, onMouseUp, value, isSelected, isScored, isWrong, isBonus, isHighlighted, debugText } = props;
 
     const style = [
         "cell letter", 
         isBonus ? " bonus" : "",
+        isHighlighted ? " highlighted" : "",
         isSelected ? " selected" : "", 
         isScored ? " flash-word-score" : "", 
         isWrong ? " flash-word-wrong" : "",

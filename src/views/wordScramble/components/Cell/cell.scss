@@ -93,3 +93,16 @@
     animation: flash-wrong-keyframes 0.5s linear;
     background-color: lightgray;
 }
+
+@keyframes flash-highlighted-keyframes {
+    0% { background-color: lightgray }
+    10% { background-color: var(--chakra-colors-teal-200) }
+    20% { background-color: var(--chakra-colors-teal-400) }
+    80% { background-color: var(--chakra-colors-teal-400) }
+    100% { background-color: lightgray }
+  }
+
+.highlighted {
+    //animation: flash-highlighted-keyframes 2s linear;
+    background-color: var(--chakra-colors-teal-400);
+}

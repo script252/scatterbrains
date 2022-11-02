@@ -59,7 +59,7 @@ function WordScrambleGame(props: any) {
       const timeRemaining = (gs.timer/100) * gs.gameSettings.timeLimit;
       const secondsPassed = ((100 - gs.timer)/100) * gs.gameSettings.timeLimit;
       setTimerExpireAt(getExpireTime(timeRemaining, secondsPassed));
-      
+
   }, [startNewGame]);
 
   const onRoll = () => {
@@ -143,7 +143,11 @@ function WordScrambleGame(props: any) {
   }
 
   const onStateChanged = (newState: WordScrambleGameState) => { 
-    setGameState({...newState, timer: timerValue});
+    setGameState({...newState, timer: timerValue, highlighted: []});
+  }
+
+  const onClickWord = (word: Word) => {
+    setGameState({...gameState, highlighted: word.wordCellIndices});
   }
 
   return (  
@@ -154,8 +158,9 @@ function WordScrambleGame(props: any) {
             <Container mt='1rem' maxW="xl" ml="0" mr="0" p="0">
               <WordList
                 foundWords={WordScrambleLib.getTurnScore(gameState).foundWords}
-                notFoundWords={gameState.possibleWords.filter((ps: Word) => !WordScrambleLib.getTurnScore(gameState).discoveredWordsSet.has(ps.wordString))}
+                notFoundWords={gameState.possibleWords.filter((ps: Word) => !WordScrambleLib.getTurnScore(gameState).discoveredWordsSet.has(ps.wordString.toLowerCase()))}
                 showNotFound={showMissingWords}
+                onClickWord={onClickWord}
               >
               </WordList>
             </Container>

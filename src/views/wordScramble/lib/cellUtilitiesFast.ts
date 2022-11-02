@@ -1,4 +1,3 @@
-import { forEachChild } from "typescript";
 import { createWord } from "./wordScrambleLib";
 import { Word, WordScrambleGameState } from "./wordScrambleTypes";
 
@@ -22,8 +21,6 @@ function dfs(board: string[][], s: string, i: number, j: number, n: number, m: n
      
     const temp: string = board[i][j];
     board[i][j]='*';
-
-    const thisCellId = ((i * gs.gameSettings.boardSize) + j);
 
     const a: number[][] = dfs(board,s,i,j+1,n,m,idx+1, [...cellIds, getCellId(j+1, i, gs)], gs);
     const b: number[][] = dfs(board,s,i,j-1,n,m,idx+1, [...cellIds, getCellId(j-1, i, gs)], gs);

@@ -86,6 +86,7 @@ export class WordScrambleGameState {
     gameSettings: NewGameSettings = new NewGameSettings();
     cells: CellData[] = [];
     selected: number[] = [];
+    highlighted: number[] = [];     // For when a selection is made by the game: clicking on the word list
     lastScoredWord: number[] = [];
     lastWrongWord: number[] = [];
     showVictory: boolean = false;
