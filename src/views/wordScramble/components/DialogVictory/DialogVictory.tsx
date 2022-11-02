@@ -18,6 +18,7 @@ function getScoreTotals(gs: WordScrambleGameState): ScoreState {
       wordsInBoard: prev.wordsInBoard + curr.wordsInBoard,
       //discoveredWords: Array.from(prev.discoveredWordsSet).concat(Array.from(curr.discoveredWordsSet)),
       discoveredWordsSet: curr.discoveredWordsSet,
+      discoveredWords: curr.discoveredWords,
       missedWords: curr.missedWords ? getMissedWords(curr.missedWords, prev.missedWords) : [],
       foundWords: []
     }

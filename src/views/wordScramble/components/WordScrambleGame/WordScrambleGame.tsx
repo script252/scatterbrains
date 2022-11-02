@@ -33,25 +33,33 @@ function WordScrambleGame(props: any) {
 
       console.log('Starting Word Scramble');
 
+      //FIXME: a lot of this needs to be moved to WordScrambleLib
+
       const initialGameState: WordScrambleGameState = WordScrambleLib.init(new NewGameSettings());
 
       // Set game state from saved value (if there is one)
       const gs = WordScrambleLib.loadGameState(initialGameState as WordScrambleGameState);
       const words: Word[] = WordScrambleLib.findWords(gs);
-      console.log(`Found ${words.length} unique words`);
+      const uniqueWords: Set<string> = new Set<string>(words.map((w:Word)=> w.wordString));
+      console.log(`Found ${uniqueWords.size} unique words, ${words.length} possible word patterns.`);
       //console.log(words);
 
-      setGameState({...gs, showNewGame: startNewGame === 'new', possibleWordCount: words.length, possibleWords: words});
+      const gsWithCounts = {...gs, showNewGame: startNewGame === 'new', possibleWordCount: uniqueWords.size, possibleWords: words}
+            
+      // FIXME: imperative, and should be in game lib
+      gsWithCounts.score[gsWithCounts.currentTurn] = WordScrambleLib.calcTurnScore(gsWithCounts, gsWithCounts.score[gsWithCounts.currentTurn], 2);
+      gsWithCounts.score[gsWithCounts.currentTurn].missedWords = words;
+      
+      setGameState(gsWithCounts);
+
       WordScrambleLib.saveGameState(gs);
       //console.log('postInit', gs);
       setInitialized(true);
       setTimerValue(gs.timer);
       const timeRemaining = (gs.timer/100) * gs.gameSettings.timeLimit;
-      //console.log('Time remaining: ', timeRemaining);
       const secondsPassed = ((100 - gs.timer)/100) * gs.gameSettings.timeLimit;
       setTimerExpireAt(getExpireTime(timeRemaining, secondsPassed));
-
-      //console.log('post set timer', gs);
+      
   }, [startNewGame]);
 
   const onRoll = () => {

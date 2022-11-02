@@ -275,7 +275,7 @@ export function onCellClicked(cell: CellData, gameState: WordScrambleGameState, 
 export function saveGameState(gs: WordScrambleGameState): WordScrambleGameState {
     
     // Stick set into array so it can be saved
-    //getTurnScore(gs).discoveredWords = Array.from(getTurnScore(gs).discoveredWordsSet);
+    getTurnScore(gs).discoveredWords = Array.from(getTurnScore(gs).discoveredWordsSet);
 
     localStorage.setItem('wordScrambleGameState', JSON.stringify(gs));
     //console.log('Saved state: ', gs);
@@ -292,7 +292,7 @@ export function loadGameState(gameState: WordScrambleGameState): WordScrambleGam
         const fieldsFilled: WordScrambleGameState = ensureFieldsPresent(loadedStateParsed, new WordScrambleGameState(), WordScrambleGameState);
 
         // Fill set with saved scored words
-        fieldsFilled.score.map((s: ScoreState) => s.discoveredWordsSet = new Set<string>(s.foundWords.map((w: Word) => w.wordString)));
+        fieldsFilled.score.map((s: ScoreState) => s.discoveredWordsSet = new Set<string>(s.discoveredWords));
         return fieldsFilled;
     } catch (err) {
         console.warn('No save state found, generating new game', gameState);
@@ -342,7 +342,6 @@ export function calcTurnScore(gameState: WordScrambleGameState, score: ScoreStat
         return wordScores[Math.min(word.length, 8)] * (hasBonus === true ? bonusMultiplier : 1);
     });
     const turnScore = allScores.length > 0 ? allScores.reduce((prev: number, curr: number, index: number) => curr + prev) : 0;
-    console.log('turn score: ', allScores, turnScore);
     const found: number = score.discoveredWordsSet.size;
     const wordsInBoard: number = gameState.possibleWordCount;
 
@@ -355,6 +354,7 @@ export function calcTurnScore(gameState: WordScrambleGameState, score: ScoreStat
         discoveredWordsSet: score.discoveredWordsSet,
         //discoveredWords: score.discoveredWords,
         foundWords: score.foundWords,
-        missedWords: missedWords
+        missedWords: missedWords,
+        discoveredWords: score.discoveredWords
     };
 }

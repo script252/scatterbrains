@@ -62,8 +62,9 @@ export class ScoreState {
     // So we can quickly check for already added words
     // This doesn't convert to json!
     discoveredWordsSet: Set<string> = new Set();
-    // Words with their associated scores
-    //discoveredWords: string[] = [];
+    // Sets must be converted in order to save,
+    // this is a copy of discoveredWordsSet
+    discoveredWords: string[] = [];
     //discoveredWordCells?: number[][] = [];
     //missedWords: string[] = [];
     turnScore: number = 0;
