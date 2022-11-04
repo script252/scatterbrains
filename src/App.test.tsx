@@ -5,10 +5,10 @@ import { BrowserRouter } from 'react-router-dom';
 
 const basename = process.env.PUBLIC_URL;
 
-test('renders learn react link', () => {
-  render(    
-  <BrowserRouter basename={`${basename}`}>
-  <App />
-  </BrowserRouter>);
-  expect(true).toBeTruthy();//.toBeInTheDocument();
-});
+// test('renders learn react link', () => {
+//   render(    
+//   <BrowserRouter basename={`${basename}`}>
+//   <App />
+//   </BrowserRouter>);
+//   expect(true).toBeTruthy();//.toBeInTheDocument();
+// });
