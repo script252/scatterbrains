@@ -52,56 +52,113 @@ function addQU(settings: NewGameSettings, letter: string) {
     return letter;
 }
 
-export function roll(gameState: WordScrambleGameState): WordScrambleGameState {
+// Loads a game if one is available.  Initializes new game if not.
+export function startGame(startNew: boolean = false): Promise<WordScrambleGameState> {
+    return new Promise<WordScrambleGameState>((resolve: any) => {
+        const initialGameState: WordScrambleGameState = init(new NewGameSettings());
 
-    //console.log(gameState.gameSettings);
+        // Don't initialize when just opening the new game dialog
+        if(startNew === true) {
+          resolve({...initialGameState, showNewGame: true});
+          return;
+        }
+    
+        const gs = loadGameState(initialGameState as WordScrambleGameState);
+        //gs.possibleWords.length <= 0 ? findWords(gs) : gs.possibleWords;
 
-    if(gameState.currentTurn >= gameState.gameSettings.rounds - 1) {
+        if(gs.possibleWords.length <= 0) {
+            findWords(gs).then((words: Word[]) => {
+
+                // Post-findWords
+                const uniqueWords: Set<string> = new Set<string>(words.map((w:Word)=> w.wordString));
+                console.log(`Found ${uniqueWords.size} unique words, ${words.length} possible word patterns.`);
+                //console.log(words);
+            
+                const gsWithCounts = {...gs, showNewGame: startNew, possibleWordCount: uniqueWords.size, possibleWords: words}
+                    
+                // FIXME: imperative
+                gsWithCounts.score[gsWithCounts.currentTurn] = calcTurnScore(gsWithCounts, gsWithCounts.score[gsWithCounts.currentTurn], 2);
+                gsWithCounts.score[gsWithCounts.currentTurn].missedWords = words;
+                
+                saveGameState(gsWithCounts);
+                console.log('postInit', gs);
+                
+                resolve(gs);
+            });
+        } else {
+            resolve({...gs, possibleWords: gs.possibleWords});
+        }
+    });
+}
+
+export function roll(gameState: WordScrambleGameState): Promise<WordScrambleGameState> {
+    return new Promise<WordScrambleGameState>((resolve: any) => {
+        //console.log(gameState.gameSettings);
+
+        if(gameState.currentTurn >= gameState.gameSettings.rounds - 1) {
+            const gs: WordScrambleGameState = {
+                ...gameState,
+                gameOver: true,
+                showVictory: true
+            };
+
+            resolve(gs);
+        }
+
+        const rolledCubes = getRolledCubes(gameState.gameSettings.boardSize === 5, gameState.gameSettings.includeRedCube);
         const gs: WordScrambleGameState = {
             ...gameState,
-            gameOver: true,
-            showVictory: true
+            gameSettings: gameState.gameSettings,
+            selected: [],
+            lastScoredWord: [],
+            currentTurn: gameState.currentTurn + 1,
+            turnHasEnded: false,
+            timer: 100,
+            cells: gameState.cells.map((cell, index:number) => {
+                const row: number = Math.floor(index / gameState.gameSettings.boardSize);
+                const col: number = Math.floor(index % gameState.gameSettings.boardSize);
+                const letter = rolledCubes[0][index]
+                return {
+                    id: index, 
+                    col: col, 
+                    row: row, 
+                    value: addQU(gameState.gameSettings, letter),
+                    isBonus: rolledCubes[1] === index
+                } as CellData;
+            }),
         };
 
-        return gs;
-    }
+        findWords(gs).then((words: Word[]) => {
 
-    const rolledCubes = getRolledCubes(gameState.gameSettings.boardSize === 5, gameState.gameSettings.includeRedCube);
-    const gs: WordScrambleGameState = {
-        ...gameState,
-        gameSettings: gameState.gameSettings,
-        selected: [],
-        lastScoredWord: [],
-        currentTurn: gameState.currentTurn + 1,
-        turnHasEnded: false,
-        timer: 100,
-        cells: gameState.cells.map((cell, index:number) => {
-            const row: number = Math.floor(index / gameState.gameSettings.boardSize);
-            const col: number = Math.floor(index % gameState.gameSettings.boardSize);
-            const letter = rolledCubes[0][index]
-            return {
-                id: index, 
-                col: col, 
-                row: row, 
-                value: addQU(gameState.gameSettings, letter),
-                isBonus: rolledCubes[1] === index
-            } as CellData;
-        }),
-    };
+            // Post-findWords
+            const uniqueWords: Set<string> = new Set<string>(words.map((w:Word)=> w.wordString));
+            console.log(`Found ${uniqueWords.size} unique words, ${words.length} possible word patterns.`);
+            //console.log(words);
+        
+            const gsWithCounts = {...gs, possibleWordCount: uniqueWords.size, possibleWords: words};
+                
+            // FIXME: imperative
+            gsWithCounts.score[gsWithCounts.currentTurn] = calcTurnScore(gsWithCounts, gsWithCounts.score[gsWithCounts.currentTurn], 2);
+            gsWithCounts.score[gsWithCounts.currentTurn].missedWords = words;
+            
+            saveGameState(gsWithCounts);
+            console.log('postInit', gsWithCounts);
+            
+            resolve(gsWithCounts);
+        });
+    });
+    // const uniqueWords: Set<string> = new Set<string>(words.map((w: Word) => w.wordString));
+    // const gsWithWords: WordScrambleGameState = {
+    //     ...gs,
+    //     possibleWordCount: uniqueWords.size, possibleWords: words,
+    // }
 
-    const words: Word[] = findWords(gs);
-    const uniqueWords: Set<string> = new Set<string>(words.map((w: Word) => w.wordString));
-    const gsWithWords: WordScrambleGameState = {
-        ...gs,
-        possibleWordCount: uniqueWords.size, possibleWords: words,
-    }
-
-    // FIXME: imperative
-    gsWithWords.score[gsWithWords.currentTurn] = calcTurnScore(gsWithWords, gsWithWords.score[gsWithWords.currentTurn], 2);
-    gsWithWords.score[gsWithWords.currentTurn].missedWords = words;
+    // // FIXME: imperative
+    // gsWithWords.score[gsWithWords.currentTurn] = calcTurnScore(gsWithWords, gsWithWords.score[gsWithWords.currentTurn], 2);
+    // gsWithWords.score[gsWithWords.currentTurn].missedWords = words;
 
     //console.log('Rolled: ', gsWithWords);
-    return gsWithWords;
+    //return gsWithWords;
 }
 
 export function getRolledCubes(useBig: boolean = false, useBonus: boolean = false): [string[], number] {
@@ -322,8 +379,23 @@ export function createWord(cellIds: number[], gs: WordScrambleGameState): Word {
     return scoredWord;
 }
 
-export function findWords(gameState: WordScrambleGameState): Word[] {
-    return findWordsFast(gameState, words.filter((w:string) => w.length <= gameState.cells.length && w.length > 2));
+const worker = new Worker('./webWorker.js', {name: 'RunFindWordsWorker', type: 'module'});
+
+export function findWords(gameState: WordScrambleGameState): Promise<Word[]> {
+    return new Promise((resolve: any) => {
+
+        const dictionary = words.filter((w:string) => w.length <= gameState.cells.length && w.length > 2)
+        findWordsFast(gameState, dictionary);
+
+        worker.onmessage = (e: any) => {
+            if(e.data.type === 'findWordsResults') {
+                //console.log('Got results: ', e.data.words);
+                resolve(e.data.words);
+            }
+        }
+
+        worker.postMessage({type: 'findWords', gameState: gameState, dictionary: dictionary});
+    });
 }
 
 export function getCurrentTurnScore(gameState: WordScrambleGameState): TurnScore {
@@ -353,7 +425,6 @@ export function calcTurnScore(gameState: WordScrambleGameState, score: ScoreStat
         found: found,
         wordsInBoard: wordsInBoard,
         discoveredWordsSet: score.discoveredWordsSet,
-        //discoveredWords: score.discoveredWords,
         foundWords: score.foundWords,
         missedWords: missedWords,
         discoveredWords: score.discoveredWords
