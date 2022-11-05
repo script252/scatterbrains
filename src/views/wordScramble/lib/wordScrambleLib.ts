@@ -1,5 +1,4 @@
 import { ensureFieldsPresent } from "../../../lib/utilities";
-import { findWordsFast } from "./cellUtilitiesFast";
 import { CellData, CellDirs, CellDir, NewGameSettings, standardCubes, WordScrambleGameState, DirStrings, wordScores, TurnScore, ScoreState, bigCubes, challengeCube, Word } from "./wordScrambleTypes";
 
 const words: string[] = require('an-array-of-english-words');
@@ -81,9 +80,9 @@ export function startGame(startNew: boolean = false): Promise<WordScrambleGameSt
                 gsWithCounts.score[gsWithCounts.currentTurn].missedWords = words;
                 
                 saveGameState(gsWithCounts);
-                console.log('postInit', gs);
+                //console.log('postInit', gsWithCounts);
                 
-                resolve(gs);
+                resolve(gsWithCounts);
             });
         } else {
             resolve({...gs, possibleWords: gs.possibleWords});
@@ -385,11 +384,11 @@ export function findWords(gameState: WordScrambleGameState): Promise<Word[]> {
     return new Promise((resolve: any) => {
 
         const dictionary = words.filter((w:string) => w.length <= gameState.cells.length && w.length > 2)
-        findWordsFast(gameState, dictionary);
+        //findWordsFast(gameState, dictionary);
 
         worker.onmessage = (e: any) => {
             if(e.data.type === 'findWordsResults') {
-                //console.log('Got results: ', e.data.words);
+                console.log('Got results: ', e.data.words);
                 resolve(e.data.words);
             }
         }
