@@ -23,12 +23,16 @@ function Cell(props: any) {
 
     return (
         <Box userSelect="none" m="0"
-            onClick={onClick} onMouseDown={onMouseDown} onMouseEnter={onMouseEnter} onMouseUp={onMouseUp}
+            
             position="relative" pointerEvents="all" id={id} className={style}>
             
             {value !== undefined && (<Text className="letter-circle" fontSize="min(10vw, 44pt)" m="auto" pointerEvents="none">{value}</Text>)}
             {debugText && (<Text fontSize="100%">{debugText}</Text>)}
             
+            <Box 
+                onClick={onClick} onMouseDown={onMouseDown} onMouseEnter={onMouseEnter} onMouseUp={onMouseUp}
+                borderRadius='full' m="25%" position="absolute" h="50%" w="50%">
+            </Box>
         </Box>
     );
 }
