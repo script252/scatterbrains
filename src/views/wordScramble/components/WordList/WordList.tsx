@@ -2,9 +2,24 @@ import { Box, Flex, SimpleGrid, Spacer, Text } from "@chakra-ui/layout";
 import React, {useLayoutEffect, useRef, useState} from "react";
 import { Word } from "../../lib/wordScrambleTypes";
 
+import { GiOpenBook} from "react-icons/gi";
+import { Icon } from "@chakra-ui/react";
+
 function WordList(props: any) {
 
-    const {foundWords = [], notFoundWords = [], showNotFound = false, onClickWord = (word: Word) => {}}: {foundWords: Word[], notFoundWords: Word[], showNotFound: boolean, onClickWord:(word: Word)=>void} = props;
+    const { 
+        foundWords = [], 
+        notFoundWords = [], 
+        showNotFound = false, 
+        onClickWord = (word: Word) => {}, 
+        onDictionaryLookup = (word: Word) => {} } : 
+    {
+        foundWords: Word[], 
+        notFoundWords: Word[], 
+        showNotFound: boolean, 
+        onClickWord:(word: Word)=>void,
+        onDictionaryLookup:(word: Word)=>void
+    } = props;
 
     const scrollBox = useRef<HTMLDivElement>(null);
 
@@ -25,14 +40,20 @@ function WordList(props: any) {
                 {showNotFound && notFoundWords.map((word: Word, index: number) => {
                     return (
                         <Box key={index} onClick={() => onClickWord(word)}>
-                            <Flex pl='1rem' pr='1rem'><Text color="gray.400">{word.wordString}</Text><Spacer></Spacer><Text color={word.hasBonus ? 'red.600' : 'gray.600'}>{word.score}</Text></Flex>
+                            <Flex pl='1rem' pr='1rem'><Text color="gray.400">{word.wordString}</Text><Spacer/>
+                            <Icon as={GiOpenBook} boxSize={4} alignSelf="center" color="gray.600" onClick={() => onDictionaryLookup(word)}/>
+                            <Text color={word.hasBonus ? 'red.600' : 'gray.600'}>{word.score}</Text>
+                            </Flex>
                         </Box>
                         );
                 })}
                 {foundWords.map((word: Word, index: number) => {
                     return (
                         <Box key={index} onClick={() => onClickWord(word)}>
-                            <Flex pl='1rem' pr='1rem'><Text color="gray.100">{word.wordString}</Text><Spacer></Spacer><Text color={word.hasBonus ? 'red.300' : 'gray.100'}>{word.score}</Text></Flex>
+                            <Flex pl='1rem' pr='1rem'><Text color="gray.100">{word.wordString}</Text><Spacer/>
+                            <Icon as={GiOpenBook} boxSize={4} alignSelf="center" color="gray.600" onClick={() => onDictionaryLookup(word)}/>
+                            <Text color={word.hasBonus ? 'red.300' : 'gray.100'}>{word.score}</Text>
+                            </Flex>
                         </Box>
                         );
                 })}

@@ -176,6 +176,11 @@ function WordScrambleGame(props: any) {
     }
   }
 
+  const onLookupWord = (word: Word) => {
+    // FIXME: find a better place for this url
+    window.open('https://www.dictionary.com/browse/'+word.wordString);
+  }
+
   return (
     <Container height="100vh" maxW="xl" className="prevent-scrolling">
         <Flex height="90%" flexDirection="column" >
@@ -187,6 +192,7 @@ function WordScrambleGame(props: any) {
                 notFoundWords={gameState.possibleWords.filter((ps: Word) => !WordScrambleLib.getTurnScore(gameState).discoveredWordsSet.has(ps.wordString.toLowerCase()))}
                 showNotFound={showMissingWords}
                 onClickWord={onClickWord}
+                onDictionaryLookup={onLookupWord}
               >
               </WordList>
             </Container>
@@ -201,7 +207,7 @@ function WordScrambleGame(props: any) {
                     <Box width="100%">
                       <Text color='gray.100'>Score: {scoreInfo.turnScore}/{gameState.score[gameState.currentTurn].scoreNeededToWin}</Text>
                     </Box>
-                    <Box width="100%">
+                    <Box width="40%">
                       <Text color='gray.100' textAlign='end'>Found: {/*FIXME: memoize or something*/ scoreInfo.found}/{Math.round(scoreInfo.wordsInBoard * getDifficultyPercent(gameState.gameSettings.difficulty))}</Text>
                     </Box>
               </HStack>
@@ -209,7 +215,7 @@ function WordScrambleGame(props: any) {
             <HStack width="100%" pl="0" pr="0">
               <Flex flexDirection="row" width="100%">
                 <Button width="100%" mr="1rem" hidden={isRollHidden()} disabled={isRollDisabled()} mt='1rem' colorScheme='gray' onClick={onPreRoll}>Roll</Button>
-                <Button width="100%" disabled={isShowMissingDisabled()} mt='1rem' colorScheme='gray' onClick={() => setShowMissingWords(!showMissingWords)}>Toggle show all possible words</Button>
+                <Button width="100%" disabled={isShowMissingDisabled()} mt='1rem' colorScheme='gray' onClick={() => setShowMissingWords(!showMissingWords)}>Show possible words (cheater!)</Button>
               </Flex>
             </HStack>
             {/* <VStack spacing='10px' width="100%" flexGrow="1">

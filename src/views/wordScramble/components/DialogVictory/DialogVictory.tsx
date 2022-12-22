@@ -3,7 +3,7 @@ import { useDisclosure } from "@chakra-ui/hooks";
 import { Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, ModalBody, ModalFooter, Center, VStack, Icon } from "@chakra-ui/react";
 import { Button, Text } from "@chakra-ui/react";
 import { EDifficulty, getDifficultyString, WordScrambleGameState } from '../../lib/wordScrambleTypes';
-import { GiTrophyCup } from 'react-icons/gi';
+import { GiTrophyCup, GiDiamondTrophy } from 'react-icons/gi';
 
 // function getMissedWords(curr: Word[], prev: Word[]) {
 //   const missed: Set<string> = new Set<string>(prev.map((w:Word) => w.id));
@@ -54,6 +54,7 @@ function DialogVictory(props: any) {
                       {diff === EDifficulty.easy && <Icon as={GiTrophyCup} boxSize={20} color="orange.600"/> }
                       {diff === EDifficulty.medium && <Icon as={GiTrophyCup} boxSize={20} color="gray.300"/> }
                       {diff === EDifficulty.hard && <Icon as={GiTrophyCup} boxSize={20} color="yellow.200"/> }
+                      {diff === EDifficulty.impossible && <Icon as={GiDiamondTrophy} boxSize={20} color="blue.200"/> }
                       <Text>Difficulty: {getDifficultyString(diff)}</Text>
                       {/* <Text>Total score: {scoreTotals.turnScore}</Text>
                       <Text>Total found: {scoreTotals.found}/{scoreTotals.wordsInBoard}</Text> */}
@@ -61,8 +62,8 @@ function DialogVictory(props: any) {
                 </Center>
             </ModalBody>
             <ModalFooter>
-            <Button onClick={() => closeVictory(true)}>Play again</Button>
-              <Button onClick={() => closeVictory(false)}>Close</Button>
+              <Button onClick={() => closeVictory(true)}>Play again</Button>
+              <Button ml="2" onClick={() => closeVictory(false)}>Close</Button>
             </ModalFooter>
           </ModalContent>
         </Modal>

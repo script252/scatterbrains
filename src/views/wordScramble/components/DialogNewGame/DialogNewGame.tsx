@@ -58,10 +58,13 @@ function DialogNewGame(props: any) {
                             <Stack direction='column'>
                                 <RadioGroup mb={8} colorScheme="black" onChange={(v: string) => settingsChanged({difficulty: Number(v) as EDifficulty})} defaultValue='2'>
                                 <Stack direction='column'>
-                                    <Radio colorScheme="blue" value='1'>Easy</Radio>
-                                    <Radio colorScheme="blue" value='2'>Medium</Radio>
-                                    <Radio colorScheme="blue" value='3'>Hard</Radio>
-                                    <Radio colorScheme="blue" value='4'>Impossible</Radio>
+                                    <Text>Difficulty</Text> 
+                                    <Text fontSize="xs">Score a fraction of the total possible score OR
+                                    find a fraction of the total number of possible words</Text>
+                                    <Radio colorScheme="blue" value='1'>Easy (10%)</Radio>
+                                    <Radio colorScheme="blue" value='2'>Medium (25%)</Radio>
+                                    <Radio colorScheme="blue" value='3'>Hard (50%)</Radio>
+                                    <Radio colorScheme="blue" value='4'>Impossible (100%)</Radio>
                                 </Stack>
                                 </RadioGroup>
                                 <Box hidden={state.simpleMode === true}>
@@ -86,16 +89,16 @@ function DialogNewGame(props: any) {
                                     </Stack>
                                     </RadioGroup>
                                 </Box>
-                                <Checkbox defaultChecked onChange={(v: any) => settingsChanged({combineQU: v.target.checked})}>Use QU</Checkbox>
-                                <Checkbox onChange={(v: any) => settingsChanged({boardSize: v.target.checked === true ? 5 : 4})}>Use big board (5x5)</Checkbox>
-                                <Checkbox defaultChecked onChange={(v: any) => settingsChanged({includeRedCube: v.target.checked})}>Use bonus die</Checkbox>
+                                <Checkbox defaultChecked onChange={(v: any) => settingsChanged({combineQU: v.target.checked})}>Replace Q with QU</Checkbox>
+                                <Checkbox onChange={(v: any) => settingsChanged({boardSize: v.target.checked === true ? 5 : 4})}>Use 5x5 board (more words, harder)</Checkbox>
+                                <Checkbox defaultChecked onChange={(v: any) => settingsChanged({includeRedCube: v.target.checked})}>Use red bonus die</Checkbox>
                             </Stack>
                             </VStack>
                         </Center>
                     </ModalBody>
                     <ModalFooter>
                     <Button onClick={cancelled}>Cancel</Button>
-                    <Button onClick={() => onConfirm(state)}>Accept</Button>
+                    <Button ml="2" onClick={() => onConfirm(state)}>Accept</Button>
                     </ModalFooter>
                 </ModalContent>
             </Modal>

@@ -50,7 +50,7 @@
     .letter-circle {
         position: absolute;
         line-height: 1;
-        font-size: 52px;
+        font-size: min(44pt, 10vw);
         top: 5%;
         left: 5%;
         width: 90%;
