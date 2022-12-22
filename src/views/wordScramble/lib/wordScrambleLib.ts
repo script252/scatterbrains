@@ -1,5 +1,5 @@
 import { ensureFieldsPresent } from "../../../lib/utilities";
-import { CellData, CellDirs, CellDir, NewGameSettings, standardCubes, WordScrambleGameState, DirStrings, wordScores, TurnScore, ScoreState, bigCubes, challengeCube, Word } from "./wordScrambleTypes";
+import { CellData, CellDirs, CellDir, NewGameSettings, standardCubes, WordScrambleGameState, DirStrings, wordScores, ScoreState, bigCubes, challengeCube, Word, getDifficultyPercent } from "./wordScrambleTypes";
 
 const words: string[] = require('an-array-of-english-words');
 
@@ -13,7 +13,7 @@ function createScores(settings: NewGameSettings): ScoreState[] {
     return scoreStates;
 }
 
-export function init(settings: NewGameSettings): WordScrambleGameState {
+export function init(settings: NewGameSettings, quickRestart: boolean = false): WordScrambleGameState {
 
     // Generate and fill cells based on difficulty
     const emptyCells = new Array<any>(settings.boardSize * settings.boardSize)
@@ -24,7 +24,7 @@ export function init(settings: NewGameSettings): WordScrambleGameState {
     const initialState: WordScrambleGameState = {
         ...new WordScrambleGameState(),
         gameSettings: {...settings},
-        score: createScores(settings),
+        score: quickRestart === true ? createScores(new NewGameSettings()) : createScores(settings),
         timer: 100,
         cells: emptyCells.map((cell, index:number) => {
             const row: number = Math.floor(index / settings.boardSize);
@@ -52,7 +52,7 @@ function addQU(settings: NewGameSettings, letter: string) {
 }
 
 // Loads a game if one is available.  Initializes new game if not.
-export function startGame(startNew: boolean = false): Promise<WordScrambleGameState> {
+export function startGame(startNew: boolean = false, quickRestartSettings?: NewGameSettings): Promise<WordScrambleGameState> {
     return new Promise<WordScrambleGameState>((resolve: any) => {
         const initialGameState: WordScrambleGameState = init(new NewGameSettings());
 
@@ -61,11 +61,13 @@ export function startGame(startNew: boolean = false): Promise<WordScrambleGameSt
           resolve({...initialGameState, showNewGame: true});
           return;
         }
-    
-        const gs = loadGameState(initialGameState as WordScrambleGameState);
-        //gs.possibleWords.length <= 0 ? findWords(gs) : gs.possibleWords;
+        
+        const gs = quickRestartSettings === undefined ? 
+            loadGameState(initialGameState as WordScrambleGameState) : 
+            init(quickRestartSettings, true);
 
         if(gs.possibleWords.length <= 0) {
+            console.log('Searching for words...');
             findWords(gs).then((words: Word[]) => {
 
                 // Post-findWords
@@ -90,10 +92,24 @@ export function startGame(startNew: boolean = false): Promise<WordScrambleGameSt
     });
 }
 
+export function restartGame(settings: NewGameSettings): Promise<WordScrambleGameState> {
+    return startGame(false, settings);//.then((gs) => roll(gs));
+}
+
+export function checkForWin(gameState: WordScrambleGameState): boolean {
+    //const requiredPercentage: number = getDifficultyPercent(gameState.gameSettings.difficulty);
+    const score = gameState.score[gameState.currentTurn];
+    //const requiredWordCount: number = Math.round(requiredPercentage * score.wordsInBoard);
+
+    // Player can win by either score or word count
+    return score.found >= score.wordsNeededToWinCount || score.turnScore >= score.scoreNeededToWin;
+}
+
 export function roll(gameState: WordScrambleGameState): Promise<WordScrambleGameState> {
     return new Promise<WordScrambleGameState>((resolve: any) => {
         //console.log(gameState.gameSettings);
 
+        // FIXME: should be in checkForWin
         if(gameState.currentTurn >= gameState.gameSettings.rounds - 1) {
             const gs: WordScrambleGameState = {
                 ...gameState,
@@ -266,6 +282,7 @@ export function onSelectionComplete(gameState: WordScrambleGameState, validate: 
 
         gs.lastScoredWord = [...gameState.selected];
         gs.score[gs.currentTurn] = calcTurnScore(gs, gs.score[gs.currentTurn], 2);
+        gs.showVictory = checkForWin(gs);
     } else {
         gs.lastWrongWord = [...gameState.selected];
     }
@@ -388,7 +405,7 @@ export function findWords(gameState: WordScrambleGameState): Promise<Word[]> {
 
         worker.onmessage = (e: any) => {
             if(e.data.type === 'findWordsResults') {
-                console.log('Got results: ', e.data.words);
+                //console.log('Got results: ', e.data.words);
                 resolve(e.data.words);
             }
         }
@@ -397,13 +414,21 @@ export function findWords(gameState: WordScrambleGameState): Promise<Word[]> {
     });
 }
 
-export function getCurrentTurnScore(gameState: WordScrambleGameState): TurnScore {
-
+export function getTurnScore(gameState: WordScrambleGameState): ScoreState {
     return gameState.score[gameState.currentTurn];
 }
 
-export function getTurnScore(gameState: WordScrambleGameState): ScoreState {
-    return gameState.score[gameState.currentTurn];
+export function calcMaxPossibleScore(gameState: WordScrambleGameState): number {
+
+    let scores = new Map<string, number>();
+
+    // Calculate highest possible score for every word
+    gameState.possibleWords.forEach((word) => {
+        const ex = scores.get(word.wordString);
+        scores.set(word.wordString, Math.max(word.score, !!ex ? ex : 0));
+    });
+
+    return Array.from(scores.values()).reduce((prev, curr) => prev + curr);
 }
 
 // Calculate score totals for turn
@@ -419,6 +444,14 @@ export function calcTurnScore(gameState: WordScrambleGameState, score: ScoreStat
 
     const missedWords: Word[] = score.missedWords.filter((missed: Word) => !score.discoveredWordsSet.has(missed.wordString));
 
+    // Need to find maximum possible score; this means if 
+    // there are duplicate words with different scores,
+    // only the larger one should be used
+    const maxPossibleScore = calcMaxPossibleScore(gameState);
+    //console.log('Max possible score: ', maxPossibleScore);
+
+    const diffScale = getDifficultyPercent(gameState.gameSettings.difficulty);
+
     return {
         turnScore: turnScore,
         found: found,
@@ -426,6 +459,8 @@ export function calcTurnScore(gameState: WordScrambleGameState, score: ScoreStat
         discoveredWordsSet: score.discoveredWordsSet,
         foundWords: score.foundWords,
         missedWords: missedWords,
-        discoveredWords: score.discoveredWords
+        discoveredWords: score.discoveredWords,
+        wordsNeededToWinCount: Math.round(wordsInBoard * diffScale),
+        scoreNeededToWin: Math.round(maxPossibleScore * diffScale),
     };
 }

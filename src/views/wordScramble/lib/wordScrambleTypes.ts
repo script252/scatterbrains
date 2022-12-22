@@ -68,18 +68,42 @@ export class ScoreState {
     //discoveredWordCells?: number[][] = [];
     //missedWords: string[] = [];
     turnScore: number = 0;
+    scoreNeededToWin: number = 0;     // Take maximum score, * by difficulty percentage
     found: number = 0;
     wordsInBoard: number = 0;
 
     foundWords: Word[] = [];
     missedWords: Word[] = [];
+    wordsNeededToWinCount: number = 0;
 }
 
-export class TurnScore {
-    turnScore: number = 0;
-    found: number = 0;
-    wordsInBoard: number = 0;
+// Numbers scale percentage of 
+// words that must be found to win
+export enum EDifficulty {
+    easy = 1,
+    medium = 2,
+    hard = 3,
+    impossible
+}
 
+export function getDifficultyString(difficulty: EDifficulty) { 
+    switch(difficulty) { 
+        case 1: return 'easy';
+        case 2: return 'medium';
+        case 3: return 'hard';
+        case 4: return 'impossible';
+    }
+}
+
+export function getDifficultyPercent(difficulty: EDifficulty) { 
+    switch(difficulty) { 
+        case 1: return 0.10;
+        case 2: return 0.25;
+        case 3: return 0.40;
+        case 4: return 1.00;
+    }
+
+    return 0;
 }
 
 export class WordScrambleGameState {
@@ -103,9 +127,11 @@ export class WordScrambleGameState {
 
 export class NewGameSettings {
     boardSize: number = 4;
-    timed: boolean = true;
-    timeLimit: number = 60;  // Seconds
+    timed: boolean = false;
+    timeLimit: number = -1;  // Seconds
     rounds: number = 3;
     combineQU: boolean = true;
     includeRedCube: boolean = true;
+    difficulty: EDifficulty = EDifficulty.medium;
+    simpleMode: boolean = true;  // Disable turns and timer
 }

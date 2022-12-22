@@ -3,7 +3,7 @@ import './wordScrambleGame.scss';
 import * as WordScrambleLib from '../../lib/wordScrambleLib';
 import { Box, Button, Container, Flex, HStack, Text } from '@chakra-ui/react';
 import { useParams } from 'react-router-dom';
-import { NewGameSettings, TurnScore, Word, WordScrambleGameState } from '../../lib/wordScrambleTypes';
+import { EDifficulty, getDifficultyPercent, getDifficultyString, NewGameSettings, ScoreState, Word, WordScrambleGameState } from '../../lib/wordScrambleTypes';
 import WordList from '../WordList/WordList';
 import WordBoard from '../WordBoard/WordBoard';
 import DialogNewGame from '../DialogNewGame/DialogNewGame';
@@ -75,14 +75,15 @@ function WordScrambleGame(props: any) {
     }
   }, [rolling, onRoll]);
 
-  const onStartNewGame = (settings: NewGameSettings) => {
-      console.log('onStartNewGame', settings);
-      const newGameState = WordScrambleLib.init(settings);
+  const onStartNewGame = async (settings: NewGameSettings) => {
+      const newGameState = await WordScrambleLib.init(settings);
       if(newGameState !== null) {
           const gs = {...newGameState, showNewGame: false};
           setGameState(gs);
           WordScrambleLib.saveGameState(gs);
-          onCloseNewGameModal();
+
+          if(!!onCloseNewGameModal)
+            onCloseNewGameModal();
 
           setTimerExpireAt(getExpireTime(gameState.gameSettings.timeLimit));
           setTimerValue(100);
@@ -95,7 +96,7 @@ function WordScrambleGame(props: any) {
       onCloseNewGameModal();
   }
 
-  const scoreInfo: TurnScore = WordScrambleLib.getCurrentTurnScore(gameState);
+  const scoreInfo: ScoreState = WordScrambleLib.getTurnScore(gameState);
 
   const onTimeout = useCallback(() => {
     if(gameState.turnHasEnded === false && gameState.gameSettings.timed === true) {
@@ -128,9 +129,14 @@ function WordScrambleGame(props: any) {
 
   const isRollDisabled = () => {
     if(initialized === false) return true;
+    if(gameState.gameSettings.simpleMode === true) return true;
     if(gameState.gameSettings.timed === false) return false;
 
     return !gameState.turnHasEnded || (gameState.currentTurn + 1) >= gameState.gameSettings.rounds;
+  }
+
+  const isRollHidden = () => {
+    return gameState.gameSettings.simpleMode === true;
   }
 
   const isShowMissingDisabled = () => {
@@ -153,7 +159,24 @@ function WordScrambleGame(props: any) {
     setGameState({...gameState, highlighted: word.wordCellIndices});
   }
 
-  return (  
+  const onCloseVictory = async (startNewGame: boolean) => {
+    if(startNewGame === false) {
+      const gs = {...gameState, 
+        showVictory: false, 
+        gameSettings: {...gameState.gameSettings, difficulty: EDifficulty.impossible}
+      };
+      setGameState(gs);
+      WordScrambleLib.saveGameState(gs);
+    } else {
+      console.log('Playing again');
+      const gs = await WordScrambleLib.startGame(false, gameState.gameSettings);
+      setGameState(gs);
+      setShowMissingWords(false);
+      //onStartNewGame(gameState.gameSettings);
+    }
+  }
+
+  return (
     <Container height="100vh" maxW="xl" className="prevent-scrolling">
         <Flex height="90%" flexDirection="column" >
             <WordBoard loading={initialized === false} locked={gameState.turnHasEnded} gameState={gameState} onStateChange={onStateChanged}></WordBoard>
@@ -169,21 +192,24 @@ function WordScrambleGame(props: any) {
             </Container>
             <Container mt='1rem' maxW="xl" ml="0" mr="0" p="0">
               <HStack width="100%" height="20%" pl="0" pr="0">
-                    <Box width="100%">
+                    <Box width="100%" hidden={isRollHidden()}>
                       <Text color='gray.100'>Turn: {gameState.currentTurn+1}/{gameState.gameSettings.rounds}</Text>
                     </Box>
-                    <Box width="100%">
-                      <Text color='gray.100'>Score: {scoreInfo.turnScore}</Text>
+                    <Box width="100%" hidden={!isRollHidden()}>
+                      <Text color='gray.100'>Difficulty: {getDifficultyString(gameState.gameSettings.difficulty)}</Text>
                     </Box>
                     <Box width="100%">
-                      <Text color='gray.100' textAlign='end'>Found: {scoreInfo.found}/{scoreInfo.wordsInBoard}</Text>
+                      <Text color='gray.100'>Score: {scoreInfo.turnScore}/{gameState.score[gameState.currentTurn].scoreNeededToWin}</Text>
+                    </Box>
+                    <Box width="100%">
+                      <Text color='gray.100' textAlign='end'>Found: {/*FIXME: memoize or something*/ scoreInfo.found}/{Math.round(scoreInfo.wordsInBoard * getDifficultyPercent(gameState.gameSettings.difficulty))}</Text>
                     </Box>
               </HStack>
             </Container>
             <HStack width="100%" pl="0" pr="0">
               <Flex flexDirection="row" width="100%">
-                <Button width="100%" mr="1rem" disabled={isRollDisabled()} mt='1rem' colorScheme='gray' onClick={onPreRoll}>Roll</Button>
-                <Button width="100%" disabled={isShowMissingDisabled()} mt='1rem' colorScheme='gray' onClick={() => setShowMissingWords(true)}>Show missing</Button>
+                <Button width="100%" mr="1rem" hidden={isRollHidden()} disabled={isRollDisabled()} mt='1rem' colorScheme='gray' onClick={onPreRoll}>Roll</Button>
+                <Button width="100%" disabled={isShowMissingDisabled()} mt='1rem' colorScheme='gray' onClick={() => setShowMissingWords(!showMissingWords)}>Toggle show all possible words</Button>
               </Flex>
             </HStack>
             {/* <VStack spacing='10px' width="100%" flexGrow="1">
@@ -195,7 +221,7 @@ function WordScrambleGame(props: any) {
             </VStack> */}
         </Flex>
         <DialogNewGame startNewGameState={gameState.showNewGame} onSettingsConfirmed={(settings: NewGameSettings) => onStartNewGame(settings)} onCancel={onNewGameCancel}></DialogNewGame>
-        <DialogVictory gameState={gameState} onCloseVictory={() => {setGameState({...gameState, showVictory: false}); WordScrambleLib.saveGameState({...gameState, showVictory: false}); }}></DialogVictory>
+        <DialogVictory gameState={gameState} onCloseVictory={onCloseVictory}></DialogVictory>
     </Container>      
   );
 }

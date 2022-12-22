@@ -25,7 +25,7 @@ function WordList(props: any) {
                 {showNotFound && notFoundWords.map((word: Word, index: number) => {
                     return (
                         <Box key={index} onClick={() => onClickWord(word)}>
-                            <Flex pl='1rem' pr='1rem'><Text color="gray.600">{word.wordString}</Text><Spacer></Spacer><Text color={word.hasBonus ? 'red.600' : 'gray.600'}>{word.score}</Text></Flex>
+                            <Flex pl='1rem' pr='1rem'><Text color="gray.400">{word.wordString}</Text><Spacer></Spacer><Text color={word.hasBonus ? 'red.600' : 'gray.600'}>{word.score}</Text></Flex>
                         </Box>
                         );
                 })}
